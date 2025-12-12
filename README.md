@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Reset HTX - Admin Management System
 
-## Getting Started
+A robust, modern, and high-performance dashboard for managing restaurant/bar operations. This repository currently houses the **Admin Backend**, built with Next.js and Supabase, featuring a dark-mode glassmorphic design and real-time data management.
 
-First, run the development server:
+> 🚧 **Status:** Admin Backend Complete. Public Frontend is currently under development.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🔐 Security & Auth
+- **Secure Authentication:** Powered by Supabase Auth (Email/Password).
+- **Middleware Protection:** Automatic redirection for unauthorized access.
+- **Password Recovery:** Built-in "Forgot Password" flow.
+- **Settings:** Admin profile management and password updates.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 📅 Event Management
+- **Scheduling:** Create, edit, and manage upcoming events.
+- **Conflict Detection:** Smart warnings if you try to book two events at the same time.
+- **Auto-Archiving:** Events automatically move to the "Past Events" archive when their date passes.
+- **Image Optimization:** Automatic client-side compression (WebP) for faster uploads and reduced storage costs.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🍽️ Menu System
+- **Categorized Management:** Organize items by Starters, Mains, Drinks, etc.
+- **Duplicate Prevention:** Automatic scanning to prevent duplicate menu item names.
+- **Search & Filter:** Real-time search for managing large menus.
+- **Stock Control:** Toggle items as "Sold Out" instantly.
 
-## Learn More
+### 📍 Floor Plan (Tables)
+- **Interactive Map:** Visual representation of restaurant tables.
+- **Live Status:** Color-coded indicators for *Available*, *Reserved*, and *Occupied*.
+- **Quick Actions:** One-click status updates directly from the card view.
 
-To learn more about Next.js, take a look at the following resources:
+### 👥 Staff & Operations
+- **Staff Management:** Add employees with specific roles (Admin, Manager, Staff).
+- **Promo Codes:** Generate and manage discount codes with active/inactive toggles.
+- **Inbox:** Centralized hub for viewing customer messages/contact form submissions.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🎨 UI/UX
+- **Dark Mode First:** Sleek, modern interface using Tailwind CSS.
+- **Glassmorphism:** Premium aesthetic with blur effects and spotlight gradients.
+- **Responsive:** Fully optimized for mobile admin management on the go.
+- **Loading States:** Smooth skeletons and spinners for a polished feel.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🛠️ Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+- **Database & Auth:** [Supabase](https://supabase.com/)
+- **Styling:** Tailwind CSS
+- **Animations:** Framer Motion & CSS Transitions
+- **Utilities:** `use-debounce` for search, Canvas API for image compression.
