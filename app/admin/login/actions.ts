@@ -1,0 +1,33 @@
+'use server'
+
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/utils/supabase/server'
+
+export async function login(formData: FormData) {
+  const supabase = await createClient()
+
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+
+  if (error) {
+    // Redirect back to /admin/login with an error parameter
+    redirect('/admin/login?error=Invalid email or password')
+  }
+
+  revalidatePath('/', 'layout')
+  redirect('/admin/dashboard')
+}
+
+export async function logout() {
+  const supabase = await createClient()
+  await supabase.auth.signOut()
+  
+  revalidatePath('/', 'layout')
+  redirect('/admin/login') // Redirect to new location
+}
