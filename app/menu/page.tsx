@@ -21,7 +21,7 @@ export default async function MenuPage() {
         {/* HEADER SECTION */}
         <div className="text-center mb-16">
           <h1 className="font-heading text-5xl md:text-7xl font-bold uppercase mb-6 leading-none tracking-tight">
-            Taste The <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F0DEAA]">Vibe</span>
+            Taste The <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4AF37] to-[#F0DEAA]">Vibe</span>
           </h1>
           <p className="text-xl md:text-2xl font-light tracking-[0.3em] text-white uppercase border-b border-[#D4AF37] inline-block pb-2 px-8">
             Drink & Dine

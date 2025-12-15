@@ -108,7 +108,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
             {events.map((event) => (
                 <div key={event.id} className="group flex flex-col md:flex-row items-center gap-6 bg-[#0a0a0a] border border-white/10 p-4 rounded-xl hover:border-[#D4AF37]/50 transition-all">
                     {/* Date Box */}
-                    <div className="flex-shrink-0 w-full md:w-24 h-24 bg-white/5 rounded-lg flex flex-col items-center justify-center border border-white/5 group-hover:border-[#D4AF37] transition-colors">
+                    <div className="shrink-0 w-full md:w-24 h-24 bg-white/5 rounded-lg flex flex-col items-center justify-center border border-white/5 group-hover:border-[#D4AF37] transition-colors">
                         <span className="text-[#D4AF37] text-sm font-bold uppercase">{format(new Date(event.date), 'MMM')}</span>
                         <span className="text-3xl font-heading font-bold text-white">{format(new Date(event.date), 'd')}</span>
                     </div>
@@ -184,7 +184,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
                                                 <div className="absolute inset-0 bg-slate-900" />
                                             )}
                                             
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-2 pointer-events-none">
+                                            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-2 pointer-events-none">
                                                 <span className="text-[#D4AF37] text-[10px] font-bold uppercase leading-none mb-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
                                                     {formatTime(ev.time)}
                                                 </span>
@@ -210,7 +210,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
         <div 
             // 1. Click overlay to close
             onClick={() => setSelectedEvent(null)}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
+            className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
         >
             <div 
                 // 2. Prevent click bubbling

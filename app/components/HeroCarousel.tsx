@@ -57,7 +57,7 @@ export default function HeroCarousel({ events }: { events: Event[] }) {
             style={{ backgroundImage: `url(${event.image_url})` }}
           />
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
+          <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-black/30" />
         </div>
       ))}
 

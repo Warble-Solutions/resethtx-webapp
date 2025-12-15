@@ -64,7 +64,7 @@ export default function EventsCalendar({ events }: { events: Event[] }) {
                     Save the Date
                 </h2>
                 <h3 className="font-heading text-5xl md:text-6xl font-bold uppercase">
-                    Upcoming <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F0DEAA]">Events</span>
+                    Upcoming <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4AF37] to-[#F0DEAA]">Events</span>
                 </h3>
             </div>
 
@@ -169,7 +169,7 @@ export default function EventsCalendar({ events }: { events: Event[] }) {
                                             )}
                                             
                                             {/* Gradient & Text Overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent flex items-end p-2">
+                                            <div className="absolute inset-0 bg-linear-to-t from-black/90 to-transparent flex items-end p-2">
                                                 <p className="font-heading text-xs md:text-sm text-white truncate w-full leading-tight">
                                                     {event.title}
                                                 </p>
@@ -190,7 +190,7 @@ export default function EventsCalendar({ events }: { events: Event[] }) {
                 // 1. CLICK OUTSIDE: Add click handler to overlay
                 onClick={() => setSelectedDate(null)}
                 // 2. REDUCED BLUR: lighter bg and less blur
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
+                className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
             >
                 <div 
                     // 3. STOP PROPAGATION: prevent clicks inside from closing
@@ -211,7 +211,7 @@ export default function EventsCalendar({ events }: { events: Event[] }) {
                     <div className="flex flex-col gap-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                         {getEventsForDay(selectedDate).map(event => (
                             <div key={event.id} className="flex gap-6 items-start group">
-                                <div className="w-24 h-24 relative flex-shrink-0 bg-slate-900 border border-white/10">
+                                <div className="w-24 h-24 relative shrink-0 bg-slate-900 border border-white/10">
                                     {event.image_url && <Image src={event.image_url} alt={event.title} fill className="object-cover" />}
                                 </div>
                                 <div className="flex-1">
