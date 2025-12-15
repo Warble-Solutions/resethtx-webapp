@@ -1,37 +1,53 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import HeroSection from './HeroSection' // Fallback import
 
 interface Event {
   id: string
   title: string
   date: string
-  time: string
+  time: string | null
   image_url: string | null
   description: string | null
 }
 
 export default function HeroCarousel({ events }: { events: Event[] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [isLoaded, setIsLoaded] = useState(false)
 
-  // Cycle through events every 2.5 seconds
-  useEffect(() => {
-    if (events.length <= 1) return // Don't cycle if only 1 event
+  // 1. Fallback to Static Hero if no events exist
+  if (!events || events.length === 0) {
+    return <HeroSection />
+  }
 
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % events.length)
-    }, 2500)
-
-    return () => clearInterval(interval)
+  // 2. Carousel Logic (Slow 6s timer)
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % events.length)
   }, [events.length])
+
+  useEffect(() => {
+    if (events.length <= 1) return
+    const interval = setInterval(nextSlide, 6000)
+    return () => clearInterval(interval)
+  }, [nextSlide, events.length])
+
+  // Trigger animations on mount
+  useEffect(() => setIsLoaded(true), [])
 
   const currentEvent = events[currentIndex]
   
-  // Format Date & Time for display
-  const eventDate = new Date(currentEvent.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
-  // Handle time formatting safely
-  let timeDisplay = "7:00 PM"
+  // Format Date
+  const eventDate = new Date(currentEvent.date).toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    month: 'long', 
+    day: 'numeric' 
+  })
+
+  // Format Time
+  let timeDisplay = "9:00 PM"
   if (currentEvent.time) {
       const [h, m] = currentEvent.time.split(':')
       const hour = parseInt(h)
@@ -41,9 +57,9 @@ export default function HeroCarousel({ events }: { events: Event[] }) {
   }
 
   return (
-    <section className="relative h-screen w-full flex items-center overflow-hidden group bg-black">
+    <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
       
-      {/* 1. BACKGROUND IMAGES (Stacked for Crossfade) */}
+      {/* --- BACKGROUND LAYER (Crossfade Images) --- */}
       {events.map((event, index) => (
         <div 
           key={event.id}
@@ -52,64 +68,96 @@ export default function HeroCarousel({ events }: { events: Event[] }) {
           }`}
         >
           {/* Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] scale-105"
-            style={{ backgroundImage: `url(${event.image_url})` }}
-          />
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-black/30" />
+          <div className="relative w-full h-full">
+            {event.image_url ? (
+                <Image 
+                    src={event.image_url} 
+                    alt={event.title}
+                    fill
+                    className={`object-cover transition-transform duration-[10000ms] ease-linear ${
+                        index === currentIndex ? 'scale-110' : 'scale-100'
+                    }`}
+                    priority={index === 0}
+                />
+            ) : (
+                // Fallback dark gradient if no image
+                <div className="w-full h-full bg-[#1a1a1a]" />
+            )}
+            
+            {/* Dark Overlays for Text Readability */}
+            <div className="absolute inset-0 bg-black/60" /> {/* General dim */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80" /> {/* Vignette */}
+          </div>
         </div>
       ))}
 
-      {/* 2. TEXT CONTENT (Z-Index higher than backgrounds) */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 mt-20">
-        <div className="max-w-3xl">
-            {/* Tagline */}
-            <div className="flex items-center gap-4 mb-6">
-                <div className="h-[2px] w-12 bg-[#D4AF37]"></div>
-                <span className="text-[#D4AF37] tracking-[0.3em] font-bold text-xs md:text-sm uppercase animate-fade-in">
-                    Featured Event
+      {/* --- CONTENT LAYER (Centered & Cinematic) --- */}
+      <div className="relative z-20 text-center px-4 max-w-5xl mx-auto mt-10">
+        
+        {/* Animated Container */}
+        <div key={currentEvent.id} className="flex flex-col items-center">
+            
+            {/* Top Tag */}
+            <h2 className="text-[#D4AF37] text-xs md:text-sm font-bold tracking-[0.3em] uppercase mb-6 animate-in fade-in slide-in-from-bottom-2 duration-700">
+                Featured Event
+            </h2>
+
+            {/* Main Title (Huge like Hero) */}
+            <h1 className="font-heading text-6xl md:text-8xl lg:text-9xl font-bold text-white mb-6 leading-tight tracking-tight uppercase drop-shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                {currentEvent.title}
+            </h1>
+
+            {/* Date & Time Bar */}
+            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6 text-slate-200 text-lg md:text-xl font-light tracking-wide mb-10 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-100 bg-white/5 backdrop-blur-md px-6 py-3 rounded-full border border-white/10">
+                <span className="flex items-center gap-2">
+                    <span className="text-[#D4AF37]">🗓</span> {eventDate}
+                </span>
+                <span className="hidden md:inline w-1 h-1 bg-slate-500 rounded-full"></span>
+                <span className="flex items-center gap-2">
+                    <span className="text-[#D4AF37]">⏰</span> {timeDisplay}
                 </span>
             </div>
 
-            {/* Title - Key change forces simple fade animation on text switch */}
-            <div key={currentEvent.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <h1 className="font-heading text-6xl md:text-8xl font-bold text-white mb-6 leading-[0.9] uppercase drop-shadow-2xl">
-                {currentEvent.title}
-                </h1>
-
-                <p className="text-slate-200 text-lg md:text-xl mb-8 font-sans max-w-xl border-l-2 border-[#D4AF37] pl-6 py-2 bg-black/30 backdrop-blur-sm">
-                    {eventDate} @ {timeDisplay} <br />
-                    <span className="text-sm text-slate-400 mt-1 block">
-                        {currentEvent.description ? currentEvent.description.slice(0, 100) + '...' : ''}
-                    </span>
+            {/* Description (Optional - Shortened) */}
+            {currentEvent.description && (
+                <p className="text-slate-300 max-w-2xl text-sm md:text-base leading-relaxed mb-10 line-clamp-2 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-150 hidden md:block">
+                    {currentEvent.description}
                 </p>
+            )}
 
-                {/* Buttons */}
-                <div className="flex flex-col md:flex-row gap-4">
-                    <Link 
-                        href={`/events`} // Or link to specific booking page
-                        className="bg-[#D4AF37] text-black font-bold px-10 py-4 uppercase tracking-[0.2em] text-center hover:bg-white transition-all duration-300 hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.4)]"
-                    >
-                        Get Tickets
-                    </Link>
-                </div>
+            {/* Buttons */}
+            <div className="flex flex-col md:flex-row gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
+                <Link 
+                    href="/events" 
+                    className="bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] uppercase tracking-widest text-sm"
+                >
+                    Get Tickets
+                </Link>
+                <Link 
+                    href="/reservations" 
+                    className="bg-transparent border border-white text-white font-bold py-4 px-10 rounded-full hover:bg-white/10 transition-all hover:border-[#D4AF37] hover:text-[#D4AF37] uppercase tracking-widest text-sm"
+                >
+                    VIP Table
+                </Link>
             </div>
         </div>
       </div>
 
-      {/* 3. PROGRESS INDICATORS (Optional: Shows which slide is active) */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-3">
-          {events.map((_, idx) => (
-              <button 
-                  key={idx} 
-                  onClick={() => setCurrentIndex(idx)}
-                  className={`h-1 transition-all duration-500 rounded-full ${
-                      idx === currentIndex ? 'w-12 bg-[#D4AF37]' : 'w-4 bg-white/30 hover:bg-white'
-                  }`} 
-              />
-          ))}
-      </div>
+      {/* --- PROGRESS INDICATORS --- */}
+      {events.length > 1 && (
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-4">
+            {events.map((_, idx) => (
+                <button 
+                    key={idx} 
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`h-1 transition-all duration-500 rounded-full ${
+                        idx === currentIndex ? 'w-16 bg-[#D4AF37]' : 'w-4 bg-white/20 hover:bg-white'
+                    }`} 
+                    aria-label={`Go to slide ${idx + 1}`}
+                />
+            ))}
+        </div>
+      )}
 
     </section>
   )

@@ -64,7 +64,7 @@ export default function EventsCalendar({ events }: { events: Event[] }) {
                     Save the Date
                 </h2>
                 <h3 className="font-heading text-5xl md:text-6xl font-bold uppercase">
-                    Upcoming <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4AF37] to-[#F0DEAA]">Events</span>
+                    Plan Your <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4AF37] to-[#F0DEAA]">Night Out</span>
                 </h3>
             </div>
 

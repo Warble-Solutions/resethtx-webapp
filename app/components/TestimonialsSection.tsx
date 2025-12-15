@@ -13,7 +13,7 @@ export default async function TestimonialsSection() {
   if (!testimonials || testimonials.length === 0) return null
 
   return (
-    <section className="py-24 bg-neutral-900 border-t border-white/5 relative overflow-hidden">
+    <section className="py-24 bg-[#0F172A] border-t border-white/5 relative overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-[#D4AF37]/50 to-transparent"></div>
       
