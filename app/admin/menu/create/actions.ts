@@ -8,8 +8,6 @@ export async function checkMenuConflict(formData: FormData) {
   const supabase = await createClient()
   const name = formData.get('name') as string
 
-  // Check if ANY item has this name (case-insensitive search)
-  // ilike matches 'Burger', 'burger', 'BURGER'
   const { data } = await supabase
     .from('menu_items')
     .select('name, category')
@@ -28,28 +26,32 @@ export async function createMenuItem(formData: FormData) {
 
   // 1. Get Text Data
   const name = formData.get('name') as string
-  const price = formData.get('price') as string
+  const price = formData.get('price') as string // <--- REMOVED parseFloat
   const category = formData.get('category') as string
   const description = formData.get('description') as string
-  const isAvailable = formData.get('is_available') === 'on' // Checkboxes return "on" if checked
+  const isAvailable = formData.get('is_available') === 'on'
 
   // 2. Handle Image Upload
   const imageFile = formData.get('image') as File
   let imageUrl = null
 
   if (imageFile && imageFile.size > 0) {
-    const fileName = `menu-${Date.now()}-${imageFile.name}`
+    // Unique filename to prevent overwrites
+    const fileName = `menu-${Date.now()}-${imageFile.name.replace(/\s/g, '-')}`
     const { error: uploadError } = await supabase.storage
-      .from('images') // We reuse the same bucket!
+      .from('images')
       .upload(fileName, imageFile)
 
-    if (uploadError) throw new Error('Failed to upload image')
-
-    const { data: publicUrlData } = supabase.storage
-      .from('images')
-      .getPublicUrl(fileName)
-      
-    imageUrl = publicUrlData.publicUrl
+    if (uploadError) {
+        console.error('Upload Error', uploadError)
+        // We continue without image if it fails
+    } else {
+        const { data: publicUrlData } = supabase.storage
+        .from('images')
+        .getPublicUrl(fileName)
+        
+        imageUrl = publicUrlData.publicUrl
+    }
   }
 
   // 3. Insert into Database
@@ -57,7 +59,7 @@ export async function createMenuItem(formData: FormData) {
     .from('menu_items')
     .insert({
       name,
-      price: parseFloat(price), // Convert string to number
+      price, // Stored as Text now
       category,
       description,
       image_url: imageUrl,
@@ -70,18 +72,15 @@ export async function createMenuItem(formData: FormData) {
   }
 
   // 4. Redirect
+  revalidatePath('/menu')
+  revalidatePath('/admin/menu')
   redirect('/admin/menu')
 }
 
-// ... existing imports and createMenuItem function ...
-
 export async function deleteMenuItem(formData: FormData) {
   const supabase = await createClient()
-  
-  // 1. Get the ID
   const id = formData.get('id') as string
 
-  // 2. Delete from DB
   const { error } = await supabase
     .from('menu_items')
     .delete()
@@ -92,9 +91,11 @@ export async function deleteMenuItem(formData: FormData) {
     throw new Error('Failed to delete item')
   }
 
-  // 3. Refresh the menu page
   revalidatePath('/admin/menu')
+  revalidatePath('/menu')
 }
+
+// Add or Replace this function in app/admin/menu/create/actions.ts
 
 export async function updateMenuItem(formData: FormData) {
   const supabase = await createClient()
@@ -104,7 +105,7 @@ export async function updateMenuItem(formData: FormData) {
 
   // 2. Get Text Data
   const name = formData.get('name') as string
-  const price = formData.get('price') as string
+  const price = formData.get('price') as string // <--- No parseFloat!
   const category = formData.get('category') as string
   const description = formData.get('description') as string
   
@@ -114,7 +115,7 @@ export async function updateMenuItem(formData: FormData) {
   // 3. Prepare Update Object
   const updateData: any = {
     name,
-    price: parseFloat(price),
+    price, // Stored as Text
     category,
     description,
     is_available: isAvailable
@@ -124,18 +125,20 @@ export async function updateMenuItem(formData: FormData) {
   const imageFile = formData.get('image') as File
   
   if (imageFile && imageFile.size > 0) {
-    const fileName = `menu-${Date.now()}-${imageFile.name}`
+    const fileName = `menu-${Date.now()}-${imageFile.name.replace(/\s/g, '-')}`
     const { error: uploadError } = await supabase.storage
       .from('images')
       .upload(fileName, imageFile)
 
-    if (uploadError) throw new Error('Failed to upload new image')
-
-    const { data: publicUrlData } = supabase.storage
-      .from('images')
-      .getPublicUrl(fileName)
-      
-    updateData.image_url = publicUrlData.publicUrl
+    if (uploadError) {
+        console.error('Upload Error', uploadError)
+    } else {
+        const { data: publicUrlData } = supabase.storage
+        .from('images')
+        .getPublicUrl(fileName)
+        
+        updateData.image_url = publicUrlData.publicUrl
+    }
   }
 
   // 5. Update Database
@@ -150,5 +153,7 @@ export async function updateMenuItem(formData: FormData) {
   }
 
   // 6. Redirect
+  revalidatePath('/menu')
+  revalidatePath('/admin/menu')
   redirect('/admin/menu')
 }

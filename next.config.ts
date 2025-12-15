@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+  },images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'yhmvfouigexsqnxccpah.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
   },
 };
 

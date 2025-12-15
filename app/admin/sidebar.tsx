@@ -21,6 +21,7 @@ export default function Sidebar() {
         { href: '/admin/promos', label: 'Promos' },
         { href: '/admin/inbox', label: 'Inbox' },
         { href: '/admin/settings', label: 'Settings' },
+        { href: '/admin/testimonials', label: 'Testimonials' },
     ]
 
     return (

@@ -6,97 +6,89 @@ import { revalidatePath } from 'next/cache'
 
 export async function checkEventConflict(formData: FormData) {
   const supabase = await createClient()
+  
+  const date = formData.get('date') as string
+  const time_hour = formData.get('time_hour') as string
+  const time_minute = formData.get('time_minute') as string
+  const time_ampm = formData.get('time_ampm') as string
 
-  // 1. Reconstruct the Date (Same logic as createEvent)
-  const rawDate = formData.get('date') as string
-  const hour = parseInt(formData.get('time_hour') as string)
-  const minute = formData.get('time_minute') as string
-  const ampm = formData.get('time_ampm') as string
+  // Convert 12h to 24h for storage
+  let hour = parseInt(time_hour)
+  if (time_ampm === 'PM' && hour !== 12) hour += 12
+  if (time_ampm === 'AM' && hour === 12) hour = 0
+  const time = `${hour.toString().padStart(2, '0')}:${time_minute}:00`
 
-  let hour24 = hour
-  if (ampm === 'PM' && hour !== 12) hour24 = hour + 12
-  if (ampm === 'AM' && hour === 12) hour24 = 0
-
-  const finalDateIso = `${rawDate}T${hour24.toString().padStart(2, '0')}:${minute}:00`
-
-  // 2. Check if an event already exists at this exact second
-  const { data } = await supabase
+  // Check for existing event at this exact time
+  const { data: existingEvent } = await supabase
     .from('events')
     .select('title')
-    .eq('date', finalDateIso)
+    .eq('date', date)
+    .eq('time', time)
     .single()
 
-  // 3. Return the conflict info
-  if (data) {
-    return { conflict: true, title: data.title }
+  if (existingEvent) {
+    return { conflict: true, title: existingEvent.title }
   }
-  
+
   return { conflict: false }
 }
 
 export async function createEvent(formData: FormData) {
   const supabase = await createClient()
 
-  // 1. Get basic text data
+  // 1. Gather Data
   const title = formData.get('title') as string
+  const date = formData.get('date') as string
+  const tickets = formData.get('tickets')
   const description = formData.get('description') as string
-  const tickets = formData.get('tickets') as string
-  
-  // 2. Stitch the Date and Time parts together
-  const rawDate = formData.get('date') as string // "2023-12-25"
-  const hour = parseInt(formData.get('time_hour') as string)
-  const minute = formData.get('time_minute') as string
-  const ampm = formData.get('time_ampm') as string
-
-  // Convert 12h format to 24h format for the database
-  let hour24 = hour
-  if (ampm === 'PM' && hour !== 12) hour24 = hour + 12
-  if (ampm === 'AM' && hour === 12) hour24 = 0
-
-  // Create the final ISO string: "2023-12-25T19:30:00"
-  // Note: We create a date object to handle Timezones correctly if needed, 
-  // but for simplicity, we append the string.
-  const finalDateIso = `${rawDate}T${hour24.toString().padStart(2, '0')}:${minute}:00`
-
-  // 3. Handle Image Upload
   const imageFile = formData.get('image') as File
-  let imageUrl = null
+  const is_featured = formData.get('is_featured') === 'on' // <--- CAPTURE TOGGLE
 
+  // 2. Handle Time Construction
+  const time_hour = formData.get('time_hour') as string
+  const time_minute = formData.get('time_minute') as string
+  const time_ampm = formData.get('time_ampm') as string
+  
+  let hour = parseInt(time_hour)
+  if (time_ampm === 'PM' && hour !== 12) hour += 12
+  if (time_ampm === 'AM' && hour === 12) hour = 0
+  const time = `${hour.toString().padStart(2, '0')}:${time_minute}:00`
+
+  // 3. Upload Image (if exists)
+  let publicUrl = null
   if (imageFile && imageFile.size > 0) {
-    const fileName = `${Date.now()}-${imageFile.name}`
+    const fileExt = imageFile.name.split('.').pop()
+    const fileName = `${Date.now()}.${fileExt}`
     const { error: uploadError } = await supabase.storage
       .from('images')
       .upload(fileName, imageFile)
 
     if (uploadError) {
       console.error('Upload Error:', uploadError)
-      throw new Error('Failed to upload image')
+      throw new Error('Image upload failed')
     }
-
-    const { data: publicUrlData } = supabase.storage
-      .from('images')
-      .getPublicUrl(fileName)
-      
-    imageUrl = publicUrlData.publicUrl
+    
+    const { data: urlData } = supabase.storage.from('images').getPublicUrl(fileName)
+    publicUrl = urlData.publicUrl
   }
 
-  // 4. Insert into Database
-  const { error: dbError } = await supabase
-    .from('events')
-    .insert({
-      title,
-      description,
-      date: finalDateIso, // Use our stitched date
-      tickets_available: Number(tickets),
-      image_url: imageUrl,
-    })
+  // 4. Insert into DB
+  const { error } = await supabase.from('events').insert({
+    title,
+    date,
+    time,
+    tickets: Number(tickets),
+    description,
+    image_url: publicUrl,
+    is_featured: is_featured, // <--- SAVE TO DB
+  })
 
-  if (dbError) {
-    console.error('DB Error:', dbError)
+  if (error) {
+    console.error('Database Error:', error)
     throw new Error('Failed to create event')
   }
 
-  // 5. Redirect back to list
+  revalidatePath('/admin/events')
   redirect('/admin/events')
 }
 
@@ -118,74 +110,4 @@ export async function deleteEvent(formData: FormData) {
 
   // Refresh the events list so the card disappears
   revalidatePath('/admin/events')
-}
-
-// ... existing imports
-// ... existing createEvent function
-// ... existing deleteEvent function
-
-export async function updateEvent(formData: FormData) {
-  const supabase = await createClient()
-
-  // 1. Get the ID (Crucial!)
-  const id = formData.get('id') as string
-  
-  // 2. Get text data
-  const title = formData.get('title') as string
-  const description = formData.get('description') as string
-  const tickets = formData.get('tickets') as string
-  
-  // 3. Reconstruct Date
-  const rawDate = formData.get('date') as string
-  const hour = parseInt(formData.get('time_hour') as string)
-  const minute = formData.get('time_minute') as string
-  const ampm = formData.get('time_ampm') as string
-
-  let hour24 = hour
-  if (ampm === 'PM' && hour !== 12) hour24 = hour + 12
-  if (ampm === 'AM' && hour === 12) hour24 = 0
-
-  const finalDateIso = `${rawDate}T${hour24.toString().padStart(2, '0')}:${minute}:00`
-
-  // 4. Prepare the Data Object
-  const updateData: any = {
-    title,
-    description,
-    date: finalDateIso,
-    tickets_available: Number(tickets),
-  }
-
-  // 5. Handle Optional Image Update
-  const imageFile = formData.get('image') as File
-  
-  if (imageFile && imageFile.size > 0) {
-    // Only if user selected a NEW file, we upload it
-    const fileName = `${Date.now()}-${imageFile.name}`
-    const { error: uploadError } = await supabase.storage
-      .from('images')
-      .upload(fileName, imageFile)
-
-    if (uploadError) throw new Error('Failed to upload new image')
-
-    const { data: publicUrlData } = supabase.storage
-      .from('images')
-      .getPublicUrl(fileName)
-      
-    // Add the new URL to the update object
-    updateData.image_url = publicUrlData.publicUrl
-  }
-
-  // 6. Update Database
-  const { error } = await supabase
-    .from('events')
-    .update(updateData)
-    .eq('id', id)
-
-  if (error) {
-    console.error('Update Error:', error)
-    throw new Error('Failed to update event')
-  }
-
-  // 7. Redirect
-  redirect('/admin/events')
 }

@@ -29,33 +29,21 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
+  // IMPORTANT: This refreshes the session if it's expired
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // --- DEBUGGING LOGS (Check your VS Code Terminal) ---
-  const rawPath = request.nextUrl.pathname
-  console.log(`[Middleware] Checking path: ${rawPath}`)
-
-  // 1. PROTECTED ROUTES LOGIC
-  if (!user && rawPath.startsWith('/admin')) {
-    
-    // Explicitly allow these paths
-    const isLoginPage = rawPath === '/admin/login'
-    const isForgotPage = rawPath === '/admin/forgot-password'
-
-    // If it is NOT login AND NOT forgot password -> Redirect
-    if (!isLoginPage && !isForgotPage) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/admin/login'
-        return NextResponse.redirect(url)
-    }
-  }
-
-  // 2. REDIRECT LOGIC (Logged in users shouldn't see login)
-  if (user && rawPath === '/admin/login') {
+  // PROTECTED ROUTES LOGIC
+  // If user is NOT logged in and tries to access /admin pages
+  if (request.nextUrl.pathname.startsWith('/admin') && !user) {
+     // Allow access to login page
+     if (request.nextUrl.pathname.includes('/login')) {
+         return supabaseResponse
+     }
+     // Redirect everyone else to login
      const url = request.nextUrl.clone()
-     url.pathname = '/admin/dashboard'
+     url.pathname = '/admin/login'
      return NextResponse.redirect(url)
   }
 

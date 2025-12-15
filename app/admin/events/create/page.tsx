@@ -73,7 +73,7 @@ export default function CreateEventPage() {
           {/* Title */}
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">Event Title</label>
-            <input name="title" required type="text" placeholder="e.g. Jazz Night" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white placeholder:text-slate-600" />
+            <input name="title" required type="text" placeholder="e.g. Jazz Night" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white placeholder:text-slate-600" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -93,29 +93,54 @@ export default function CreateEventPage() {
             {/* Tickets */}
             <div>
               <label className="block text-sm font-bold text-slate-300 mb-2">Total Tickets</label>
-              <input name="tickets" required type="number" placeholder="100" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white" />
+              <input name="tickets" required type="number" placeholder="100" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
             </div>
           </div>
 
           {/* Description */}
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">Description</label>
-            <textarea name="description" rows={4} placeholder="What is this event about?" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white"></textarea>
+            <textarea name="description" rows={4} placeholder="What is this event about?" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white"></textarea>
           </div>
 
           {/* Image */}
           <div className="p-4 border border-dashed border-slate-700 rounded-lg bg-slate-900/50">
             <label className="block text-sm font-bold text-slate-300 mb-2">Cover Image</label>
-            <input name="image" type="file" accept="image/*" className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" />
+            <input name="image" type="file" accept="image/*" className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37] file:text-black hover:file:bg-white hover:file:text-black cursor-pointer transition-colors" />
           </div>
+
+          {/* --- NEW FEATURED TOGGLE --- */}
+          <div className="flex items-center justify-between p-4 bg-slate-900 border border-slate-700 rounded-lg group hover:border-[#D4AF37]/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[#D4AF37]/20 rounded-lg text-[#D4AF37]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <div>
+                <label htmlFor="featured-toggle" className="block text-sm font-bold text-white cursor-pointer select-none">Feature on Homepage</label>
+                <p className="text-xs text-slate-400">This event will be the main banner on the website.</p>
+              </div>
+            </div>
+            
+            {/* CHANGED FROM DIV TO LABEL */}
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input 
+                id="featured-toggle" 
+                type="checkbox" 
+                name="is_featured" 
+                className="peer sr-only" 
+              />
+              <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#D4AF37] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div>
+            </label>
+          </div>
+          {/* --------------------------- */}
 
           {/* Submit Button */}
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="mt-4 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-purple-500/20 transition-all w-full md:w-auto md:self-end disabled:opacity-50 flex items-center justify-center gap-2"
+            className="mt-4 bg-gradient-to-r from-[#D4AF37] to-[#B3932D] hover:from-white hover:to-slate-200 hover:text-black text-black font-bold py-3 px-6 rounded-lg shadow-lg shadow-[#D4AF37]/20 transition-all w-full md:w-auto md:self-end disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {isSubmitting && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+            {isSubmitting && <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />}
             {isSubmitting ? 'Optimizing & Saving...' : 'Create Event'}
           </button>
         </form>
