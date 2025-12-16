@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer'
-// 1. Import the Google Fonts
-import { Oswald, Montserrat } from "next/font/google";
+// 1. Import the NEW Google Fonts
+import { Cinzel, Manrope } from "next/font/google";
 import "./globals.css";
 
 // 2. Configure them
-const oswald = Oswald({
+const cinzel = Cinzel({
   subsets: ["latin"],
-  variable: "--font-oswald",
+  variable: "--font-cinzel", // Matches your new tailwind config
   display: "swap",
 });
 
-const montserrat = Montserrat({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-montserrat",
+  variable: "--font-manrope", // Matches your new tailwind config
   display: "swap",
 });
 
@@ -30,9 +30,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* 3. Apply the variables to the body */}
+      {/* 3. Apply the NEW variables to the body */}
       <body
-        className={`${oswald.variable} ${montserrat.variable} antialiased bg-black text-white selection:bg-gold-500 selection:text-black`}
+        className={`${cinzel.variable} ${manrope.variable} antialiased bg-black text-white selection:bg-gold-500 selection:text-black`}
       >
         <Navbar />
         {children}

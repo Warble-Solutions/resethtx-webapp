@@ -8,6 +8,9 @@ const navLinks = [
   { name: 'HOME', href: '/' },
   { name: 'EVENTS', href: '/events' },
   { name: 'MENU', href: '/menu' },
+  { name: 'ABOUT', href: '/about' },
+  { name: 'CONTACT', href: '/contact' },
+  { name: 'Gallery', href: '/gallery' },
 ]
 
 export default function Navbar() {

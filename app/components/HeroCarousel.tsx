@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import HeroSection from './HeroSection' // Fallback import
+import HeroSection from './HeroSection'
 
 interface Event {
   id: string
@@ -18,12 +18,10 @@ export default function HeroCarousel({ events }: { events: Event[] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
 
-  // 1. Fallback to Static Hero if no events exist
   if (!events || events.length === 0) {
     return <HeroSection />
   }
 
-  // 2. Carousel Logic (Slow 6s timer)
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % events.length)
   }, [events.length])
@@ -34,19 +32,16 @@ export default function HeroCarousel({ events }: { events: Event[] }) {
     return () => clearInterval(interval)
   }, [nextSlide, events.length])
 
-  // Trigger animations on mount
   useEffect(() => setIsLoaded(true), [])
 
   const currentEvent = events[currentIndex]
   
-  // Format Date
   const eventDate = new Date(currentEvent.date).toLocaleDateString('en-US', { 
     weekday: 'long', 
     month: 'long', 
     day: 'numeric' 
   })
 
-  // Format Time
   let timeDisplay = "9:00 PM"
   if (currentEvent.time) {
       const [h, m] = currentEvent.time.split(':')
@@ -59,7 +54,7 @@ export default function HeroCarousel({ events }: { events: Event[] }) {
   return (
     <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
       
-      {/* --- BACKGROUND LAYER (Crossfade Images) --- */}
+      {/* BACKGROUND */}
       {events.map((event, index) => (
         <div 
           key={event.id}
@@ -67,48 +62,42 @@ export default function HeroCarousel({ events }: { events: Event[] }) {
             index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
           }`}
         >
-          {/* Image */}
           <div className="relative w-full h-full">
             {event.image_url ? (
                 <Image 
                     src={event.image_url} 
                     alt={event.title}
                     fill
-                    className={`object-cover transition-transform duration-[10000ms] ease-linear ${
+                    className={`object-cover transition-transform duration-10000 ease-linear ${
                         index === currentIndex ? 'scale-110' : 'scale-100'
                     }`}
                     priority={index === 0}
                 />
             ) : (
-                // Fallback dark gradient if no image
                 <div className="w-full h-full bg-[#1a1a1a]" />
             )}
-            
-            {/* Dark Overlays for Text Readability */}
-            <div className="absolute inset-0 bg-black/60" /> {/* General dim */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80" /> {/* Vignette */}
+            <div className="absolute inset-0 bg-black/60" />
+            <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-black/80" />
           </div>
         </div>
       ))}
 
-      {/* --- CONTENT LAYER (Centered & Cinematic) --- */}
+      {/* CONTENT */}
       <div className="relative z-20 text-center px-4 max-w-5xl mx-auto mt-10">
-        
-        {/* Animated Container */}
         <div key={currentEvent.id} className="flex flex-col items-center">
             
-            {/* Top Tag */}
-            <h2 className="text-[#D4AF37] text-xs md:text-sm font-bold tracking-[0.3em] uppercase mb-6 animate-in fade-in slide-in-from-bottom-2 duration-700">
+            {/* TAG: Font Heading (Cinzel) for elegance */}
+            <h2 className="font-heading text-[#D4AF37] text-xs md:text-sm font-bold tracking-[0.3em] uppercase mb-6 animate-in fade-in slide-in-from-bottom-2 duration-700">
                 Featured Event
             </h2>
 
-            {/* Main Title (Huge like Hero) */}
+            {/* TITLE: Font Heading (Cinzel) */}
             <h1 className="font-heading text-6xl md:text-8xl lg:text-9xl font-bold text-white mb-6 leading-tight tracking-tight uppercase drop-shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
                 {currentEvent.title}
             </h1>
 
-            {/* Date & Time Bar */}
-            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6 text-slate-200 text-lg md:text-xl font-light tracking-wide mb-10 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-100 bg-white/5 backdrop-blur-md px-6 py-3 rounded-full border border-white/10">
+            {/* INFO BAR: Font Sans (Manrope) for readability */}
+            <div className="font-sans flex flex-col md:flex-row items-center gap-2 md:gap-6 text-slate-200 text-lg md:text-xl font-light tracking-wide mb-10 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-100 bg-white/5 backdrop-blur-md px-6 py-3 rounded-full border border-white/10">
                 <span className="flex items-center gap-2">
                     <span className="text-[#D4AF37]">🗓</span> {eventDate}
                 </span>
@@ -118,24 +107,24 @@ export default function HeroCarousel({ events }: { events: Event[] }) {
                 </span>
             </div>
 
-            {/* Description (Optional - Shortened) */}
+            {/* DESCRIPTION: Font Sans */}
             {currentEvent.description && (
-                <p className="text-slate-300 max-w-2xl text-sm md:text-base leading-relaxed mb-10 line-clamp-2 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-150 hidden md:block">
+                <p className="font-sans text-slate-300 max-w-2xl text-sm md:text-base leading-relaxed mb-10 line-clamp-2 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-150 hidden md:block">
                     {currentEvent.description}
                 </p>
             )}
 
-            {/* Buttons */}
+            {/* BUTTONS: Font Sans */}
             <div className="flex flex-col md:flex-row gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
                 <Link 
                     href="/events" 
-                    className="bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] uppercase tracking-widest text-sm"
+                    className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] uppercase tracking-widest text-sm"
                 >
                     Get Tickets
                 </Link>
                 <Link 
                     href="/reservations" 
-                    className="bg-transparent border border-white text-white font-bold py-4 px-10 rounded-full hover:bg-white/10 transition-all hover:border-[#D4AF37] hover:text-[#D4AF37] uppercase tracking-widest text-sm"
+                    className="font-sans bg-transparent border border-white text-white font-bold py-4 px-10 rounded-full hover:bg-white/10 transition-all hover:border-[#D4AF37] hover:text-[#D4AF37] uppercase tracking-widest text-sm"
                 >
                     VIP Table
                 </Link>
@@ -143,7 +132,7 @@ export default function HeroCarousel({ events }: { events: Event[] }) {
         </div>
       </div>
 
-      {/* --- PROGRESS INDICATORS --- */}
+      {/* PROGRESS */}
       {events.length > 1 && (
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-4">
             {events.map((_, idx) => (

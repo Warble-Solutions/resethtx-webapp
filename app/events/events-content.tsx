@@ -15,10 +15,9 @@ interface Event {
 }
 
 export default function EventsContent({ events }: { events: Event[] }) {
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'calendar'>('grid')
+  // 1. CHANGE: Default view is now 'calendar'
+  const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'grid'>('calendar')
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  
-  // --- NEW: State for the Popup Modal ---
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
 
   // --- CALENDAR LOGIC ---
@@ -32,7 +31,6 @@ export default function EventsContent({ events }: { events: Event[] }) {
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1))
   const getEventsForDay = (day: Date) => events.filter(e => isSameDay(new Date(e.date), day))
 
-  // Helper to format time
   const formatTime = (timeString: string | null) => {
     if (!timeString) return 'TBA'
     const [h, m] = timeString.split(':')
@@ -46,12 +44,13 @@ export default function EventsContent({ events }: { events: Event[] }) {
     <div>
       {/* --- TABS NAVIGATION --- */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
-        <h2 className="text-2xl font-bold text-white border-l-4 border-[#D4AF37] pl-4">
+        <h2 className="text-2xl font-bold text-white border-l-4 border-[#D4AF37] pl-4 font-heading">
             {viewMode === 'calendar' ? format(currentMonth, 'MMMM yyyy') : 'All Upcoming Events'}
         </h2>
 
         <div className="flex p-1 bg-white/5 rounded-lg border border-white/10">
-            {['grid', 'list', 'calendar'].map((mode) => (
+            {/* 2. CHANGE: Reordered array to ['calendar', 'list', 'grid'] */}
+            {['calendar', 'list', 'grid'].map((mode) => (
                 <button
                     key={mode}
                     onClick={() => setViewMode(mode as any)}
@@ -69,81 +68,13 @@ export default function EventsContent({ events }: { events: Event[] }) {
         </div>
       </div>
 
-      {/* --- VIEW 1: GRID VIEW --- */}
-      {viewMode === 'grid' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in duration-500">
-            {events.map((event) => (
-                <div 
-                    key={event.id} 
-                    onClick={() => setSelectedEvent(event)} // <--- CLICK TO OPEN MODAL
-                    className="group bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden hover:border-[#D4AF37]/50 transition-all duration-300 hover:-translate-y-2 cursor-pointer"
-                >
-                    <div className="relative h-64 w-full overflow-hidden">
-                        {event.image_url ? (
-                            <Image src={event.image_url} alt={event.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-                        ) : (
-                            <div className="w-full h-full bg-slate-900 flex items-center justify-center text-slate-700">No Image</div>
-                        )}
-                        <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-md border border-[#D4AF37] text-white px-4 py-2 rounded text-center">
-                            <span className="block text-xs font-bold uppercase text-[#D4AF37]">{format(new Date(event.date), 'MMM')}</span>
-                            <span className="block text-2xl font-bold font-heading">{format(new Date(event.date), 'd')}</span>
-                        </div>
-                    </div>
-                    <div className="p-6">
-                        <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-1">{formatTime(event.time)}</p>
-                        <h3 className="text-2xl font-heading font-bold text-white leading-tight mb-4">{event.title}</h3>
-                        <div className="flex items-center justify-between border-t border-white/10 pt-4">
-                            <span className="text-slate-500 text-xs uppercase font-bold">{event.tickets > 0 ? `${event.tickets} Tickets` : 'Sold Out'}</span>
-                            <button className="text-white hover:text-[#D4AF37] font-bold text-sm uppercase tracking-wide transition-colors">Details →</button>
-                        </div>
-                    </div>
-                </div>
-            ))}
-        </div>
-      )}
-
-      {/* --- VIEW 2: LIST VIEW --- */}
-      {viewMode === 'list' && (
-        <div className="flex flex-col gap-4 animate-in fade-in duration-500">
-            {events.map((event) => (
-                <div key={event.id} className="group flex flex-col md:flex-row items-center gap-6 bg-[#0a0a0a] border border-white/10 p-4 rounded-xl hover:border-[#D4AF37]/50 transition-all">
-                    {/* Date Box */}
-                    <div className="shrink-0 w-full md:w-24 h-24 bg-white/5 rounded-lg flex flex-col items-center justify-center border border-white/5 group-hover:border-[#D4AF37] transition-colors">
-                        <span className="text-[#D4AF37] text-sm font-bold uppercase">{format(new Date(event.date), 'MMM')}</span>
-                        <span className="text-3xl font-heading font-bold text-white">{format(new Date(event.date), 'd')}</span>
-                    </div>
-
-                    {/* Image (Small) */}
-                    <div className="relative w-full md:w-40 h-24 rounded-lg overflow-hidden hidden md:block">
-                         {event.image_url && <Image src={event.image_url} alt={event.title} fill className="object-cover" />}
-                    </div>
-
-                    {/* Info */}
-                    <div className="flex-1 text-center md:text-left">
-                        <p className="text-[#D4AF37] text-xs font-bold uppercase mb-1">{formatTime(event.time)}</p>
-                        <h3 className="text-xl font-heading font-bold text-white">{event.title}</h3>
-                        <p className="text-slate-500 text-sm line-clamp-1">{event.description}</p>
-                    </div>
-
-                    {/* Action */}
-                    <button 
-                        onClick={() => setSelectedEvent(event)} // <--- CLICK TO OPEN MODAL
-                        className="w-full md:w-auto bg-white text-black hover:bg-[#D4AF37] font-bold py-3 px-8 rounded-lg transition-colors text-sm uppercase tracking-wide"
-                    >
-                        Details
-                    </button>
-                </div>
-            ))}
-        </div>
-      )}
-
-      {/* --- VIEW 3: CALENDAR VIEW --- */}
+      {/* --- VIEW 1: CALENDAR VIEW (Moved to Top) --- */}
       {viewMode === 'calendar' && (
         <div className="animate-in fade-in duration-500">
             {/* Calendar Controls */}
             <div className="flex justify-end mb-4 gap-2">
-                <button onClick={prevMonth} className="px-4 py-2 border border-white/20 hover:border-[#D4AF37] text-white hover:text-[#D4AF37] transition-colors">← Prev</button>
-                <button onClick={nextMonth} className="px-4 py-2 border border-white/20 hover:border-[#D4AF37] text-white hover:text-[#D4AF37] transition-colors">Next →</button>
+                <button onClick={prevMonth} className="px-4 py-2 border border-white/20 hover:border-[#D4AF37] text-white hover:text-[#D4AF37] transition-colors rounded">← Prev</button>
+                <button onClick={nextMonth} className="px-4 py-2 border border-white/20 hover:border-[#D4AF37] text-white hover:text-[#D4AF37] transition-colors rounded">Next →</button>
             </div>
 
             <div className="grid grid-cols-7 border border-white/10 bg-[#0a0a0a]">
@@ -165,12 +96,12 @@ export default function EventsContent({ events }: { events: Event[] }) {
                                 </span>
                             </div>
                             
-                            <div className="flex-1 flex flex-col w-full h-full pt-0"> 
+                            <div className="flex-1 flex flex-col w-full h-full pt-8"> 
                                 {dayEvents.length > 0 ? (
                                     dayEvents.map(ev => (
                                         <div 
                                             key={ev.id} 
-                                            onClick={() => setSelectedEvent(ev)} // <--- CLICK TO OPEN MODAL
+                                            onClick={() => setSelectedEvent(ev)}
                                             className="relative flex-1 w-full min-h-[60px] overflow-hidden group border-t border-white/10 first:border-t-0 hover:z-20 cursor-pointer"
                                         >
                                             {ev.image_url ? (
@@ -205,19 +136,84 @@ export default function EventsContent({ events }: { events: Event[] }) {
         </div>
       )}
 
+      {/* --- VIEW 2: LIST VIEW --- */}
+      {viewMode === 'list' && (
+        <div className="flex flex-col gap-4 animate-in fade-in duration-500">
+            {events.map((event) => (
+                <div key={event.id} className="group flex flex-col md:flex-row items-center gap-6 bg-[#0a0a0a] border border-white/10 p-4 rounded-xl hover:border-[#D4AF37]/50 transition-all">
+                    {/* Date Box */}
+                    <div className="shrink-0 w-full md:w-24 h-24 bg-white/5 rounded-lg flex flex-col items-center justify-center border border-white/5 group-hover:border-[#D4AF37] transition-colors">
+                        <span className="text-[#D4AF37] text-sm font-bold uppercase">{format(new Date(event.date), 'MMM')}</span>
+                        <span className="text-3xl font-heading font-bold text-white">{format(new Date(event.date), 'd')}</span>
+                    </div>
+
+                    {/* Image (Small) */}
+                    <div className="relative w-full md:w-40 h-24 rounded-lg overflow-hidden hidden md:block">
+                         {event.image_url && <Image src={event.image_url} alt={event.title} fill className="object-cover" />}
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 text-center md:text-left">
+                        <p className="text-[#D4AF37] text-xs font-bold uppercase mb-1">{formatTime(event.time)}</p>
+                        <h3 className="text-xl font-heading font-bold text-white">{event.title}</h3>
+                        <p className="text-slate-500 text-sm line-clamp-1">{event.description}</p>
+                    </div>
+
+                    {/* Action */}
+                    <button 
+                        onClick={() => setSelectedEvent(event)}
+                        className="w-full md:w-auto bg-white text-black hover:bg-[#D4AF37] font-bold py-3 px-8 rounded-lg transition-colors text-sm uppercase tracking-wide"
+                    >
+                        Details
+                    </button>
+                </div>
+            ))}
+        </div>
+      )}
+
+      {/* --- VIEW 3: GRID VIEW --- */}
+      {viewMode === 'grid' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in duration-500">
+            {events.map((event) => (
+                <div 
+                    key={event.id} 
+                    onClick={() => setSelectedEvent(event)}
+                    className="group bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden hover:border-[#D4AF37]/50 transition-all duration-300 hover:-translate-y-2 cursor-pointer"
+                >
+                    <div className="relative h-64 w-full overflow-hidden">
+                        {event.image_url ? (
+                            <Image src={event.image_url} alt={event.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                        ) : (
+                            <div className="w-full h-full bg-slate-900 flex items-center justify-center text-slate-700">No Image</div>
+                        )}
+                        <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-md border border-[#D4AF37] text-white px-4 py-2 rounded text-center">
+                            <span className="block text-xs font-bold uppercase text-[#D4AF37]">{format(new Date(event.date), 'MMM')}</span>
+                            <span className="block text-2xl font-bold font-heading">{format(new Date(event.date), 'd')}</span>
+                        </div>
+                    </div>
+                    <div className="p-6">
+                        <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-1">{formatTime(event.time)}</p>
+                        <h3 className="text-2xl font-heading font-bold text-white leading-tight mb-4">{event.title}</h3>
+                        <div className="flex items-center justify-between border-t border-white/10 pt-4">
+                            <span className="text-slate-500 text-xs uppercase font-bold">{event.tickets > 0 ? `${event.tickets} Tickets` : 'Sold Out'}</span>
+                            <button className="text-white hover:text-[#D4AF37] font-bold text-sm uppercase tracking-wide transition-colors">Details →</button>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+      )}
+
       {/* --- POPUP MODAL --- */}
       {selectedEvent && (
         <div 
-            // 1. Click overlay to close
             onClick={() => setSelectedEvent(null)}
             className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
         >
             <div 
-                // 2. Prevent click bubbling
                 onClick={(e) => e.stopPropagation()}
                 className="bg-[#0a0a0a] border border-[#D4AF37] max-w-3xl w-full flex flex-col md:flex-row shadow-[0_0_50px_rgba(212,175,55,0.2)] cursor-default overflow-hidden relative rounded-lg"
             >
-                {/* Close Button */}
                 <button 
                     onClick={() => setSelectedEvent(null)}
                     className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 hover:bg-white text-white hover:text-black transition-colors"
@@ -225,7 +221,6 @@ export default function EventsContent({ events }: { events: Event[] }) {
                     ✕
                 </button>
 
-                {/* Left: Image */}
                 <div className="w-full md:w-2/5 relative h-64 md:h-auto min-h-[300px]">
                     {selectedEvent.image_url ? (
                         <Image src={selectedEvent.image_url} alt={selectedEvent.title} fill className="object-cover" />
@@ -234,7 +229,6 @@ export default function EventsContent({ events }: { events: Event[] }) {
                     )}
                 </div>
 
-                {/* Right: Details */}
                 <div className="w-full md:w-3/5 p-8 flex flex-col">
                     <div className="mb-auto">
                         <span className="text-[#D4AF37] font-bold uppercase tracking-widest text-xs mb-2 block">
