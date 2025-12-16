@@ -108,7 +108,7 @@ export default function GalleryContent() {
       {selectedImage && (
         <div 
             onClick={() => setSelectedImage(null)}
-            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300"
+            className="fixed inset-0 z-100 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300"
         >
             <button className="absolute top-6 right-6 text-white hover:text-[#C59D24] transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>

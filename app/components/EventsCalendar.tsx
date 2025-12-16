@@ -116,7 +116,7 @@ export default function EventsCalendar({ events }: { events: Event[] }) {
                                                 )}
                                                 
                                                 {/* Text Overlay */}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-3 pointer-events-none">
+                                                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-3 pointer-events-none">
                                                     <span className="text-[#C59D24] text-[10px] font-bold uppercase leading-none mb-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
                                                         {formatTime(ev.time)}
                                                     </span>
@@ -162,7 +162,7 @@ export default function EventsCalendar({ events }: { events: Event[] }) {
         {selectedEvent && (
             <div 
                 onClick={() => setSelectedEvent(null)}
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
+                className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
             >
                 <div 
                     onClick={(e) => e.stopPropagation()}
@@ -173,7 +173,7 @@ export default function EventsCalendar({ events }: { events: Event[] }) {
                     {/* Image Header */}
                     <div className="relative h-48 w-full bg-slate-900">
                         {selectedEvent.image_url && <Image src={selectedEvent.image_url} alt={selectedEvent.title} fill className="object-cover" />}
-                        <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black to-transparent">
+                        <div className="absolute bottom-0 left-0 w-full p-6 bg-linear-to-t from-black to-transparent">
                             <h3 className="font-heading text-3xl text-white">{selectedEvent.title}</h3>
                         </div>
                     </div>

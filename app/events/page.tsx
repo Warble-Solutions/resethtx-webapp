@@ -21,7 +21,7 @@ export default async function EventsPage() {
         {/* HEADER */}
         <div className="text-center mb-16">
           <h1 className="font-heading text-5xl md:text-7xl font-bold uppercase mb-6">
-            Event <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F0DEAA]">Calendar</span>
+            Event <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4AF37] to-[#F0DEAA]">Calendar</span>
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
             Secure your spot at the hottest nights in Houston. <br/>
