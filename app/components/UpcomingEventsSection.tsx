@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 
-// 1. Define the Interface so TypeScript knows what 'events' look like
+// 1. Define the Interface
 interface Event {
   id: string
   title: string
@@ -12,113 +12,107 @@ interface Event {
   tickets: number
 }
 
-// 2. Add helper functions
+// 2. Helper Functions
 const getEventTag = (title: string, time: string | null) => {
   const t = time?.toLowerCase() || ''
   const name = title.toLowerCase()
   if (name.includes('happy') || t.includes('pm - 8')) return 'HAPPY HOUR'
   if (t.includes('am')) return 'NIGHTLIFE'
-  return 'LIVE EVENT'
+  return 'LIVE DJ'
 }
 
-const formatDate = (dateString: string) => {
+const getMonth = (dateString: string) => {
   const date = new Date(dateString)
-  return date.toISOString().split('T')[0]
+  return date.toLocaleString('default', { month: 'short' }).toUpperCase()
 }
 
-// 3. Update the function signature to accept { events }
+const getDay = (dateString: string) => {
+  const date = new Date(dateString)
+  return date.getDate()
+}
+
+// 3. Component
 export default function UpcomingEventsSection({ events }: { events: Event[] }) {
-  
-  // Safe check: ensure events exist before slicing
+
+  // Display only first 3 events
   const featuredEvents = events ? events.slice(0, 3) : []
 
   return (
-    <section className="bg-black py-20 px-6">
+    <section className="bg-[#050505] py-24 px-6">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* HEADER */}
-        <div className="flex items-end justify-between mb-10 border-b border-white/10 pb-4">
-          <h2 className="font-heading text-4xl md:text-5xl font-bold text-white uppercase">
-            TRENDING <span className="text-[#C59D24]">NOW</span>
+        <div className="text-center mb-16">
+          <p className="text-[#A1A1AA] text-[10px] uppercase tracking-[0.3em] font-sans font-medium mb-4">
+            The Agenda
+          </p>
+          <h2 className="font-heading text-5xl md:text-6xl text-white font-light uppercase tracking-tight">
+            Upcoming
           </h2>
-          
-          <Link 
-            href="/events" 
-            className="hidden md:flex items-center gap-1 text-[#C59D24] text-xs font-bold uppercase tracking-widest hover:text-white transition-colors"
-          >
-            VIEW ALL <span>→</span>
-          </Link>
         </div>
 
         {/* CARDS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {featuredEvents.length > 0 ? (
             featuredEvents.map((event) => (
-              <div 
-                key={event.id} 
-                className="bg-[#111827] rounded-xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 border border-white/5 hover:border-[#C59D24]/50 flex flex-col h-full"
+              <div
+                key={event.id}
+                className="relative aspect-square w-full group overflow-hidden bg-[#111] cursor-pointer"
               >
-                {/* Image Area */}
-                <div className="relative h-56 w-full shrink-0">
-                  {event.image_url ? (
-                    <Image
-                      src={event.image_url}
-                      alt={event.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-slate-800 flex items-center justify-center text-slate-500 text-xs">NO IMAGE</div>
-                  )}
-                  {/* Dynamic Tag */}
-                  <span className="absolute top-4 left-4 bg-[#C59D24] text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                    {getEventTag(event.title, event.time)}
+                {/* Image */}
+                {event.image_url ? (
+                  <Image
+                    src={event.image_url}
+                    alt={event.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-slate-900" />
+                )}
+
+                {/* Date Box (Top Left) */}
+                <div className="absolute top-6 left-6 w-16 h-16 bg-[#C59D24] text-black flex flex-col items-center justify-center font-serif z-10 shadow-lg">
+                  <span className="text-[10px] font-bold uppercase tracking-widest leading-none mb-1 font-sans">
+                    {getMonth(event.date)}
+                  </span>
+                  <span className="text-3xl font-bold font-heading leading-none">
+                    {getDay(event.date)}
                   </span>
                 </div>
 
-                {/* Content Area */}
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="text-[#C59D24] text-[10px] font-bold uppercase tracking-widest mb-2">
-                    {formatDate(event.date)} • {event.time || 'TBA'}
-                  </div>
+                {/* Dark Gradient Overlay */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-transparent to-transparent opacity-90 transition-opacity duration-300 pointer-events-none" />
 
-                  <h3 className="text-xl font-heading font-bold text-white mb-3 leading-tight">
+                {/* Text Content (Bottom Left) */}
+                <div className="absolute bottom-8 left-8 z-20">
+                  <span className="text-[#C59D24] text-[10px] font-bold uppercase tracking-[0.2em] mb-2 block font-sans">
+                    {getEventTag(event.title, event.time)}
+                  </span>
+                  <h3 className="text-2xl font-heading text-white uppercase tracking-wide leading-tight">
                     {event.title}
                   </h3>
-
-                  <p className="text-slate-400 text-xs leading-relaxed mb-6 line-clamp-2">
-                    {event.description || 'Join us for an unforgettable night.'}
-                  </p>
-
-                  <div className="mt-auto flex items-center justify-between border-t border-white/5 pt-4">
-                    <span className="text-white font-bold text-lg">
-                        {event.tickets > 0 ? 'Tickets Avail' : 'Sold Out'}
-                    </span>
-                    <Link 
-                      href={`/events`} 
-                      className="text-[#C59D24] text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors"
-                    >
-                      DETAILS →
-                    </Link>
-                  </div>
                 </div>
+
+                {/* Link Wrapper */}
+                <Link href="/events" className="absolute inset-0 z-30" aria-label={`View details for ${event.title}`} />
               </div>
             ))
           ) : (
-            <div className="col-span-3 text-center py-10 text-slate-500">
-                No upcoming events scheduled.
+            <div className="col-span-3 text-center py-10 text-slate-500 font-sans tracking-widest text-sm uppercase">
+              No upcoming events found.
             </div>
           )}
         </div>
 
-        {/* Mobile View All */}
-        <div className="mt-8 flex justify-center md:hidden">
-            <Link 
-                href="/events" 
-                className="text-[#C59D24] text-xs font-bold uppercase tracking-widest hover:text-white transition-colors"
-            >
-                VIEW ALL EVENTS →
-            </Link>
+        {/* Footer Link */}
+        <div className="text-center">
+          <Link
+            href="/events"
+            className="inline-block text-[10px] text-white uppercase tracking-[0.2em] font-bold border-b border-[#C59D24] pb-1 hover:text-[#C59D24] transition-colors font-sans"
+          >
+            View Full Calendar
+          </Link>
         </div>
 
       </div>

@@ -15,6 +15,7 @@ export default function Sidebar() {
     const menuItems = [
         { href: '/admin/dashboard', label: 'Dashboard' },
         { href: '/admin/events', label: 'Events' },
+        { href: '/admin/reservations', label: 'Reservations' },
         { href: '/admin/menu', label: 'Menu' },
         { href: '/admin/tables', label: 'Tables' },
         { href: '/admin/staff', label: 'Staff' },

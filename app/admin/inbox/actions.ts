@@ -9,7 +9,7 @@ export async function markAsRead(formData: FormData) {
   const id = formData.get('id') as string
 
   const { error } = await supabase
-    .from('contact_submissions')
+    .from('contact_messages')
     .update({ is_read: true })
     .eq('id', id)
 
@@ -23,7 +23,7 @@ export async function deleteSubmission(formData: FormData) {
   const id = formData.get('id') as string
 
   const { error } = await supabase
-    .from('contact_submissions')
+    .from('contact_messages')
     .delete()
     .eq('id', id)
 

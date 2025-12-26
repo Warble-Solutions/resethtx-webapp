@@ -10,21 +10,22 @@ export default function CreateEventPage() {
   const formRef = useRef<HTMLFormElement>(null)
   const [conflict, setConflict] = useState<{ title: string } | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isFeatured, setIsFeatured] = useState(false) // <--- NEW STATE
 
   // Helper to handle compression and creation
   const executeCreate = async (formData: FormData) => {
     // 1. Compression Magic
     const imageFile = formData.get('image') as File
     if (imageFile && imageFile.size > 0) {
-        try {
-            const compressed = await compressImage(imageFile)
-            formData.set('image', compressed)
-            console.log(`Compressed: ${(imageFile.size/1024).toFixed(0)}kb -> ${(compressed.size/1024).toFixed(0)}kb`)
-        } catch (err) {
-            console.error("Compression failed, using original.", err)
-        }
+      try {
+        const compressed = await compressImage(imageFile)
+        formData.set('image', compressed)
+        console.log(`Compressed: ${(imageFile.size / 1024).toFixed(0)}kb -> ${(compressed.size / 1024).toFixed(0)}kb`)
+      } catch (err) {
+        console.error("Compression failed, using original.", err)
+      }
     }
-    
+
     // 2. Send to server
     await createEvent(formData)
   }
@@ -59,8 +60,8 @@ export default function CreateEventPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
-            <h1 className="text-3xl font-bold text-white">Add New Event</h1>
-            <p className="text-slate-400 text-sm mt-1">Create a new party or gathering.</p>
+          <h1 className="text-3xl font-bold text-white">Add New Event</h1>
+          <p className="text-slate-400 text-sm mt-1">Create a new party or gathering.</p>
         </div>
         <Link href="/admin/events" className="text-slate-400 hover:text-white hover:underline">
           Cancel
@@ -69,7 +70,7 @@ export default function CreateEventPage() {
 
       <SpotlightCard className="p-8">
         <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-6">
-          
+
           {/* Title */}
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">Event Title</label>
@@ -113,30 +114,44 @@ export default function CreateEventPage() {
           <div className="flex items-center justify-between p-4 bg-slate-900 border border-slate-700 rounded-lg group hover:border-[#D4AF37]/50 transition-colors">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-[#D4AF37]/20 rounded-lg text-[#D4AF37]">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
               </div>
               <div>
                 <label htmlFor="featured-toggle" className="block text-sm font-bold text-white cursor-pointer select-none">Feature on Homepage</label>
                 <p className="text-xs text-slate-400">This event will be the main banner on the website.</p>
               </div>
             </div>
-            
+
             {/* CHANGED FROM DIV TO LABEL */}
             <label className="relative inline-flex items-center cursor-pointer">
-              <input 
-                id="featured-toggle" 
-                type="checkbox" 
-                name="is_featured" 
-                className="peer sr-only" 
+              <input
+                id="featured-toggle"
+                type="checkbox"
+                name="is_featured"
+                checked={isFeatured}
+                onChange={(e) => setIsFeatured(e.target.checked)}
+                className="peer sr-only"
               />
               <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#D4AF37] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div>
             </label>
           </div>
+
+          {/* Conditional Banner Input */}
+          {isFeatured && (
+            <div className="p-4 border border-dashed border-[#D4AF37]/50 rounded-lg bg-[#D4AF37]/5 animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg">🌟</span>
+                <label className="block text-sm font-bold text-[#D4AF37]">Hero Banner (Landscape)</label>
+              </div>
+              <input name="featured_image" type="file" accept="image/*" className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37] file:text-black hover:file:bg-white hover:file:text-black cursor-pointer transition-colors" />
+              <p className="text-xs text-slate-500 mt-2">Recommended size: 1920x1080px for best results.</p>
+            </div>
+          )}
           {/* --------------------------- */}
 
           {/* Submit Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isSubmitting}
             className="mt-4 bg-linear-to-r from-[#D4AF37] to-[#B3932D] hover:from-white hover:to-slate-200 hover:text-black text-black font-bold py-3 px-6 rounded-lg shadow-lg shadow-[#D4AF37]/20 transition-all w-full md:w-auto md:self-end disabled:opacity-50 flex items-center justify-center gap-2"
           >

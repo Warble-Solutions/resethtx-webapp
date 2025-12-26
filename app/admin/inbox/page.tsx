@@ -7,7 +7,7 @@ export default async function InboxPage() {
 
   // Fetch data
   const { data } = await supabase
-    .from('contact_submissions')
+    .from('contact_messages')
     .select('*')
     .order('created_at', { ascending: false })
 
@@ -16,8 +16,8 @@ export default async function InboxPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-10">
         <div>
-           <h1 className="text-3xl font-bold text-white">Inbox</h1>
-           <p className="text-slate-400 mt-1">Read messages from customers.</p>
+          <h1 className="text-3xl font-bold text-white">Inbox</h1>
+          <p className="text-slate-400 mt-1">Read messages from customers.</p>
         </div>
         <div className="bg-slate-900 border border-slate-700 px-4 py-2 rounded-full shadow-lg">
           <span className="text-blue-400 font-bold">{data?.length || 0}</span>
@@ -32,7 +32,7 @@ export default async function InboxPage() {
       ) : (
         // We pass the data to our Client Component
         <div className="space-y-4">
-            <MessageList messages={data || []} />
+          <MessageList messages={data || []} />
         </div>
       )}
     </div>

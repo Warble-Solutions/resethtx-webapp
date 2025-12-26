@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 
 export async function checkEventConflict(formData: FormData) {
   const supabase = await createClient()
-  
+
   const date = formData.get('date') as string
   const time_hour = formData.get('time_hour') as string
   const time_minute = formData.get('time_minute') as string
@@ -42,13 +42,14 @@ export async function createEvent(formData: FormData) {
   const tickets = formData.get('tickets')
   const description = formData.get('description') as string
   const imageFile = formData.get('image') as File
+  const featuredImageFile = formData.get('featured_image') as File
   const is_featured = formData.get('is_featured') === 'on' // <--- CAPTURE TOGGLE
 
   // 2. Handle Time Construction
   const time_hour = formData.get('time_hour') as string
   const time_minute = formData.get('time_minute') as string
   const time_ampm = formData.get('time_ampm') as string
-  
+
   let hour = parseInt(time_hour)
   if (time_ampm === 'PM' && hour !== 12) hour += 12
   if (time_ampm === 'AM' && hour === 12) hour = 0
@@ -67,9 +68,27 @@ export async function createEvent(formData: FormData) {
       console.error('Upload Error:', uploadError)
       throw new Error('Image upload failed')
     }
-    
+
     const { data: urlData } = supabase.storage.from('images').getPublicUrl(fileName)
     publicUrl = urlData.publicUrl
+  }
+
+  // 3b. Upload Featured Image (if exists)
+  let featuredImageUrl = null
+  if (featuredImageFile && featuredImageFile.size > 0) {
+    const fileExt = featuredImageFile.name.split('.').pop()
+    const fileName = `banner_${Date.now()}.${fileExt}`
+    const { error: uploadError } = await supabase.storage
+      .from('images')
+      .upload(fileName, featuredImageFile)
+
+    if (uploadError) {
+      console.error('Featured Image Upload Error:', uploadError)
+      throw new Error('Featured image upload failed')
+    }
+
+    const { data: urlData } = supabase.storage.from('images').getPublicUrl(fileName)
+    featuredImageUrl = urlData.publicUrl
   }
 
   // 4. Insert into DB
@@ -80,6 +99,7 @@ export async function createEvent(formData: FormData) {
     tickets: Number(tickets),
     description,
     image_url: publicUrl,
+    featured_image_url: featuredImageUrl,
     is_featured: is_featured, // <--- SAVE TO DB
   })
 
@@ -94,7 +114,7 @@ export async function createEvent(formData: FormData) {
 
 export async function deleteEvent(formData: FormData) {
   const supabase = await createClient()
-  
+
   // Get the ID from the hidden input field
   const id = formData.get('id') as string
 

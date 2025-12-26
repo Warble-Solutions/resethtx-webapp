@@ -21,7 +21,7 @@ export async function updateEvent(formData: FormData) {
   const time_hour = formData.get('time_hour') as string
   const time_minute = formData.get('time_minute') as string
   const time_ampm = formData.get('time_ampm') as string
-  
+
   let hour = parseInt(time_hour || '12') // Default to 12 if missing
   if (time_ampm === 'PM' && hour !== 12) hour += 12
   if (time_ampm === 'AM' && hour === 12) hour = 0
@@ -50,9 +50,27 @@ export async function updateEvent(formData: FormData) {
       console.error("Image Upload Error:", uploadError)
       throw new Error('Image upload failed')
     }
-    
+
     const { data: urlData } = supabase.storage.from('images').getPublicUrl(fileName)
     updates.image_url = urlData.publicUrl
+  }
+
+  // 4b. Handle Featured Image Upload
+  const featuredImageFile = formData.get('featured_image') as File
+  if (featuredImageFile && featuredImageFile.size > 0) {
+    const fileExt = featuredImageFile.name.split('.').pop()
+    const fileName = `banner_${Date.now()}.${fileExt}`
+    const { error: uploadError } = await supabase.storage
+      .from('images')
+      .upload(fileName, featuredImageFile)
+
+    if (uploadError) {
+      console.error("Featured Image Upload Error:", uploadError)
+      throw new Error('Featured image upload failed')
+    }
+
+    const { data: urlData } = supabase.storage.from('images').getPublicUrl(fileName)
+    updates.featured_image_url = urlData.publicUrl
   }
 
   // 5. Update DB

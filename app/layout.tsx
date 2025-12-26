@@ -21,6 +21,9 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "Reset HTX",
   description: "Experience the vibe.",
+  icons: {
+    icon: '/logos/fav.png',
+  },
 };
 
 export default function RootLayout({
