@@ -11,7 +11,8 @@ import PlanYourNightSection from './PlanYourNightSection'
 import ReservationSection from './ReservationSection'
 import EventModal from './EventModal'
 import InquireModal from './InquireModal'
-import ReviewSubmission from './ReviewSubmission'
+import ReviewModal from './ReviewModal'
+import ReviewsCTA from './ReviewsCTA'
 import ExclusiveAccess from './ExclusiveAccess'
 
 interface Event {
@@ -38,6 +39,7 @@ export default function HomeClient({
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isInquireModalOpen, setIsInquireModalOpen] = useState(false)
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
 
     const handleEventClick = (event: Event) => {
         setSelectedEvent(event)
@@ -67,7 +69,7 @@ export default function HomeClient({
 
             <PlanYourNightSection />
 
-            <ReviewSubmission />
+            <ReviewsCTA onOpenReview={() => setIsReviewModalOpen(true)} />
 
             <EventModal
                 isOpen={isModalOpen}
@@ -78,6 +80,11 @@ export default function HomeClient({
             <InquireModal
                 isOpen={isInquireModalOpen}
                 onClose={() => setIsInquireModalOpen(false)}
+            />
+
+            <ReviewModal
+                isOpen={isReviewModalOpen}
+                onClose={() => setIsReviewModalOpen(false)}
             />
 
         </main>
