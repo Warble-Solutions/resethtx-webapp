@@ -5,6 +5,7 @@ interface Testimonial {
     author_role: string | null
     created_at: string
     is_active: boolean
+    rating?: number
 }
 
 export default function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) {
@@ -36,8 +37,15 @@ export default function TestimonialsSection({ testimonials }: { testimonials: Te
                             className="shrink-0 w-[85vw] md:w-96 snap-center bg-black/40 border border-white/5 p-8 relative group hover:border-[#D4AF37]/30 transition-all duration-500"
                         >
                             {/* Gold Quote Icon */}
-                            <div className="absolute -top-4 -left-2 text-6xl text-[#D4AF37] opacity-20 font-serif leading-none group-hover:opacity-40 transition-opacity">
+                            <div className="absolute top-6 right-6 text-6xl text-[#D4AF37]/40 font-serif leading-none group-hover:text-[#D4AF37] transition-colors">
                                 &ldquo;
+                            </div>
+
+                            {/* Stars */}
+                            <div className="flex text-[#D4AF37] text-sm mb-4">
+                                {Array.from({ length: t.rating || 5 }).map((_, i) => (
+                                    <span key={i}>★</span>
+                                ))}
                             </div>
 
                             {/* Quote Text */}

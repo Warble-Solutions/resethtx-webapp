@@ -13,6 +13,10 @@ interface Event {
     image_url: string | null
     description: string | null
     tickets: number
+    is_external_event?: boolean
+    external_url?: string
+    ticket_price?: number
+    ticket_capacity?: number
 }
 
 export default function EventsContent({ events }: { events: Event[] }) {

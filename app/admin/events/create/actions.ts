@@ -43,7 +43,11 @@ export async function createEvent(formData: FormData) {
   const description = formData.get('description') as string
   const imageFile = formData.get('image') as File
   const featuredImageFile = formData.get('featured_image') as File
-  const is_featured = formData.get('is_featured') === 'on' // <--- CAPTURE TOGGLE
+  const is_featured = formData.get('is_featured') === 'on'
+  const is_external_event = formData.get('is_external_event') === 'on'
+  const external_url = formData.get('external_url') as string
+  const ticket_price = Number(formData.get('ticket_price')) || 0
+  const ticket_capacity = Number(formData.get('ticket_capacity')) || 0
 
   // 2. Handle Time Construction
   const time_hour = formData.get('time_hour') as string
@@ -100,7 +104,11 @@ export async function createEvent(formData: FormData) {
     description,
     image_url: publicUrl,
     featured_image_url: featuredImageUrl,
-    is_featured: is_featured, // <--- SAVE TO DB
+    is_featured: is_featured,
+    is_external_event: is_external_event,
+    external_url: external_url,
+    ticket_price: ticket_price,
+    ticket_capacity: ticket_capacity
   })
 
   if (error) {

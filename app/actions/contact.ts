@@ -1,10 +1,14 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 
 export async function submitContactForm(formData: FormData) {
-    const supabase = await createClient()
+    // TEMPORARY: Use direct client to bypass potential cookie/headers deadlock
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
 
     // Extract data
     const data = {
@@ -25,12 +29,36 @@ export async function submitContactForm(formData: FormData) {
 
         if (error) throw error
 
-        // Revalidate admin inbox so new messages appear immediately
-        revalidatePath('/admin/inbox')
+        // Revalidate admin inbox (Disabled to prevent hanging)
+        // revalidatePath('/admin/inbox')
+
         return { success: true }
 
     } catch (error: any) {
         console.error('Contact Form Error:', error)
         return { success: false, error: 'Failed to send message. Please try again.' }
+    }
+}
+
+export async function updateMessageRemark(id: string, remark: string) {
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+
+    try {
+        const { error } = await supabase
+            .from('contact_messages')
+            .update({ remarks: remark })
+            .eq('id', id)
+
+        if (error) throw error
+
+        revalidatePath('/admin/inbox')
+
+        return { success: true }
+    } catch (error: any) {
+        console.error('Update Remark Error:', error)
+        return { success: false, error: 'Failed to update remark.' }
     }
 }

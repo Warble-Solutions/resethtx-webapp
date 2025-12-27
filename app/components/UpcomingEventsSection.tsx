@@ -44,10 +44,10 @@ export default function UpcomingEventsSection({ events }: { events: Event[] }) {
         {/* HEADER */}
         <div className="text-center mb-16">
           <p className="text-[#A1A1AA] text-[10px] uppercase tracking-[0.3em] font-sans font-medium mb-4">
-            The Agenda
+            Upcoming
           </p>
           <h2 className="font-heading text-5xl md:text-6xl text-white font-light uppercase tracking-tight">
-            Upcoming
+            Events
           </h2>
         </div>
 

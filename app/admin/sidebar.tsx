@@ -23,6 +23,8 @@ export default function Sidebar() {
         { href: '/admin/inbox', label: 'Inbox' },
         { href: '/admin/settings', label: 'Settings' },
         { href: '/admin/testimonials', label: 'Testimonials' },
+        { href: '/admin/reviews', label: 'Reviews' },
+        { href: '/admin/gallery', label: 'Gallery' },
     ]
 
     return (

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import anime from 'animejs'
 import { getEventTables, bookTable } from '@/app/actions/event-booking'
 import { validatePromo } from '@/app/actions/promos'
+import TableMap from './TableMap'
 
 interface Table {
     id: string
@@ -10,6 +11,8 @@ interface Table {
     price: number
     category: string
     isBooked?: boolean
+    x?: number
+    y?: number
 }
 
 export default function EventBookingSystem({ eventId }: { eventId: string }) {
@@ -174,55 +177,21 @@ export default function EventBookingSystem({ eventId }: { eventId: string }) {
     return (
         <div ref={containerRef} className="w-full max-w-5xl mx-auto p-4 md:p-8 min-h-[400px]">
 
-            {/* --- VIEW 1: SELECTION GRID --- */}
+            {/* --- VIEW 1: MAP SELECTION --- */}
             {step === 'select' && (
-                <div className="table-grid-container relative px-4">
-                    {/* Background Pattern - Keeping subtle for depth */}
-                    <div className="absolute inset-0 bg-[linear-gradient(rgba(212,175,55,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(212,175,55,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_80%)] -z-10 pointer-events-none" />
-
-                    <h2 className="text-3xl font-heading text-white mb-10 text-center uppercase tracking-widest drop-shadow-lg">
+                <div className="table-map-container px-2">
+                    <h2 className="text-3xl font-heading text-white mb-6 text-center uppercase tracking-widest drop-shadow-lg">
                         Select Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F1C40F]">Table</span>
                     </h2>
 
-                    {/* LEGEND - MINIMAL */}
-                    <div className="flex justify-center gap-8 mb-12 text-[10px] uppercase tracking-widest font-bold text-slate-400">
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full border-2 border-[#D4AF37]"></div>
-                            <span>Available</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-[#D4AF37] shadow-[0_0_10px_#D4AF37]"></div>
-                            <span className="text-[#D4AF37]">Selected</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-zinc-800"></div>
-                            <span>Booked</span>
-                        </div>
-                    </div>
+                    <TableMap
+                        tables={tables} // Now includes x, y, category from fetch
+                        onSelectTable={handleSelectTable}
+                        selectedTableId={selectedTable?.id}
+                    />
 
-                    {/* CONSTELLATION GRID */}
-                    <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto mb-12">
-                        {tables.map((table) => (
-                            <div
-                                key={table.id}
-                                onClick={() => !table.isBooked && handleSelectTable(table)}
-                                title={!table.isBooked ? `Table ${table.name} • ${table.capacity} Seats` : 'Booked'}
-                                className={`
-                                    table-card relative w-20 h-20 rounded-full flex flex-col items-center justify-center transition-all duration-300 cursor-pointer
-                                    ${table.isBooked
-                                        ? 'bg-zinc-800 text-zinc-600 scale-90 cursor-not-allowed hidden md:flex' // Hide booked on small screens? or keep dim
-                                        : selectedTable?.id === table.id
-                                            ? 'bg-[#D4AF37] text-black scale-110 shadow-[0_0_25px_rgba(212,175,55,0.6)] z-10'
-                                            : 'border-2 border-[#D4AF37]/50 text-[#D4AF37] hover:border-[#D4AF37] hover:bg-[#D4AF37]/10 hover:shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:scale-105'
-                                    }
-                                `}
-                            >
-                                <span className="font-heading font-bold text-sm leading-none">{String(table.name).replace('Table ', '')}</span>
-                                <span className={`text-[9px] font-bold mt-0.5 ${selectedTable?.id === table.id ? 'text-black/70' : 'opacity-60'}`}>
-                                    {table.capacity}P
-                                </span>
-                            </div>
-                        ))}
+                    <div className="text-center mt-6 text-slate-500 text-xs uppercase tracking-widest">
+                        Tap a table to view details & book
                     </div>
                 </div>
             )}

@@ -80,11 +80,11 @@ export default async function Footer() {
                         src={settings.google_maps_embed_url}
                         width="100%"
                         height="100%"
-                        style={{ border: 0, filter: 'grayscale(100%) invert(90%)' }} // Dark mode map hack
+                        style={{ border: 0 }}
                         allowFullScreen={true}
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
-                        className="group-hover:grayscale-0 group-hover:invert-0 transition-all duration-500"
+                        className="transition-all duration-500"
                     ></iframe>
                 </div>
 

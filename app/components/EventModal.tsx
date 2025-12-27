@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import EventBookingSystem from './EventBookingSystem'
+import { purchaseTickets } from '@/app/actions/checkout'
 
 interface Event {
     id: string
@@ -12,6 +13,10 @@ interface Event {
     image_url: string | null
     featured_image_url?: string | null
     description?: string | null
+    is_external_event?: boolean
+    external_url?: string
+    ticket_price?: number
+    ticket_capacity?: number
 }
 
 interface EventModalProps {
@@ -21,16 +26,27 @@ interface EventModalProps {
 }
 
 export default function EventModal({ isOpen, onClose, event }: EventModalProps) {
-    const [view, setView] = useState<'details' | 'booking'>('details')
+    const [view, setView] = useState<'details' | 'booking' | 'rsvp' | 'purchase'>('details')
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [purchaseState, setPurchaseState] = useState<{ success: boolean, message: string } | null>(null)
 
-    // Reset view when modal opens or event changes
+    // Form inputs
+    const [userName, setUserName] = useState('')
+    const [userEmail, setUserEmail] = useState('')
+    const [ticketQty, setTicketQty] = useState(1)
+
+    // Reset view when modal opens
     useEffect(() => {
         if (isOpen) {
             setView('details')
+            setPurchaseState(null)
+            setUserName('')
+            setUserEmail('')
+            setTicketQty(1)
         }
     }, [isOpen, event])
 
-    // Prevent scrolling when modal is open
+    // Prevent scrolling
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden'
@@ -44,7 +60,6 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
 
     if (!isOpen || !event) return null
 
-    // Format Date/Time helper
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
         return date.toLocaleDateString('en-US', {
@@ -54,18 +69,54 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
         })
     }
 
+    const handleExternalClick = () => {
+        if (event.external_url) {
+            window.open(event.external_url, '_blank')
+        }
+    }
+
+    const handleTicketSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setIsSubmitting(true)
+
+        try {
+            const result = await purchaseTickets({
+                eventId: event.id,
+                userName,
+                userEmail,
+                quantity: ticketQty
+            })
+
+            if (result.success) {
+                setPurchaseState({ success: true, message: result.message || 'Success!' })
+                // If paid, we might redirect, but for now show success
+                if (result.redirectUrl) {
+                    // simulate redirect delay
+                    setTimeout(() => {
+                        // window.location.href = result.redirectUrl // Commented out for mock flow
+                        console.log('Redirecting to:', result.redirectUrl)
+                    }, 2000)
+                }
+            } else {
+                alert(result.error || 'Failed to process request.')
+            }
+        } catch (error) {
+            console.error(error)
+            alert('An unexpected error occurred.')
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
-            {/* Backdrop */}
             <div
                 className="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-300"
                 onClick={onClose}
             />
 
-            {/* Modal Content */}
             <div className="relative z-10 w-full max-w-5xl bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl flex flex-col h-[90vh] md:h-auto md:max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-300">
 
-                {/* Close Button */}
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-black/50 hover:bg-white text-white hover:text-black flex items-center justify-center transition-colors border border-white/10"
@@ -75,28 +126,24 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
 
                 {/* --- DETAILS VIEW --- */}
                 {view === 'details' && (
-                    <div className="flex flex-col md:flex-row h-full min-h-0 overflow-y-auto md:overflow-hidden pb-12 md:pb-0">
-
-                        {/* Image Section (Half width on desktop) */}
-                        <div className="w-full md:w-1/2 relative min-h-[300px] md:h-full">
+                    <div className="flex flex-col md:flex-row items-stretch h-full min-h-0 overflow-y-auto md:overflow-hidden pb-12 md:pb-0">
+                        {/* Image */}
+                        <div className="w-full md:w-1/2 relative min-h-[300px]">
                             {event.image_url ? (
                                 <Image
                                     src={event.image_url}
                                     alt={event.title}
                                     fill
-                                    className="object-cover"
+                                    className="absolute inset-0 w-full h-full object-cover object-top"
                                 />
                             ) : (
-                                <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-slate-500">
-                                    No Image
-                                </div>
+                                <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-slate-500">No Image</div>
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-[#0a0a0a]" />
                         </div>
 
-                        {/* Info Section */}
+                        {/* Info */}
                         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-[#0a0a0a] relative">
-
                             <div className="mb-2">
                                 <span className="inline-block px-3 py-1 bg-[#D4AF37]/10 text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest rounded-full border border-[#D4AF37]/20">
                                     Event Details
@@ -108,26 +155,121 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
                             </h2>
 
                             <div className="flex flex-col gap-2 text-slate-300 mb-8 font-sans">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[#D4AF37]">🗓</span>
-                                    <span className="text-lg">{formatDate(event.date)}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[#D4AF37]">⏰</span>
-                                    <span className="text-lg">{event.time || '9:00 PM'}</span>
-                                </div>
+                                <div className="flex items-center gap-2"><span className="text-[#D4AF37]">🗓</span><span className="text-lg">{formatDate(event.date)}</span></div>
+                                <div className="flex items-center gap-2"><span className="text-[#D4AF37]">⏰</span><span className="text-lg">{event.time || '9:00 PM'}</span></div>
                             </div>
 
                             <p className="text-slate-400 leading-relaxed mb-10 max-w-md">
-                                {event.description || "Join us for an unforgettable night at Reset HTX. Experience luxury, music, and crafted cocktails in our premier lounge."}
+                                {event.description || "Join us for an unforgettable night at Reset HTX."}
                             </p>
 
-                            <button
-                                onClick={() => setView('booking')}
-                                className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-8 rounded-full transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] uppercase tracking-widest text-sm text-center"
-                            >
-                                Get Tickets / Book Table
-                            </button>
+                            {/* --- DYNAMIC CTA --- */}
+                            <div className="flex flex-col gap-4">
+                                {event.is_external_event ? (
+                                    <button
+                                        onClick={handleExternalClick}
+                                        className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm"
+                                    >
+                                        GET TICKETS
+                                    </button>
+                                ) : (
+                                    <>
+                                        {/* Internal Event Logic */}
+                                        {(event.ticket_price === 0 || event.ticket_price === undefined) ? (
+                                            /* FREE EVENT */
+                                            <button
+                                                onClick={() => setView('rsvp')}
+                                                className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm"
+                                            >
+                                                RSVP FOR FREE
+                                            </button>
+                                        ) : (
+                                            /* PAID EVENT - DUAL OPTIONS */
+                                            <div className="flex flex-col gap-3">
+                                                <button
+                                                    onClick={() => setView('purchase')}
+                                                    className="w-full bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm"
+                                                >
+                                                    General Admission (${event.ticket_price})
+                                                </button>
+                                                <div className="flex items-center gap-4">
+                                                    <div className="h-[1px] bg-white/10 flex-1"></div>
+                                                    <span className="text-slate-500 text-xs font-bold uppercase">OR</span>
+                                                    <div className="h-[1px] bg-white/10 flex-1"></div>
+                                                </div>
+                                                <button
+                                                    onClick={() => setView('booking')}
+                                                    className="w-full border border-white/20 hover:border-[#D4AF37] text-white hover:text-[#D4AF37] font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm"
+                                                >
+                                                    Book a Table
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+
+                        </div>
+                    </div>
+                )}
+
+                {/* --- RSVP / PURCHASE VIEW --- */}
+                {(view === 'rsvp' || view === 'purchase') && (
+                    <div className="flex flex-col h-full min-h-0 bg-[#0a0a0a] p-8 md:p-12 items-center justify-center relative">
+                        <button
+                            onClick={() => setView('details')}
+                            className="absolute top-6 left-6 text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors"
+                        >
+                            ← Back
+                        </button>
+
+                        <div className="max-w-md w-full bg-[#111] border border-white/10 p-8 rounded-2xl shadow-xl">
+                            {purchaseState ? (
+                                <div className="text-center py-10 animate-in fade-in zoom-in">
+                                    <div className="w-16 h-16 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">✓</div>
+                                    <h3 className="text-2xl font-heading text-white mb-2">{purchaseState.message}</h3>
+                                    <p className="text-slate-400 text-sm mb-6">Check your email for confirmation details.</p>
+                                    <button onClick={onClose} className="bg-white text-black font-bold py-3 px-8 rounded-full w-full uppercase tracking-widest">Close</button>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleTicketSubmit} className="flex flex-col gap-6">
+                                    <div className="text-center mb-4">
+                                        <h3 className="text-2xl font-heading text-white uppercase tracking-wider">
+                                            {view === 'rsvp' ? 'Free List RSVP' : 'Purchase Tickets'}
+                                        </h3>
+                                        <p className="text-slate-400 text-sm">{event.title}</p>
+                                    </div>
+
+                                    {view === 'purchase' && (
+                                        <div>
+                                            <label className="text-xs font-bold text-slate-400 uppercase block mb-2">Quantity (${event.ticket_price} ea)</label>
+                                            <div className="flex items-center gap-4 bg-black/50 p-2 rounded-lg border border-white/10">
+                                                <button type="button" onClick={() => setTicketQty(Math.max(1, ticketQty - 1))} className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 text-white rounded">-</button>
+                                                <span className="flex-1 text-center font-bold text-xl text-white">{ticketQty}</span>
+                                                <button type="button" onClick={() => setTicketQty(Math.min(10, ticketQty + 1))} className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 text-white rounded">+</button>
+                                            </div>
+                                            <p className="text-right text-[#D4AF37] font-bold mt-2">Total: ${(event.ticket_price || 0) * ticketQty}</p>
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <label className="text-xs font-bold text-slate-400 uppercase block mb-2">Full Name</label>
+                                        <input required type="text" value={userName} onChange={e => setUserName(e.target.value)} className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none" placeholder="Jane Doe" />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-bold text-slate-400 uppercase block mb-2">Email Address</label>
+                                        <input required type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none" placeholder="jane@example.com" />
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="bg-[#D4AF37] hover:bg-white text-black font-bold py-4 rounded-lg uppercase tracking-widest mt-2 transition-all disabled:opacity-50"
+                                    >
+                                        {isSubmitting ? 'Processing...' : (view === 'rsvp' ? 'Confirm RSVP' : 'Complete Purchase')}
+                                    </button>
+                                </form>
+                            )}
                         </div>
                     </div>
                 )}

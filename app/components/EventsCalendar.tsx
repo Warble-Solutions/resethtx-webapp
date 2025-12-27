@@ -106,7 +106,7 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
                                             className="absolute inset-0 block w-full h-full cursor-pointer"
                                         >
                                             {event.image_url && (
-                                                <Image src={event.image_url} alt={event.title} fill className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+                                                <Image src={event.image_url} alt={event.title} fill className="w-full h-full object-cover object-top opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
                                             )}
                                             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                                             <div className="absolute bottom-2 left-2 right-2">

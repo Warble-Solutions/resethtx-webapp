@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { markAsRead, deleteSubmission } from './actions'
+import { updateMessageRemark } from '@/app/actions/contact'
 import SpotlightCard from '@/app/components/SpotlightCard'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -14,6 +15,7 @@ interface Submission {
     is_read: boolean
     inquiry_type?: string
     created_at: string
+    remarks?: string | null
 }
 
 export default function MessageList({ messages }: { messages: Submission[] }) {
@@ -49,7 +51,11 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                                     {!msg.is_read && <span className="ml-3 inline-block w-2 h-2 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_#3b82f6]"></span>}
                                 </h3>
                                 <span className="text-xs text-slate-500 whitespace-nowrap font-mono">
-                                    {new Date(msg.created_at).toLocaleDateString()}
+                                    {new Date(msg.created_at).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: '2-digit',
+                                        day: '2-digit'
+                                    })}
                                 </span>
                             </div>
 
@@ -140,6 +146,37 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                                 <div className="mt-8 flex items-center gap-2 text-xs text-slate-500 font-mono border-t border-slate-800 pt-6">
                                     <span>RECEIVED:</span>
                                     <span className="text-slate-400">{new Date(selectedMessage.created_at).toLocaleString()}</span>
+                                </div>
+
+                                {/* ADMIN REMARKS SECTION */}
+                                <div className="mt-8 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
+                                    <h4 className="text-yellow-500/80 text-xs font-bold uppercase tracking-wider mb-2">Internal Admin Remarks</h4>
+                                    <textarea
+                                        className="w-full bg-slate-950/50 border border-slate-800 rounded-lg p-3 text-sm text-slate-300 focus:outline-none focus:border-yellow-500/40 transition-colors min-h-[80px]"
+                                        placeholder="Add internal notes about this inquiry..."
+                                        value={selectedMessage.remarks || ''}
+                                        onChange={(e) => setSelectedMessage({ ...selectedMessage, remarks: e.target.value })}
+                                    />
+                                    <div className="flex justify-end mt-2">
+                                        <button
+                                            onClick={async () => {
+                                                if (!selectedMessage) return
+                                                const res = await updateMessageRemark(selectedMessage.id, selectedMessage.remarks || '')
+                                                if (res.success) {
+                                                    // Optional: Show a toast or feedback
+                                                    // Update the main list so it persists if we close/reopen
+                                                    // Since we modify 'selectedMessage' in place, we should also update the parent list if possible, or just rely on re-fetch.
+                                                    // For now, let's just show visual feedback or assume it worked.
+                                                    alert('Remark saved successfully')
+                                                } else {
+                                                    alert('Failed to save remark')
+                                                }
+                                            }}
+                                            className="text-xs font-bold text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10 px-3 py-1.5 rounded transition-colors"
+                                        >
+                                            Save Remark
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

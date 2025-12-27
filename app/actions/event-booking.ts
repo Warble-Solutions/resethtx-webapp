@@ -8,26 +8,24 @@ interface Table {
     id: string
     name: string
     capacity: number
-    price: number // Assuming tables might have a reservation price
-    category: string // e.g., 'VIP', 'Standard', 'Booth'
+    price: number
+    category: string
     isBooked?: boolean
+    x?: number
+    y?: number
 }
 
 export async function getEventTables(eventId: string) {
     const supabase = await createClient()
 
     try {
-        // 1. Fetch all available physical tables
         const { data: tables, error: tablesError } = await supabase
             .from('tables')
             .select('*')
-            .order('table_number', { ascending: true }) // Changed from 'name' to 'table_number' if that's the column
-
-        console.log('Server Action: Raw Tables Fetch:', { count: tables?.length, first: tables?.[0], error: tablesError })
+            .order('table_number', { ascending: true })
 
         if (tablesError) throw tablesError
 
-        // 2. Fetch all confirmed bookings for this specific event
         const { data: bookings, error: bookingsError } = await supabase
             .from('event_bookings')
             .select('table_id')
@@ -36,18 +34,17 @@ export async function getEventTables(eventId: string) {
 
         if (bookingsError) throw bookingsError
 
-        // 3. Create a set of booked table IDs for efficient lookup
         const bookedTableIds = new Set(bookings.map(b => b.table_id))
 
-        // 4. Map the availability status onto the tables
-        // Adapting to actual DB schema: { id, table_number, seats, status }
         const tablesWithStatus: Table[] = tables.map(table => ({
             id: table.id,
-            name: table.table_number || `Table ${table.id.slice(0, 4)}`, // Map table_number to name
-            capacity: table.seats || 2, // Map seats to capacity
-            price: table.price || 100, // Default price if missing
-            category: table.category || 'Standard', // Default category if missing
-            isBooked: bookedTableIds.has(table.id)
+            name: table.table_number || table.name || `Table ${table.id.slice(0, 4)}`,
+            capacity: table.seats || table.capacity || 2,
+            price: table.price || 100,
+            category: table.category || 'Standard',
+            isBooked: bookedTableIds.has(table.id),
+            x: table.x,
+            y: table.y
         }))
 
         return { success: true, tables: tablesWithStatus }

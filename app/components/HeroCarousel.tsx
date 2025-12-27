@@ -42,16 +42,22 @@ interface Event {
   description: string | null
 }
 
-export default function HeroCarousel({ events, onEventClick }: { events: Event[], onEventClick?: (event: Event) => void }) {
+interface HeroCarouselProps {
+  events: Event[]
+  onEventClick?: (event: Event) => void
+  onInquire?: () => void
+}
+
+export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCarouselProps) {
 
   // 1. Create the Static Brand Slide
   const staticBaseSlide: BrandSlide = {
     id: 'static-brand-slide',
     type: 'BRAND',
-    title: 'RESET HTX',
-    subtitle: "Houston's Premier Lounge",
-    description: "Experience an atmosphere where luxury meets rhythm. Crafted cocktails, world-class DJs, and an unforgettable vibe.",
-    image_url: '/images/event-1.jpg' // Using the same image as the original HeroSection
+    title: 'Celebrate With Us',
+    subtitle: "Reset HTX",
+    description: "Now accepting bookings for private parties, corporate events, and special occasions.",
+    image_url: '/images/event-1.jpg'
   }
 
   // 2. Map Events to EventSlides
@@ -66,11 +72,6 @@ export default function HeroCarousel({ events, onEventClick }: { events: Event[]
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
 
-  // NOTE: REMOVED THE EARLY RETURN FOR EMPTY EVENTS
-  // if (!events || events.length === 0) {
-  //   return <HeroSection />
-  // }
-
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % allSlides.length)
   }, [allSlides.length])
@@ -80,8 +81,6 @@ export default function HeroCarousel({ events, onEventClick }: { events: Event[]
     const interval = setInterval(nextSlide, 6000)
     return () => clearInterval(interval)
   }, [nextSlide, allSlides.length])
-
-  useEffect(() => setIsLoaded(true), [])
 
   useEffect(() => setIsLoaded(true), [])
 
@@ -106,9 +105,8 @@ export default function HeroCarousel({ events, onEventClick }: { events: Event[]
   }
 
   return (
-    <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+    <section className="relative h-screen w-full overflow-hidden bg-black">
 
-      {/* BACKGROUND */}
       {/* BACKGROUND */}
       {allSlides.map((slide, index) => {
         // Determine Image Source
@@ -143,9 +141,9 @@ export default function HeroCarousel({ events, onEventClick }: { events: Event[]
         )
       })}
 
-      {/* CONTENT */}
-      <div className="relative z-20 text-center px-4 max-w-5xl mx-auto mt-10">
-        <div key={currentSlide.id} className="flex flex-col items-center">
+      {/* CONTENT CONTAINER - CENTERED POSITIONING */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl px-4 z-20">
+        <div key={currentSlide.id} className="flex flex-col items-center text-center">
 
           {/* --- BRAND SLIDE CONTENT --- */}
           {currentSlide.type === 'BRAND' && (
@@ -153,25 +151,19 @@ export default function HeroCarousel({ events, onEventClick }: { events: Event[]
               <h2 className="font-display text-[#D4AF37] text-sm md:text-base tracking-[0.3em] uppercase mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {currentSlide.subtitle}
               </h2>
-              <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-normal text-white mb-8 tracking-tight animate-in fade-in slide-in-from-bottom-6 duration-1000">
-                RESET <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4AF37] via-[#F0DEAA] to-[#D4AF37]">HTX</span>
+              <h1 className="font-display text-4xl md:text-6xl font-normal text-white mb-6 tracking-tight animate-in fade-in slide-in-from-bottom-6 duration-1000 uppercase">
+                {currentSlide.title}
               </h1>
-              <p className="font-sans text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+              <p className="font-sans text-slate-300 text-lg md:text-xl max-w-xl mb-10 leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
                 {currentSlide.description}
               </p>
-              <div className="flex flex-col md:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
-                <Link
-                  href="/reservations"
+              <div className="flex gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+                <button
+                  onClick={onInquire}
                   className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] tracking-widest text-sm uppercase"
                 >
-                  Book A Table
-                </Link>
-                <Link
-                  href="/menu"
-                  className="font-sans bg-transparent border border-white text-white font-bold py-4 px-10 rounded-full hover:bg-white/10 transition-all hover:border-[#D4AF37] hover:text-[#D4AF37] tracking-widest text-sm uppercase"
-                >
-                  View Menu
-                </Link>
+                  INQUIRE NOW
+                </button>
               </div>
             </>
           )}
@@ -179,11 +171,9 @@ export default function HeroCarousel({ events, onEventClick }: { events: Event[]
           {/* --- EVENT SLIDE CONTENT --- */}
           {currentSlide.type === 'EVENT' && (
             <>
-              <h2 className="font-display text-[#D4AF37] text-xs md:text-sm tracking-[0.3em] uppercase mb-6 animate-in fade-in slide-in-from-bottom-2 duration-700">
-                Featured Event
-              </h2>
 
-              <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-normal text-white mb-6 leading-tight tracking-tight uppercase drop-shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
+
+              <h1 className="font-display text-4xl md:text-6xl font-normal text-white mb-6 leading-tight tracking-tight uppercase drop-shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
                 {currentSlide.title}
               </h1>
 
@@ -197,25 +187,20 @@ export default function HeroCarousel({ events, onEventClick }: { events: Event[]
                 </span>
               </div>
 
+              {/* Removed description from Featured Event to align visually closer to Brand slide structure if needed, or keep it consistent text-lg */}
               {currentSlide.description && (
-                <p className="font-sans text-slate-300 max-w-2xl text-sm md:text-base leading-relaxed mb-10 line-clamp-2 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-150 hidden md:block">
+                <p className="font-sans text-slate-300 max-w-xl text-sm md:text-base leading-relaxed mb-10 line-clamp-2 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-150 hidden md:block">
                   {currentSlide.description}
                 </p>
               )}
 
-              <div className="flex flex-col md:flex-row gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
+              <div className="flex gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
                 <button
                   onClick={() => onEventClick?.(currentSlide as unknown as Event)}
                   className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] uppercase tracking-widest text-sm"
                 >
                   Get Tickets
                 </button>
-                <Link
-                  href="/reservations"
-                  className="font-sans bg-transparent border border-white text-white font-bold py-4 px-10 rounded-full hover:bg-white/10 transition-all hover:border-[#D4AF37] hover:text-[#D4AF37] uppercase tracking-widest text-sm"
-                >
-                  VIP Table
-                </Link>
               </div>
             </>
           )}

@@ -1,5 +1,6 @@
 import HomeClient from './components/HomeClient'
 import { createClient } from '@/utils/supabase/server'
+import { getApprovedTestimonials } from './actions/testimonials'
 
 // Refresh the page data every hour
 export const revalidate = 3600
@@ -23,11 +24,7 @@ export default async function Home() {
     .order('date', { ascending: true })
 
   // 3. Fetch Testimonials
-  const { data: testimonials } = await supabase
-    .from('testimonials')
-    .select('*')
-    .eq('is_active', true)
-    .order('created_at', { ascending: false })
+  const testimonials = await getApprovedTestimonials()
 
   return (
     <HomeClient

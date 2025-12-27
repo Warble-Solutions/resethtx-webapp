@@ -10,7 +10,8 @@ export default function CreateEventPage() {
   const formRef = useRef<HTMLFormElement>(null)
   const [conflict, setConflict] = useState<{ title: string } | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isFeatured, setIsFeatured] = useState(false) // <--- NEW STATE
+  const [isFeatured, setIsFeatured] = useState(false)
+  const [isExternal, setIsExternal] = useState(false) // <--- NEW STATE
 
   // Helper to handle compression and creation
   const executeCreate = async (formData: FormData) => {
@@ -91,11 +92,49 @@ export default function CreateEventPage() {
               </div>
             </div>
 
-            {/* Tickets */}
-            <div>
-              <label className="block text-sm font-bold text-slate-300 mb-2">Total Tickets</label>
-              <input name="tickets" required type="number" placeholder="100" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+            {/* Event Type Toggle */}
+            <div className="md:col-span-2 bg-slate-800 p-4 rounded-lg flex items-center justify-between">
+              <span className="font-bold text-white">Event Type</span>
+              <div className="flex bg-slate-950 p-1 rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => setIsExternal(false)}
+                  className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${!isExternal ? 'bg-[#D4AF37] text-black' : 'text-slate-400 hover:text-white'}`}
+                >
+                  Internal Event
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsExternal(true)}
+                  className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${isExternal ? 'bg-[#D4AF37] text-black' : 'text-slate-400 hover:text-white'}`}
+                >
+                  External Link
+                </button>
+              </div>
+              <input type="hidden" name="is_external_event" value={isExternal ? 'on' : 'off'} />
             </div>
+
+            {/* Conditional Fields */}
+            {isExternal ? (
+              <div className="md:col-span-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="block text-sm font-bold text-slate-300 mb-2">External Ticket URL</label>
+                <input name="external_url" required type="url" placeholder="https://ticketmaster.com/..." className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+              </div>
+            ) : (
+              <>
+                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                  <label className="block text-sm font-bold text-slate-300 mb-2">Ticket Price ($)</label>
+                  <input name="ticket_price" type="number" placeholder="0 = Free" defaultValue="0" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+                  <p className="text-xs text-slate-500 mt-1">Leave 0 for free RSVP.</p>
+                </div>
+                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                  <label className="block text-sm font-bold text-slate-300 mb-2">Total Capacity</label>
+                  <input name="ticket_capacity" required type="number" placeholder="100" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+                </div>
+                {/* Maintain backward compatibility for 'tickets' field in DB if needed, or map it */}
+                <input type="hidden" name="tickets" value="0" />
+              </>
+            )}
           </div>
 
           {/* Description */}

@@ -3,12 +3,16 @@
 import { useState } from 'react'
 import HeroCarousel from './HeroCarousel'
 import UpcomingEventsSection from './UpcomingEventsSection'
+import PrivateEventsSection from './PrivateEventsSection'
 import EventsCalendar from './EventsCalendar'
 import TestimonialsSection from './TestimonialsSection'
 import SonicLandscapeSection from './SonicLandscapeSection'
 import PlanYourNightSection from './PlanYourNightSection'
 import ReservationSection from './ReservationSection'
 import EventModal from './EventModal'
+import InquireModal from './InquireModal'
+import ReviewSubmission from './ReviewSubmission'
+import ExclusiveAccess from './ExclusiveAccess'
 
 interface Event {
     id: string
@@ -33,6 +37,7 @@ export default function HomeClient({
 }) {
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isInquireModalOpen, setIsInquireModalOpen] = useState(false)
 
     const handleEventClick = (event: Event) => {
         setSelectedEvent(event)
@@ -45,14 +50,14 @@ export default function HomeClient({
             <HeroCarousel
                 events={featuredEvents}
                 onEventClick={handleEventClick}
-            />
-
-            <EventsCalendar
-                events={allEvents}
-                onEventClick={handleEventClick}
+                onInquire={() => setIsInquireModalOpen(true)}
             />
 
             <UpcomingEventsSection events={featuredEvents} />
+
+            <ExclusiveAccess onInquire={() => setIsInquireModalOpen(true)} />
+
+            <PrivateEventsSection onInquire={() => setIsInquireModalOpen(true)} />
 
             <TestimonialsSection testimonials={testimonials} />
 
@@ -62,10 +67,17 @@ export default function HomeClient({
 
             <PlanYourNightSection />
 
+            <ReviewSubmission />
+
             <EventModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 event={selectedEvent}
+            />
+
+            <InquireModal
+                isOpen={isInquireModalOpen}
+                onClose={() => setIsInquireModalOpen(false)}
             />
 
         </main>
