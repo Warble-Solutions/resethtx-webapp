@@ -173,6 +173,9 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
             <>
 
 
+              <h2 className="font-display text-[#D4AF37] text-sm md:text-base tracking-[0.3em] uppercase mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                RESET HTX
+              </h2>
               <h1 className="font-display text-4xl md:text-6xl font-normal text-white mb-6 leading-tight tracking-tight uppercase drop-shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
                 {currentSlide.title}
               </h1>

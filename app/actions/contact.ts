@@ -15,12 +15,14 @@ export async function submitContactForm(formData: FormData) {
         first_name: formData.get('firstName') as string,
         last_name: formData.get('lastName') as string,
         email: formData.get('email') as string,
+        phone: formData.get('phone') as string,
+        dob: formData.get('dob') as string,
         inquiry_type: formData.get('inquiryType') as string,
         message: formData.get('message') as string,
     }
 
     // Simple validation
-    if (!data.first_name || !data.email || !data.message) {
+    if (!data.first_name || !data.email || !data.message || !data.phone || !data.dob) {
         return { success: false, error: 'Please fill in all required fields.' }
     }
 

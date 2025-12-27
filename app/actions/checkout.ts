@@ -7,12 +7,26 @@ interface PurchaseDetails {
     eventId: string
     userName: string
     userEmail: string
+    userPhone: string
+    userDob: string
     quantity: number
 }
 
 // NOTE: This currently mocks the Stripe integration
-export async function purchaseTickets({ eventId, userName, userEmail, quantity }: PurchaseDetails) {
+export async function purchaseTickets({ eventId, userName, userEmail, userPhone, userDob, quantity }: PurchaseDetails) {
     const supabase = await createClient()
+
+    // 0. Validate Age (Server-Side)
+    const today = new Date()
+    const birthDate = new Date(userDob)
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const m = today.getMonth() - birthDate.getMonth()
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--
+    }
+    if (age < 21) {
+        return { success: false, error: 'You must be 21+ to purchase tickets.' }
+    }
 
     // 1. Fetch Event Details
     const { data: event, error: eventError } = await supabase
@@ -36,6 +50,8 @@ export async function purchaseTickets({ eventId, userName, userEmail, quantity }
                 event_id: eventId,
                 user_name: userName,
                 user_email: userEmail,
+                user_phone: userPhone,
+                user_dob: userDob,
                 quantity: quantity,
                 total_price: 0,
                 status: 'free',
@@ -60,6 +76,8 @@ export async function purchaseTickets({ eventId, userName, userEmail, quantity }
             event_id: eventId,
             user_name: userName,
             user_email: userEmail,
+            user_phone: userPhone,
+            user_dob: userDob,
             quantity: quantity,
             total_price: totalPrice,
             status: 'paid', // Mocking instant success

@@ -33,6 +33,8 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
     // Form inputs
     const [userName, setUserName] = useState('')
     const [userEmail, setUserEmail] = useState('')
+    const [userPhone, setUserPhone] = useState('')
+    const [userDob, setUserDob] = useState('')
     const [ticketQty, setTicketQty] = useState(1)
 
     // Reset view when modal opens
@@ -42,6 +44,8 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
             setPurchaseState(null)
             setUserName('')
             setUserEmail('')
+            setUserPhone('')
+            setUserDob('')
             setTicketQty(1)
         }
     }, [isOpen, event])
@@ -75,8 +79,26 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
         }
     }
 
+    const isOver21 = (dobString: string) => {
+        if (!dobString) return false
+        const today = new Date()
+        const birthDate = new Date(dobString)
+        let age = today.getFullYear() - birthDate.getFullYear()
+        const m = today.getMonth() - birthDate.getMonth()
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--
+        }
+        return age >= 21
+    }
+
     const handleTicketSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+
+        if (!isOver21(userDob)) {
+            alert('You must be 21+ to attend this event.')
+            return
+        }
+
         setIsSubmitting(true)
 
         try {
@@ -84,6 +106,8 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
                 eventId: event.id,
                 userName,
                 userEmail,
+                userPhone,
+                userDob,
                 quantity: ticketQty
             })
 
@@ -261,6 +285,17 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
                                         <input required type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none" placeholder="jane@example.com" />
                                     </div>
 
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-xs font-bold text-slate-400 uppercase block mb-2">Phone</label>
+                                            <input required type="tel" value={userPhone} onChange={e => setUserPhone(e.target.value)} className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none" placeholder="(555) 555-5555" />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-bold text-slate-400 uppercase block mb-2">Date of Birth</label>
+                                            <input required type="date" value={userDob} onChange={e => setUserDob(e.target.value)} className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none" />
+                                        </div>
+                                    </div>
+
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
@@ -292,7 +327,7 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
 
                         {/* Booking System Content */}
                         <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-black/50 pb-20 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                            <EventBookingSystem eventId={event.id} />
+                            <EventBookingSystem eventId={event.id} eventDate={event.date} />
                         </div>
                     </div>
                 )}

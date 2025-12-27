@@ -128,6 +128,7 @@ export default function ReservationsClient({
                                     <th className="px-6 py-4 rounded-tl-lg">Event</th>
                                     <th className="px-6 py-4">Table</th>
                                     <th className="px-6 py-4">Customer</th>
+                                    <th className="px-6 py-4">Phone / DOB</th>
                                     <th className="px-6 py-4">Status</th>
                                     <th className="px-6 py-4 rounded-tr-lg text-right">Actions</th>
                                 </tr>
@@ -135,12 +136,12 @@ export default function ReservationsClient({
                             <tbody className="divide-y divide-white/5">
                                 {eventBookings.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
+                                        <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
                                             No event table bookings found.
                                         </td>
                                     </tr>
                                 ) : (
-                                    eventBookings.map((booking) => (
+                                    eventBookings.map((booking: any) => (
                                         <tr key={booking.id} className="bg-[#0a0a0a] hover:bg-[#111] transition-colors group">
                                             {/* EVENT */}
                                             <td className="px-6 py-6">
@@ -172,6 +173,12 @@ export default function ReservationsClient({
                                                 <a href={`mailto:${booking.customer_email}`} className="text-xs hover:text-[#D4AF37] transition-colors">
                                                     {booking.customer_email}
                                                 </a>
+                                            </td>
+
+                                            {/* PHONE / DOB */}
+                                            <td className="px-6 py-6">
+                                                <div className="text-slate-300 font-mono text-xs mb-1">{booking.guest_phone || 'N/A'}</div>
+                                                <div className="text-xs text-slate-500">DOB: {booking.guest_dob || 'N/A'}</div>
                                             </td>
 
                                             {/* STATUS */}

@@ -72,6 +72,17 @@ export default function ContactForm({ className = "", onSuccess }: { className?:
                     </div>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Phone</label>
+                        <input name="phone" required type="tel" className="w-full bg-black border border-white/10 rounded-lg p-3 text-white focus:border-[#C59D24] outline-none transition-colors" placeholder="(555) 555-5555" />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Date of Birth (21+)</label>
+                        <input name="dob" required type="date" className="w-full bg-black border border-white/10 rounded-lg p-3 text-white focus:border-[#C59D24] outline-none transition-colors" />
+                    </div>
+                </div>
+
                 <div>
                     <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Email Address</label>
                     <input name="email" required type="email" className="w-full bg-black border border-white/10 rounded-lg p-3 text-white focus:border-[#C59D24] outline-none transition-colors" placeholder="john@example.com" />

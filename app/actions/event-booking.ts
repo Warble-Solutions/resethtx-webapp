@@ -57,11 +57,23 @@ export async function getEventTables(eventId: string) {
 
 import { validatePromo } from './promos'
 
-export async function bookTable(eventId: string, tableId: string, name: string, email: string, promoCode: string) {
+export async function bookTable(eventId: string, tableId: string, name: string, email: string, phone: string, dob: string, promoCode: string) {
     const supabase = await createClient()
 
     try {
-        // 1. Validate Promo (Server-Side Enforcement)
+        // 1. Validate Age (Server-Side)
+        const today = new Date()
+        const birthDate = new Date(dob)
+        let age = today.getFullYear() - birthDate.getFullYear()
+        const m = today.getMonth() - birthDate.getMonth()
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--
+        }
+        if (age < 21) {
+            return { success: false, error: 'You must be 21+ to book a table.' }
+        }
+
+        // 2. Validate Promo
         if (!promoCode) {
             return { success: false, error: 'Valid promo code is required to complete booking.' }
         }
@@ -71,7 +83,7 @@ export async function bookTable(eventId: string, tableId: string, name: string, 
             return { success: false, error: promoValidation.message || 'Invalid promo code.' }
         }
 
-        // 2. Insert Booking
+        // 3. Insert Booking
         const { error: bookingError } = await supabase
             .from('event_bookings')
             .insert({
@@ -79,6 +91,8 @@ export async function bookTable(eventId: string, tableId: string, name: string, 
                 table_id: tableId,
                 customer_name: name,
                 customer_email: email,
+                guest_phone: phone,
+                guest_dob: dob,
                 status: 'confirmed'
             })
 
@@ -90,15 +104,9 @@ export async function bookTable(eventId: string, tableId: string, name: string, 
             throw bookingError
         }
 
-        // 3. Increment Promo Usage (Non-blocking or blocking, here blocking for safety)
-        // We use rpc or simple update. Simple update is fine for now.
-        // Assuming we want to increment irrespective of concurrency for this simple app.
+        // 4. Increment Promo Usage
         const { error: promoError } = await supabase.rpc('increment_promo_usage', { code_input: promoCode.toUpperCase() })
-
-        // Fallback if RPC doesn't exist (User didn't specify RPC creation, so I will try standard update)
-        // Note: Standard update has race conditions, but acceptable for this scope.
         if (promoError) {
-            // Try standard update if RPC fails (likely does not exist)
             const { data: currentPromo } = await supabase.from('promos').select('times_used').eq('code', promoCode.toUpperCase()).single()
             if (currentPromo) {
                 await supabase.from('promos').update({ times_used: (currentPromo.times_used || 0) + 1 }).eq('code', promoCode.toUpperCase())

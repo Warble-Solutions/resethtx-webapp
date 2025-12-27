@@ -55,6 +55,13 @@ export default function HomeClient({
                 onInquire={() => setIsInquireModalOpen(true)}
             />
 
+            {/* Restored Calendar Widget */}
+            <EventsCalendar
+                events={allEvents}
+                onEventClick={handleEventClick}
+            />
+
+            {/* Restored Upcoming Events Section */}
             <UpcomingEventsSection events={featuredEvents} />
 
             <ExclusiveAccess onInquire={() => setIsInquireModalOpen(true)} />
