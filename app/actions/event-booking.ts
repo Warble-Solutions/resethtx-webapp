@@ -21,8 +21,8 @@ export async function getEventTables(eventId: string) {
     try {
         const { data: tables, error: tablesError } = await supabase
             .from('tables')
-            .select('*')
-            .order('table_number', { ascending: true })
+            .select('id, name, capacity, category, x, y')
+            .order('name', { ascending: true })
 
         if (tablesError) throw tablesError
 
@@ -36,11 +36,11 @@ export async function getEventTables(eventId: string) {
 
         const bookedTableIds = new Set(bookings.map(b => b.table_id))
 
-        const tablesWithStatus: Table[] = tables.map(table => ({
+        const tablesWithStatus: Table[] = tables.map((table: any) => ({
             id: table.id,
-            name: table.table_number || table.name || `Table ${table.id.slice(0, 4)}`,
-            capacity: table.seats || table.capacity || 2,
-            price: table.price || 100,
+            name: table.name || `Table ${table.id.slice(0, 4)}`,
+            capacity: table.capacity || 2,
+            price: 100, // Hardcoded default price as requested/assumed since column might depend on event settings or be missing
             category: table.category || 'Standard',
             isBooked: bookedTableIds.has(table.id),
             x: table.x,

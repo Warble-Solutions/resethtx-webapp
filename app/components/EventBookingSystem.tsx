@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react'
 import anime from 'animejs'
 import { getEventTables, bookTable } from '@/app/actions/event-booking'
 import { validatePromo } from '@/app/actions/promos'
-import TableMap from './TableMap'
 
 interface Table {
     id: string
@@ -14,6 +13,8 @@ interface Table {
     x?: number
     y?: number
 }
+
+const BOOKING_FEE = 50
 
 export default function EventBookingSystem({ eventId }: { eventId: string }) {
     const [tables, setTables] = useState<Table[]>([])
@@ -54,24 +55,6 @@ export default function EventBookingSystem({ eventId }: { eventId: string }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [eventId])
 
-    // 2. Entrance Animation (Grid)
-    useEffect(() => {
-        console.log('Animation Effect Triggered. Tables:', tables.length, 'Loading:', loading, 'Step:', step)
-        if (!loading && tables.length > 0 && step === 'select') {
-            // Reset opacity for re-entrance
-            anime.set('.table-card', { opacity: 0, translateY: 20 })
-
-            anime({
-                targets: '.table-card',
-                translateY: [20, 0],
-                opacity: [0, 1],
-                delay: anime.stagger(30), // Faster stagger for snappy feel
-                easing: 'easeOutExpo',
-                duration: 500
-            })
-        }
-    }, [loading, tables, step])
-
     // 3. Handle Table Selection & Transition
     const handleSelectTable = (table: Table) => {
         if (table.isBooked) return
@@ -82,45 +65,11 @@ export default function EventBookingSystem({ eventId }: { eventId: string }) {
         setDiscountApplied(false)
         setPromoCode('')
         setPromoMessage(null)
-
-        // Animate Out Grid
-        anime({
-            targets: '.table-grid-container',
-            opacity: [1, 0],
-            translateY: [0, -20],
-            easing: 'easeInExpo',
-            duration: 400,
-            complete: () => {
-                setStep('checkout')
-                // Animate In Form
-                setTimeout(() => {
-                    anime({
-                        targets: '.checkout-form-container',
-                        opacity: [0, 1],
-                        translateY: [20, 0],
-                        easing: 'easeOutExpo',
-                        duration: 600
-                    })
-                }, 50)
-            }
-        })
     }
 
-    // 4. Handle Back to Selection
     const handleBack = () => {
-        // Animate Out Form
-        anime({
-            targets: '.checkout-form-container',
-            opacity: [1, 0],
-            translateY: [0, 20],
-            easing: 'easeInExpo',
-            duration: 400,
-            complete: () => {
-                setStep('select')
-                setSelectedTable(null)
-                // Grid animation will trigger via useEffect
-            }
-        })
+        setStep('select')
+        setSelectedTable(null)
     }
 
     // 5. Handle Promo Apply
@@ -177,21 +126,122 @@ export default function EventBookingSystem({ eventId }: { eventId: string }) {
     return (
         <div ref={containerRef} className="w-full max-w-5xl mx-auto p-4 md:p-8 min-h-[400px]">
 
-            {/* --- VIEW 1: MAP SELECTION --- */}
+            {/* --- VIEW 1: CATEGORIZED LIST SELECTION --- */}
             {step === 'select' && (
-                <div className="table-map-container px-2">
+                <div className="table-list-container px-2 pb-20">
                     <h2 className="text-3xl font-heading text-white mb-6 text-center uppercase tracking-widest drop-shadow-lg">
                         Select Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F1C40F]">Table</span>
                     </h2>
 
-                    <TableMap
-                        tables={tables} // Now includes x, y, category from fetch
-                        onSelectTable={handleSelectTable}
-                        selectedTableId={selectedTable?.id}
-                    />
+                    {/* Disclaimer UI */}
+                    <div className="bg-zinc-900 border-l-4 border-[#D4AF37] p-4 mb-8 rounded-r-lg shadow-lg max-w-3xl mx-auto">
+                        <div className="flex items-start gap-4">
+                            <div className="text-[#D4AF37] mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>
+                            </div>
+                            <div>
+                                <p className="text-white font-bold uppercase tracking-wider text-sm mb-1">Reservation Fee Required</p>
+                                <p className="text-slate-400 text-sm leading-relaxed">
+                                    Table bookings require a <span className="text-white font-bold">${BOOKING_FEE} reservation fee</span>. This fee secures your spot and does not go towards your tab.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div className="text-center mt-6 text-slate-500 text-xs uppercase tracking-widest">
-                        Tap a table to view details & book
+                    {/* Group tables by category */}
+                    {(() => {
+                        // Strict Sort Order
+                        const categoryOrder = ['Lounge', 'Dance Floor', 'Dj Booth', 'Patio', 'Table Top']
+
+                        const groupedTables = tables.reduce((acc, table) => {
+                            const cat = table.category || 'Standard'
+                            if (!acc[cat]) acc[cat] = []
+                            acc[cat].push(table)
+                            return acc
+                        }, {} as Record<string, Table[]>)
+
+                        // Filter and Sort Categories
+                        const presentCategories = Object.keys(groupedTables)
+                        const sortedCategories = [
+                            ...categoryOrder.filter(c => presentCategories.includes(c)),
+                            ...presentCategories.filter(c => !categoryOrder.includes(c) && c !== 'Standard'),
+                            ...(presentCategories.includes('Standard') ? ['Standard'] : [])
+                        ]
+
+                        return (
+                            <div className="flex flex-col gap-10 max-w-4xl mx-auto">
+                                {sortedCategories.map(category => (
+                                    <div key={category} className="animate-in slide-in-from-bottom-4 fade-in duration-700">
+                                        {/* Category Header */}
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <h3 className="text-[#D4AF37] font-bold text-xl uppercase tracking-widest whitespace-nowrap px-4 border-l-4 border-[#D4AF37]">
+                                                {category}
+                                            </h3>
+                                            <div className="h-[1px] bg-white/10 w-full"></div>
+                                        </div>
+
+                                        {/* Grid */}
+                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                            {groupedTables[category].map(table => {
+                                                const isSelected = selectedTable?.id === table.id
+                                                return (
+                                                    <button
+                                                        key={table.id}
+                                                        onClick={() => !table.isBooked && handleSelectTable(table)}
+                                                        disabled={table.isBooked}
+                                                        className={`
+                                                            relative p-4 rounded-xl border transition-all duration-300 text-left group flex flex-col justify-between h-full min-h-[100px]
+                                                            ${table.isBooked
+                                                                ? 'border-white/5 bg-white/5 opacity-50 cursor-not-allowed grayscale'
+                                                                : isSelected
+                                                                    ? 'bg-[#D4AF37] border-[#D4AF37] text-black shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-105 z-10'
+                                                                    : 'border-zinc-800 bg-[#0a0a0a] text-white hover:border-[#D4AF37] hover:bg-[#D4AF37]/10'
+                                                            }
+                                                        `}
+                                                    >
+                                                        {/* Status Indicator Dot */}
+                                                        {!table.isBooked && (
+                                                            <div className={`absolute top-3 right-3 w-2 h-2 rounded-full ${isSelected ? 'bg-black' : 'bg-[#D4AF37]'}`} />
+                                                        )}
+
+                                                        <div>
+                                                            <div className="font-heading font-bold text-lg mb-1 leading-tight">{table.name}</div>
+                                                            <div className={`text-xs font-bold uppercase tracking-wider ${isSelected ? 'text-black/70' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                                                                Max {table.capacity} Guests
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Price Tag (Using Booking Fee as display or standard tag?) User said "Pay $50", card just needs name/capacity basically, but showing price is good context */}
+                                                        {/* User requirement: Display Name and Capacity on card. Price is booking fee in footer. */}
+                                                    </button>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )
+                    })()}
+
+                    {/* Sticky Mobile/Desktop Action Bar if selection made */}
+                    <div className={`fixed bottom-0 left-0 right-0 z-50 transition-transform duration-300 ${selectedTable ? 'translate-y-0' : 'translate-y-full'}`}>
+                        <div className="bg-[#111] border-t border-[#D4AF37] p-4 md:p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
+                            <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                                <div className="text-center md:text-left">
+                                    <div className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-1">Selected Table</div>
+                                    <div className="text-white font-heading text-2xl md:text-3xl font-bold">{selectedTable?.name}</div>
+                                    <div className="text-[#D4AF37] text-xs uppercase tracking-wider font-bold">Max {selectedTable?.capacity} Guests</div>
+                                </div>
+
+                                <button
+                                    onClick={() => setStep('checkout')}
+                                    className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-12 rounded-full uppercase tracking-widest shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                                >
+                                    <span>Pay ${BOOKING_FEE.toFixed(2)} & Book</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
@@ -212,7 +262,7 @@ export default function EventBookingSystem({ eventId }: { eventId: string }) {
                             </div>
                             <div className="mt-4 md:mt-0 text-right">
                                 <p className="text-xs text-slate-500 uppercase font-bold mb-1">Total Due</p>
-                                <p className={`text-2xl font-bold ${discountApplied ? 'text-slate-500 line-through text-lg' : 'text-white'}`}>$100.00</p>
+                                <p className={`text-2xl font-bold ${discountApplied ? 'text-slate-500 line-through text-lg' : 'text-white'}`}>${BOOKING_FEE.toFixed(2)}</p>
                                 {discountApplied && <p className="text-2xl font-bold text-[#D4AF37]">$0.00</p>}
                                 <p className="text-[10px] text-[#D4AF37] uppercase tracking-wider font-bold">{discountApplied ? 'Promo Applied' : 'Pending Payment'}</p>
                             </div>

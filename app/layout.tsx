@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer'
+import FloatingSocials from './components/FloatingSocials'
 // 1. Import the NEW Google Fonts
 import { Cinzel, Manrope } from "next/font/google";
 import "./globals.css";
@@ -39,6 +40,7 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
+        <FloatingSocials />
         <Footer />
       </body>
     </html>
