@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { IdCard, Shirt, Users, Ticket } from 'lucide-react'
 import PrivateEventsAboutSection from '@/app/components/PrivateEventsAboutSection'
 
 export default function AboutPage() {
@@ -157,35 +158,64 @@ export default function AboutPage() {
             </section>
 
 
-            {/* 6. ETIQUETTE / DRESS CODE (Dark Section) */}
-            <section className="py-24 bg-[#C59D24] text-black">
-                <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
-                    <div className="flex-1">
-                        <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6">House Rules</h2>
-                        <p className="font-sans text-black/80 text-lg leading-relaxed mb-8 font-medium">
-                            To maintain the vibe, we enforce a strict upscale dress code. We reserve the right to deny entry to anyone not meeting our standards.
+            {/* 6. HOUSE RULES (Redesigned) */}
+            <section className="py-24 bg-[#050505] border-t border-white/5">
+                <div className="max-w-7xl mx-auto px-6">
+                    {/* Header */}
+                    <div className="text-center mb-16">
+                        <h2 className="font-heading text-4xl md:text-5xl font-bold text-[#C59D24] uppercase tracking-widest mb-4">House Rules</h2>
+                        <p className="font-sans text-slate-500 text-lg max-w-2xl mx-auto">
+                            To ensure a premium experience for all guests, we ask that you adhere to the following standards.
                         </p>
-                        <ul className="font-sans font-bold space-y-3 uppercase tracking-wide text-sm">
-                            {[
-                                '— No Athletic Wear or Jerseys',
-                                '— No Flip Flops or Slides',
-                                '— No Ball Caps (Fedoras/Brims Allowed)',
-                                '— No Oversized Clothing'
-                            ].map((rule, i) => (
-                                <li key={i} className="hover:translate-x-2 transition-transform duration-300 cursor-default">
-                                    {rule}
-                                </li>
-                            ))}
-                        </ul>
                     </div>
-                    <div className="flex-1 w-full">
-                        <div className="bg-black text-[#C59D24] p-10 rounded-2xl text-center shadow-2xl transform hover:scale-105 transition-transform duration-500">
-                            <h3 className="font-heading text-2xl mb-2">Age Policy</h3>
-                            <p className="font-sans text-white/70 mb-8">Strictly 21+ with valid physical ID.</p>
 
-                            <h3 className="font-heading text-2xl mb-2">Cover Charge</h3>
-                            <p className="font-sans text-white/70">Applies weekends after 10PM and for special events.</p>
+                    {/* Cards Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+
+                        {/* Rule 1: Age */}
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
+                            <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
+                                <IdCard className="w-8 h-8 text-[#C59D24]" />
+                            </div>
+                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">Age Requirement</h3>
+                            <p className="text-zinc-400 font-sans leading-relaxed">
+                                Strictly 21+ for all guests. Valid physical ID required for entry.
+                            </p>
                         </div>
+
+                        {/* Rule 2: Dress Code */}
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
+                            <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
+                                <Shirt className="w-8 h-8 text-[#C59D24]" />
+                            </div>
+                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">Dress Code</h3>
+                            <p className="text-zinc-400 font-sans leading-relaxed">
+                                Upscale casual. No athletic wear, jerseys, baggy clothing, or flip-flops.
+                            </p>
+                        </div>
+
+                        {/* Rule 3: Behavior */}
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
+                            <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
+                                <Users className="w-8 h-8 text-[#C59D24]" />
+                            </div>
+                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">Behavior</h3>
+                            <p className="text-zinc-400 font-sans leading-relaxed">
+                                Respect the vibe. Management reserves the right to refuse service to anyone.
+                            </p>
+                        </div>
+
+                        {/* Rule 4: Reservations */}
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
+                            <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
+                                <Ticket className="w-8 h-8 text-[#C59D24]" />
+                            </div>
+                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">Reservations</h3>
+                            <p className="text-zinc-400 font-sans leading-relaxed">
+                                Reservations are recommended for guaranteed seating. 15-minute grace period.
+                            </p>
+                        </div>
+
                     </div>
                 </div>
             </section>
