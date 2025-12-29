@@ -46,7 +46,7 @@ export default function ExclusiveAccess({ onInquire }: ExclusiveAccessProps) {
                             UPGRADE YOUR NIGHT
                         </span>
                         <h2 className="text-4xl md:text-5xl font-bold text-white uppercase leading-tight font-heading">
-                            EXCLUSIVE <span className="bg-white text-black px-2 inline-block transform -skew-x-6">ACCESS</span>
+                            EXCLUSIVE <span className="bg-[#D3AE3A] text-black px-2 inline-block transform -skew-x-6">ACCESS</span>
                         </h2>
                     </div>
 
