@@ -28,6 +28,7 @@ interface EventSlide extends BaseSlide {
   time: string | null
   featured_image_url: string | null
   description: string | null
+  category?: string
 }
 
 type Slide = BrandSlide | EventSlide
@@ -98,14 +99,19 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
 
   const getEventDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric'
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric'
     })
   }
 
   return (
     <section className="relative h-screen w-full overflow-hidden bg-black">
+
+      {/* NETWORK BUG WATERMARK */}
+      <div className="absolute top-8 left-8 z-20 opacity-80 mix-blend-overlay pointer-events-none">
+        <img src="/logos/r_logo.png" alt="R Logo" className="w-16 md:w-20" />
+      </div>
 
       {/* BACKGROUND */}
       {allSlides.map((slide, index) => {

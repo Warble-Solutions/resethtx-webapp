@@ -140,3 +140,30 @@ export async function cancelEventBooking(bookingId: string) {
         return { success: false, error: error.message }
     }
 }
+
+export async function getEventForDate(date: string) {
+    const supabase = await createClient()
+
+    try {
+        const startOfDay = new Date(date).toISOString()
+        const endOfDay = new Date(new Date(date).setHours(23, 59, 59, 999)).toISOString()
+
+        const { data, error } = await supabase
+            .from('events')
+            .select('id, date')
+            .gte('date', startOfDay)
+            .lte('date', endOfDay)
+            .limit(1)
+
+        if (error) throw error
+
+        if (data && data.length > 0) {
+            return { success: true, event: data[0] }
+        }
+
+        return { success: false, error: 'No event found' }
+    } catch (error: any) {
+        console.error('Error fetching event by date:', error)
+        return { success: false, error: error.message }
+    }
+}

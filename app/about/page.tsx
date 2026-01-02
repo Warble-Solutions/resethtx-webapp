@@ -159,8 +159,13 @@ export default function AboutPage() {
 
 
             {/* 6. HOUSE RULES (Redesigned) */}
-            <section className="py-24 bg-[#050505] border-t border-white/5">
-                <div className="max-w-7xl mx-auto px-6">
+            <section className="py-24 bg-[#050505] border-t border-white/5 relative overflow-hidden">
+                {/* Watermark */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none opacity-5">
+                    <img src="/logos/r_logo.png" alt="Brand" className="w-[600px] opacity-20" />
+                </div>
+
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
                     {/* Header */}
                     <div className="text-center mb-16">
                         <h2 className="font-heading text-4xl md:text-5xl font-bold text-[#C59D24] uppercase tracking-widest mb-4">House Rules</h2>

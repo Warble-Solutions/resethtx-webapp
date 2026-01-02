@@ -59,7 +59,7 @@ export default function UpcomingEventsSection({ events }: { events: Event[] }) {
           {featuredEvents.length > 0 ? (
             featuredEvents.map((event) => {
               const dateObj = new Date(event.date)
-              const dateStr = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toUpperCase()
+              const dateStr = dateObj.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" })
               const timeStr = event.time ? event.time : "9:00 PM"
 
               return (

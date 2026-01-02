@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 import anime from 'animejs'
-import { getEventTables, bookTable } from '@/app/actions/event-booking'
+import { getEventTables, bookTable, getEventForDate } from '@/app/actions/event-booking'
 import { validatePromo } from '@/app/actions/promos'
 import BookingCheckoutModal from './BookingCheckoutModal'
 
@@ -19,7 +19,12 @@ interface Table {
 
 const BOOKING_FEE = 50
 
-export default function EventBookingSystem({ eventId, eventDate }: { eventId: string, eventDate: string }) {
+export default function EventBookingSystem({ eventId: initialEventId, eventDate: initialEventDate }: { eventId: string, eventDate: string }) {
+    // Current Active Event and Date State
+    const [currentEventId, setCurrentEventId] = useState(initialEventId)
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date(initialEventDate))
+    const [eventLookupError, setEventLookupError] = useState<string | null>(null)
+
     const [tables, setTables] = useState<Table[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -55,24 +60,57 @@ export default function EventBookingSystem({ eventId, eventDate }: { eventId: st
     }
 
     // 1. Fetch Tables
-    const fetchTables = async () => {
+    const fetchTables = async (id: string) => {
         setLoading(true)
-        console.log('Fetching tables for event:', eventId)
-        const { success, tables, error } = await getEventTables(eventId)
+        console.log('Fetching tables for event:', id)
+        const { success, tables, error } = await getEventTables(id)
         console.log('Fetch result:', { success, count: tables?.length, error })
 
         if (success && tables) {
             setTables(tables)
         } else {
             console.error('Failed to load tables')
+            setTables([])
         }
         setLoading(false)
     }
 
+    // Initial Load
     useEffect(() => {
-        fetchTables()
+        fetchTables(currentEventId)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [eventId])
+    }, [])
+
+    // Handle Date Change
+    const handleDateChange = async (dateStr: string) => {
+        // Update input state immediately for UI responsiveness
+        const newDate = new Date(dateStr)
+        // Adjust for timezone offset to prevent date shifting when creating new Date object
+        // Actually, input type="date" returns YYYY-MM-DD. 
+        // new Date('YYYY-MM-DD') creates UTC midnight.
+        // We want to preserve the calendar date selected by user.
+        // Let's stick to the string for lookup, but store Date object for display if needed ?
+        // actually simplest is just store the date string or the Date object carefully.
+        // Using new Date(dateStr + 'T12:00:00') puts it in midday to avoid timezone shifts for display.
+        const displayDate = new Date(dateStr + 'T12:00:00')
+        setSelectedDate(displayDate)
+
+        setLoading(true)
+        setSelectedTable(null)
+        setEventLookupError(null)
+
+        const { success, event, error } = await getEventForDate(dateStr)
+
+        if (success && event) {
+            setCurrentEventId(event.id)
+            await fetchTables(event.id)
+        } else {
+            setCurrentEventId('')
+            setTables([])
+            setEventLookupError('No events scheduled for this date.')
+            setLoading(false)
+        }
+    }
 
     // 3. Handle Table Selection & Transition
     const handleSelectTable = (table: Table) => {
@@ -119,7 +157,7 @@ export default function EventBookingSystem({ eventId, eventDate }: { eventId: st
         setIsBooking(true)
         setBookingError(null)
 
-        const result = await bookTable(eventId, selectedTable.id, customerName, customerEmail, customerPhone, customerDob, promoCode)
+        const result = await bookTable(currentEventId, selectedTable.id, customerName, customerEmail, customerPhone, customerDob, promoCode)
 
         if (result.success) {
             alert('Table Booked Successfully! Check your email for confirmation.')
@@ -133,7 +171,7 @@ export default function EventBookingSystem({ eventId, eventDate }: { eventId: st
             setPromoMessage(null)
             setSelectedTable(null)
             setIsCheckoutOpen(false)
-            fetchTables() // Refresh data
+            fetchTables(currentEventId) // Refresh data
         } else {
             setBookingError(result.error || 'Booking failed')
         }
@@ -142,7 +180,7 @@ export default function EventBookingSystem({ eventId, eventDate }: { eventId: st
 
     if (loading) return <div className="text-center text-slate-500 py-20 animate-pulse">Loading availability...</div>
 
-    if (!loading && tables.length === 0) {
+    if (!loading && tables.length === 0 && !eventLookupError) {
         return (
             <div className="text-center text-slate-400 py-20">
                 <p className="text-xl mb-2">No tables available.</p>
@@ -156,9 +194,32 @@ export default function EventBookingSystem({ eventId, eventDate }: { eventId: st
 
             {/* --- VIEW 1: CATEGORIZED LIST SELECTION --- */}
             <div className="table-list-container px-2 pb-20">
-                <h2 className="text-3xl font-heading text-white mb-6 text-center uppercase tracking-widest drop-shadow-lg">
-                    Select Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F1C40F]">Table</span>
-                </h2>
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl font-heading text-white mb-4 uppercase tracking-widest drop-shadow-lg">
+                        Availability for <span className="text-[#D4AF37]">{selectedDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</span>
+                    </h2>
+
+                    <div className="inline-flex items-center gap-2 bg-zinc-900 border border-white/10 rounded-lg p-1.5 pr-4 hover:border-[#D4AF37] transition-colors group cursor-pointer focus-within:border-[#D4AF37] focus-within:ring-1 focus-within:ring-[#D4AF37]">
+                        <div className="p-2 bg-white/5 rounded text-[#D4AF37]">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" /></svg>
+                        </div>
+                        <div className="flex flex-col items-start">
+                            <span className="text-[10px] text-slate-500 uppercase font-bold leading-tight">Change Date</span>
+                            <input
+                                type="date"
+                                value={selectedDate.toISOString().split('T')[0]}
+                                onChange={(e) => handleDateChange(e.target.value)}
+                                className="bg-transparent border-none text-white text-sm font-bold uppercase p-0 focus:ring-0 outline-none w-[130px] cursor-pointer [color-scheme:dark]"
+                            />
+                        </div>
+                    </div>
+
+                    {eventLookupError && (
+                        <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded max-w-md mx-auto">
+                            {eventLookupError}
+                        </div>
+                    )}
+                </div>
 
                 {/* Disclaimer UI */}
                 <div className="bg-zinc-900 border-l-4 border-[#D4AF37] p-4 mb-8 rounded-r-lg shadow-lg max-w-3xl mx-auto">
@@ -273,7 +334,7 @@ export default function EventBookingSystem({ eventId, eventDate }: { eventId: st
                 isOpen={isCheckoutOpen}
                 onClose={() => setIsCheckoutOpen(false)}
                 selectedTable={selectedTable}
-                eventDate={eventDate}
+                eventDate={selectedDate.toISOString()}
                 onConfirm={handleBooking}
                 isProcessing={isBooking}
                 error={bookingError}
@@ -320,9 +381,11 @@ export default function EventBookingSystem({ eventId, eventDate }: { eventId: st
                             <input
                                 required
                                 type="date"
+                                max={new Date(new Date().setFullYear(new Date().getFullYear() - 21)).toISOString().split('T')[0]}
                                 value={customerDob}
                                 onChange={(e) => setCustomerDob(e.target.value)}
-                                className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none transition-colors"
+                                className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none transition-colors [color-scheme:dark]"
+                                placeholder="MM/DD/YYYY"
                             />
                         </div>
                     </div>

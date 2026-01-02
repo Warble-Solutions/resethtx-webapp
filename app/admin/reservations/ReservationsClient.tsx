@@ -149,7 +149,7 @@ export default function ReservationsClient({
                                                     {booking.events?.title || <span className="text-red-500">Unknown Event</span>}
                                                 </div>
                                                 <div className="text-xs text-zinc-500">
-                                                    {booking.events?.date ? new Date(booking.events.date).toLocaleDateString() : 'No Date'}
+                                                    {booking.events?.date ? new Date(booking.events.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : 'No Date'}
                                                 </div>
                                             </td>
 

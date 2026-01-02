@@ -38,6 +38,10 @@ export default function BookingCheckoutModal({
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
             <div className="relative w-full max-w-lg bg-zinc-950 border border-[#D4AF37] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                {/* Watermark */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none opacity-[0.03]">
+                    <img src="/logos/r_logo.png" alt="Brand" className="w-[80%]" />
+                </div>
 
                 {/* Header */}
                 <div className="p-6 border-b border-white/10 flex items-center justify-between bg-[#111]">
@@ -67,7 +71,7 @@ export default function BookingCheckoutModal({
                         <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
                                 <p className="text-slate-500 uppercase font-bold text-[10px] mb-1">Date</p>
-                                <p className="text-white font-medium">{new Date(eventDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
+                                <p className="text-white font-medium">{new Date(eventDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</p>
                             </div>
                             <div>
                                 <p className="text-slate-500 uppercase font-bold text-[10px] mb-1">Guests</p>

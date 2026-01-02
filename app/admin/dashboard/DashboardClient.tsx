@@ -185,9 +185,9 @@ export default function DashboardClient({
                                 </p>
                                 <div className="mt-4 pt-4 border-t border-slate-800 flex items-center gap-2 text-sm text-slate-300">
                                     🗓️ {new Date(nextEvent.date).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
+                                        month: '2-digit',
+                                        day: '2-digit',
+                                        year: 'numeric'
                                     })}
                                 </div>
                             </div>

@@ -36,21 +36,21 @@ export default async function ArchivePage({
         </div>
 
         <div className="flex gap-3 w-full md:w-auto">
-            <div className="w-full md:w-64">
-                <SearchInput placeholder="Search history..." />
-            </div>
-            <Link 
-              href="/admin/events"
-              className="bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 px-5 rounded-lg transition-all border border-slate-700 whitespace-nowrap"
-            >
-              ← Back to Upcoming
-            </Link>
+          <div className="w-full md:w-64">
+            <SearchInput placeholder="Search history..." />
+          </div>
+          <Link
+            href="/admin/events"
+            className="bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 px-5 rounded-lg transition-all border border-slate-700 whitespace-nowrap"
+          >
+            ← Back to Upcoming
+          </Link>
         </div>
       </div>
 
       {events?.length === 0 ? (
         <SpotlightCard className="text-center py-20 border-dashed border-slate-700">
-           <p className="text-slate-400 text-lg">
+          <p className="text-slate-400 text-lg">
             No past events found in the archive.
           </p>
         </SpotlightCard>
@@ -58,7 +58,7 @@ export default async function ArchivePage({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events?.map((event) => (
             <SpotlightCard key={event.id} className="group flex flex-col p-0 h-full opacity-75 hover:opacity-100 transition-opacity">
-              
+
               {/* Image Section (Grayscale to indicate 'Past') */}
               <div className="h-48 bg-slate-800 relative mb-4 -mx-6 -mt-6 w-[calc(100%+3rem)]">
                 {event.image_url ? (
@@ -67,7 +67,7 @@ export default async function ArchivePage({
                   <div className="w-full h-full flex items-center justify-center text-slate-600">No Image</div>
                 )}
                 <div className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur text-slate-400 text-xs font-bold px-3 py-1 rounded-full border border-slate-800">
-                  ENDED: {new Date(event.date).toLocaleDateString()}
+                  ENDED: {new Date(event.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
                 </div>
               </div>
 

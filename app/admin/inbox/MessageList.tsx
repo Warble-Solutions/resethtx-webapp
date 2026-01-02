@@ -52,10 +52,10 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                                 </h3>
                                 <span className="text-xs text-slate-500 whitespace-nowrap font-mono">
                                     {new Date(msg.created_at).toLocaleDateString('en-US', {
-                                        year: 'numeric',
                                         month: '2-digit',
-                                        day: '2-digit'
-                                    })}
+                                        day: '2-digit',
+                                        year: 'numeric'
+                                    })} {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                             </div>
 

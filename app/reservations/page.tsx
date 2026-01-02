@@ -26,7 +26,7 @@ export default async function ReservationsPage() {
                     <div>
                         <div className="text-center mb-8">
                             <h2 className="text-2xl text-white font-heading">{nextEvent.title}</h2>
-                            <p className="text-slate-400">{new Date(nextEvent.date).toLocaleDateString()}</p>
+                            <p className="text-slate-400">{new Date(nextEvent.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</p>
                         </div>
                         <EventBookingSystem eventId={nextEvent.id} eventDate={nextEvent.date} />
                     </div>

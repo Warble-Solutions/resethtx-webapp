@@ -92,7 +92,7 @@ export default function ReservationsTable({ initialReservations }: { initialRese
                                 {/* DETAILS */}
                                 <td className="px-6 py-6">
                                     <div className="flex items-center gap-2 text-slate-300 mb-1">
-                                        <span className="text-[#D4AF37]">📅</span> {new Date(res.date).toLocaleDateString()}
+                                        <span className="text-[#D4AF37]">📅</span> {new Date(res.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
                                     </div>
                                     <div className="flex items-center gap-2 text-slate-300 mb-1">
                                         <span className="text-[#D4AF37]">⏰</span> {res.time}

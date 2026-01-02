@@ -67,9 +67,9 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
         return date.toLocaleDateString('en-US', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric'
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric'
         })
     }
 
@@ -140,6 +140,10 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
             />
 
             <div className="relative z-10 w-full max-w-5xl bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl flex flex-col h-[90vh] md:h-auto md:max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+                {/* Watermark */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none opacity-[0.03]">
+                    <img src="/logos/r_logo.png" alt="Brand" className="w-[80%]" />
+                </div>
 
                 <button
                     onClick={onClose}
@@ -292,7 +296,15 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
                                         </div>
                                         <div>
                                             <label className="text-xs font-bold text-slate-400 uppercase block mb-2">Date of Birth</label>
-                                            <input required type="date" value={userDob} onChange={e => setUserDob(e.target.value)} className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none" />
+                                            <input
+                                                required
+                                                type="date"
+                                                max={new Date(new Date().setFullYear(new Date().getFullYear() - 21)).toISOString().split('T')[0]}
+                                                value={userDob}
+                                                onChange={e => setUserDob(e.target.value)}
+                                                className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none [color-scheme:dark]"
+                                                placeholder="MM/DD/YYYY"
+                                            />
                                         </div>
                                     </div>
 

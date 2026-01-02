@@ -10,8 +10,17 @@ export default async function Footer() {
     if (!settings) return null
 
     return (
-        <footer className="bg-[#050505] border-t border-white/10 pt-20 pb-10 px-6">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-20 mb-16">
+        <footer className="bg-[#050505] border-t border-white/10 pt-20 pb-10 px-6 relative overflow-hidden">
+            {/* Watermark */}
+            <div className="absolute bottom-4 right-4 pointer-events-none overflow-hidden opacity-10 select-none">
+                <img
+                    src="/logos/r_logo.png"
+                    alt="Watermark"
+                    className="w-[150px] md:w-[200px] object-contain"
+                />
+            </div>
+
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-20 mb-16 relative z-10">
 
                 {/* COL 1: CONTACT US */}
                 <div>
@@ -113,9 +122,9 @@ export default async function Footer() {
                     href="https://kentagiouskollective.com/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 opacity-40 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
+                    className="flex items-center gap-3 transition-opacity"
                 >
-                    <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Powered by</span>
+                    <span className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold">Powered by</span>
                     <Image
                         src="/logos/kentagious.png"
                         alt="Kentagious Kollective"

@@ -39,39 +39,39 @@ export default async function EventsPage({
         </div>
 
         <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-            
-            {/* Row 1: Search Bar (Full width on mobile) */}
-            <div className="w-full md:w-64">
-                <SearchInput placeholder="Search upcoming..." />
-            </div>
-            
-            {/* Row 2: Buttons (Side-by-side on mobile, inline on desktop) */}
-            <div className="flex gap-3 w-full md:w-auto">
-                <Link 
-                  href="/admin/events/archive"
-                  className="flex-1 md:flex-none bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-2.5 px-5 rounded-lg transition-all border border-slate-700 flex items-center justify-center whitespace-nowrap"
-                >
-                  📜 Past Events
-                </Link>
 
-                <Link 
-                  href="/admin/events/create" 
-                  className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 px-5 rounded-lg transition-all shadow-lg shadow-blue-500/20 whitespace-nowrap flex items-center justify-center"
-                >
-                  + Add New
-                </Link>
-            </div>
+          {/* Row 1: Search Bar (Full width on mobile) */}
+          <div className="w-full md:w-64">
+            <SearchInput placeholder="Search upcoming..." />
+          </div>
+
+          {/* Row 2: Buttons (Side-by-side on mobile, inline on desktop) */}
+          <div className="flex gap-3 w-full md:w-auto">
+            <Link
+              href="/admin/events/archive"
+              className="flex-1 md:flex-none bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-2.5 px-5 rounded-lg transition-all border border-slate-700 flex items-center justify-center whitespace-nowrap"
+            >
+              📜 Past Events
+            </Link>
+
+            <Link
+              href="/admin/events/create"
+              className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 px-5 rounded-lg transition-all shadow-lg shadow-blue-500/20 whitespace-nowrap flex items-center justify-center"
+            >
+              + Add New
+            </Link>
+          </div>
         </div>
       </div>
 
       {events?.length === 0 ? (
         <SpotlightCard className="text-center py-20 border-dashed border-slate-700">
-           <p className="text-slate-400 mb-4 text-lg">
+          <p className="text-slate-400 mb-4 text-lg">
             {query ? `No upcoming events match "${query}"` : "No upcoming events scheduled."}
           </p>
           {!query && (
-             <Link href="/admin/events/create" className="text-blue-400 font-semibold hover:text-blue-300">
-                Create your first event
+            <Link href="/admin/events/create" className="text-blue-400 font-semibold hover:text-blue-300">
+              Create your first event
             </Link>
           )}
         </SpotlightCard>
@@ -87,7 +87,7 @@ export default async function EventsPage({
                   <div className="w-full h-full flex items-center justify-center text-slate-600">No Image</div>
                 )}
                 <div className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full border border-slate-700">
-                  {new Date(event.date).toLocaleDateString()}
+                  {new Date(event.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
                 </div>
               </div>
 
@@ -102,16 +102,16 @@ export default async function EventsPage({
                   <span className="text-xs font-bold text-slate-500 bg-slate-800 px-2 py-1 rounded border border-slate-700 whitespace-nowrap">
                     🎟️ {event.tickets_available} Tickets
                   </span>
-                  
+
                   <div className="flex items-center gap-4">
                     <Link href={`/admin/events/${event.id}/edit`} className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-wider">
                       EDIT
                     </Link>
                     <form action={deleteEvent} className="flex">
-                        <input type="hidden" name="id" value={event.id} />
-                        <button type="submit" className="text-xs font-bold text-red-500 hover:text-red-400 transition-colors uppercase tracking-wider">
-                            DELETE
-                        </button>
+                      <input type="hidden" name="id" value={event.id} />
+                      <button type="submit" className="text-xs font-bold text-red-500 hover:text-red-400 transition-colors uppercase tracking-wider">
+                        DELETE
+                      </button>
                     </form>
                   </div>
                 </div>
