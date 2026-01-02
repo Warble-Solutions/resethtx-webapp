@@ -18,6 +18,7 @@ interface BookingCheckoutModalProps {
     onConfirm: (e: React.FormEvent) => Promise<void>
     isProcessing: boolean
     error: string | null
+    guestDob?: string // Added guestDob for summary display
     children?: React.ReactNode // For passing form inputs if needed, or specific checkout fields
 }
 
@@ -29,6 +30,7 @@ export default function BookingCheckoutModal({
     onConfirm,
     isProcessing,
     error,
+    guestDob,
     children
 }: BookingCheckoutModalProps) {
     if (!isOpen || !selectedTable) return null
@@ -77,6 +79,18 @@ export default function BookingCheckoutModal({
                                 <p className="text-slate-500 uppercase font-bold text-[10px] mb-1">Guests</p>
                                 <p className="text-white font-medium">Up to {selectedTable.capacity} People</p>
                             </div>
+                            {guestDob && (
+                                <div className="col-span-2 border-t border-white/10 pt-2 mt-2">
+                                    <p className="text-slate-500 uppercase font-bold text-[10px] mb-1">Date of Birth</p>
+                                    <p className="text-white font-medium">
+                                        {new Date(guestDob).toLocaleDateString('en-US', {
+                                            month: '2-digit',
+                                            day: '2-digit',
+                                            year: 'numeric'
+                                        })}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
 

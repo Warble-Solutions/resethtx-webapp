@@ -36,6 +36,7 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
     const [userPhone, setUserPhone] = useState('')
     const [userDob, setUserDob] = useState('')
     const [ticketQty, setTicketQty] = useState(1)
+    const [couponCode, setCouponCode] = useState('')
 
     // Reset view when modal opens
     useEffect(() => {
@@ -47,6 +48,7 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
             setUserPhone('')
             setUserDob('')
             setTicketQty(1)
+            setCouponCode('')
         }
     }, [isOpen, event])
 
@@ -108,19 +110,16 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
                 userEmail,
                 userPhone,
                 userDob,
-                quantity: ticketQty
+                quantity: ticketQty,
+                couponCode
             })
 
             if (result.success) {
-                setPurchaseState({ success: true, message: result.message || 'Success!' })
-                // If paid, we might redirect, but for now show success
-                if (result.redirectUrl) {
-                    // simulate redirect delay
-                    setTimeout(() => {
-                        // window.location.href = result.redirectUrl // Commented out for mock flow
-                        console.log('Redirecting to:', result.redirectUrl)
-                    }, 2000)
-                }
+                onClose()
+                // Small delay to ensure modal closes before alert (optional but smoother)
+                setTimeout(() => {
+                    alert('Ticket reserved! Check your email.')
+                }, 300)
             } else {
                 alert(result.error || 'Failed to process request.')
             }
@@ -306,6 +305,17 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
                                                 placeholder="MM/DD/YYYY"
                                             />
                                         </div>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <label className="block text-xs font-bold text-[#D4AF37] mb-1">PROMO CODE</label>
+                                        <input
+                                            type="text"
+                                            value={couponCode}
+                                            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                            placeholder="ENTER CODE"
+                                            className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:border-[#D4AF37] outline-none"
+                                        />
                                     </div>
 
                                     <button

@@ -338,6 +338,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
                 onConfirm={handleBooking}
                 isProcessing={isBooking}
                 error={bookingError}
+                guestDob={customerDob}
             >
                 {/* Injection of Form Fields logic */}
                 <div className="space-y-4">

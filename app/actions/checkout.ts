@@ -10,10 +10,11 @@ interface PurchaseDetails {
     userPhone: string
     userDob: string
     quantity: number
+    couponCode?: string // Added couponCode
 }
 
 // NOTE: This currently mocks the Stripe integration
-export async function purchaseTickets({ eventId, userName, userEmail, userPhone, userDob, quantity }: PurchaseDetails) {
+export async function purchaseTickets({ eventId, userName, userEmail, userPhone, userDob, quantity, couponCode }: PurchaseDetails) {
     const supabase = await createClient()
 
     // 0. Validate Age (Server-Side)
@@ -51,11 +52,12 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
                 user_name: userName,
                 user_email: userEmail,
                 user_phone: userPhone,
-                user_dob: userDob,
+                guest_dob: userDob,
                 quantity: quantity,
                 total_price: 0,
                 status: 'free',
-                payment_intent_id: null
+                payment_intent_id: null,
+                coupon_code: couponCode || null
             })
 
         if (insertError) {
@@ -77,11 +79,12 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
             user_name: userName,
             user_email: userEmail,
             user_phone: userPhone,
-            user_dob: userDob,
+            guest_dob: userDob,
             quantity: quantity,
             total_price: totalPrice,
             status: 'paid', // Mocking instant success
-            payment_intent_id: 'mock_pi_' + Date.now()
+            payment_intent_id: 'mock_pi_' + Date.now(),
+            coupon_code: couponCode || null
         })
 
     if (insertError) {
