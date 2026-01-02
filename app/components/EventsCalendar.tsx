@@ -12,6 +12,7 @@ interface Event {
     featured_image_url?: string | null
     description?: string | null
     section_name?: string
+    category?: string
 }
 
 export default function EventsCalendar({ events, onEventClick }: { events: Event[], onEventClick?: (event: Event) => void }) {

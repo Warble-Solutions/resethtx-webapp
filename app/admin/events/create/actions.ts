@@ -38,6 +38,7 @@ export async function createEvent(formData: FormData) {
 
   // 1. Gather Data
   const title = formData.get('title') as string
+  const category = formData.get('category') as string || 'Nightlife'
   const date = formData.get('date') as string
   const tickets = formData.get('tickets')
   const description = formData.get('description') as string
@@ -108,7 +109,8 @@ export async function createEvent(formData: FormData) {
     is_external_event: is_external_event,
     external_url: external_url,
     ticket_price: ticket_price,
-    ticket_capacity: ticket_capacity
+    ticket_capacity: ticket_capacity,
+    category: category
   })
 
   if (error) {

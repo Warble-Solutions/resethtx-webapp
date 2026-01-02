@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState, useRef } from 'react'
 import anime from 'animejs'
 import { getEventTables, bookTable } from '@/app/actions/event-booking'

@@ -1,13 +1,14 @@
 'use client'
 
+import Link from 'next/link'
 import Image from 'next/image'
 import { Crown, Star, Briefcase } from 'lucide-react'
 
 interface ExclusiveAccessProps {
-    onInquire: () => void
+    // onInquire: () => void // Removed as we use Links now
 }
 
-export default function ExclusiveAccess({ onInquire }: ExclusiveAccessProps) {
+export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
     const cards = [
         {
             id: 1,
@@ -50,21 +51,21 @@ export default function ExclusiveAccess({ onInquire }: ExclusiveAccessProps) {
                         </h2>
                     </div>
 
-                    <button
-                        onClick={onInquire}
+                    <Link
+                        href="/reservations"
                         className="text-[#D4AF37] font-bold text-sm tracking-widest hover:text-white transition-colors group"
                     >
-                        Inquire Now <span className="inline-block transition-transform group-hover:translate-x-1">-&gt;</span>
-                    </button>
+                        Book Table <span className="inline-block transition-transform group-hover:translate-x-1">-&gt;</span>
+                    </Link>
                 </div>
 
                 {/* Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
                     {cards.map((card) => (
-                        <div
+                        <Link
+                            href={card.buttonText === 'CONTACT US' ? '/contact' : '/reservations'}
                             key={card.id}
-                            onClick={onInquire}
-                            className="group relative h-[450px] w-full overflow-hidden rounded-xl cursor-pointer border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-500"
+                            className="group relative h-[450px] w-full overflow-hidden rounded-xl cursor-pointer border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-500 block"
                         >
                             {/* Background Image */}
                             <Image
@@ -115,7 +116,7 @@ export default function ExclusiveAccess({ onInquire }: ExclusiveAccessProps) {
                                 {/* Animated Line */}
                                 <div className="absolute bottom-0 left-0 w-0 h-1 bg-[#D4AF37] transition-all duration-500 group-hover:w-full" />
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 

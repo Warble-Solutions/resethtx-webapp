@@ -10,7 +10,6 @@ import SonicLandscapeSection from './SonicLandscapeSection'
 import PlanYourNightSection from './PlanYourNightSection'
 import ReservationSection from './ReservationSection'
 import EventModal from './EventModal'
-import InquireModal from './InquireModal'
 import ReviewModal from './ReviewModal'
 import ReviewsCTA from './ReviewsCTA'
 import ExclusiveAccess from './ExclusiveAccess'
@@ -38,7 +37,6 @@ export default function HomeClient({
 }) {
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [isInquireModalOpen, setIsInquireModalOpen] = useState(false)
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
 
     const handleEventClick = (event: Event) => {
@@ -52,7 +50,6 @@ export default function HomeClient({
             <HeroCarousel
                 events={featuredEvents}
                 onEventClick={handleEventClick}
-                onInquire={() => setIsInquireModalOpen(true)}
             />
 
             {/* Restored Calendar Widget */}
@@ -64,9 +61,9 @@ export default function HomeClient({
             {/* Restored Upcoming Events Section */}
             <UpcomingEventsSection events={featuredEvents} />
 
-            <ExclusiveAccess onInquire={() => setIsInquireModalOpen(true)} />
+            <ExclusiveAccess />
 
-            <PrivateEventsSection onInquire={() => setIsInquireModalOpen(true)} />
+            <PrivateEventsSection />
 
             <TestimonialsSection testimonials={testimonials} />
 
@@ -82,11 +79,6 @@ export default function HomeClient({
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 event={selectedEvent}
-            />
-
-            <InquireModal
-                isOpen={isInquireModalOpen}
-                onClose={() => setIsInquireModalOpen(false)}
             />
 
             <ReviewModal

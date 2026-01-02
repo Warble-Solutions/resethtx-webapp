@@ -10,10 +10,16 @@
   html {
     font-family: var(--font-manrope), sans-serif;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-cinzel), serif;
-    font-weight: 700; /* Default headings to bold */
+    font-weight: 700;
+    /* Default headings to bold */
   }
 }
 
@@ -38,9 +44,11 @@ body {
 }
 
 /* Fail-safe Gold Color */
-.bg-gold-400, .bg-gold-500 {
+.bg-gold-400,
+.bg-gold-500 {
   background-color: #D4AF37 !important;
 }
+
 .text-gold-400 {
   color: #D4AF37 !important;
 }
@@ -49,14 +57,33 @@ body {
 .custom-scrollbar::-webkit-scrollbar {
   height: 6px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.3); /* Gold with opacity */
+  background: rgba(212, 175, 55, 0.3);
+  /* Gold with opacity */
   border-radius: 10px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.8); /* Brighter gold on hover */
+  background: rgba(212, 175, 55, 0.8);
+  /* Brighter gold on hover */
+}
+
+/* Custom Text Selection Highlight */
+::selection {
+  background-color: #D4AF37 !important;
+  /* Force Gold Background */
+  color: #000000 !important;
+  /* Force Black Text */
+}
+
+/* Firefox Compatibility */
+::-moz-selection {
+  background-color: #D4AF37 !important;
+  color: #000000 !important;
 }

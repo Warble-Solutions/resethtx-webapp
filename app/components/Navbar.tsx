@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
-import InquireModal from './InquireModal'
 
 const navLinks = [
   { name: 'HOME', href: '/' },
@@ -19,7 +18,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const [isInquireOpen, setIsInquireOpen] = useState(false)
 
   // Handle Scroll Transparency
   useEffect(() => {
@@ -47,7 +45,6 @@ export default function Navbar() {
 
   return (
     <>
-      <InquireModal isOpen={isInquireOpen} onClose={() => setIsInquireOpen(false)} />
 
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${scrolled || isOpen
@@ -86,12 +83,12 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <button
-              onClick={() => setIsInquireOpen(true)}
+            <Link
+              href="/reservations"
               className="relative overflow-hidden bg-[#D4AF37] text-black font-bold text-xs tracking-[0.2em] px-8 py-3 uppercase transition-all duration-300 hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] hover:scale-105"
             >
-              <span className="relative z-10 font-sans">Inquire</span>
-            </button>
+              <span className="relative z-10 font-sans">Book Table</span>
+            </Link>
           </div>
 
           {/* MOBILE HAMBURGER BUTTON */}
@@ -130,15 +127,13 @@ export default function Navbar() {
           <div
             className={`mt-8 transition-all duration-500 delay-500 transform ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
           >
-            <button
-              onClick={() => {
-                setIsOpen(false)
-                setIsInquireOpen(true)
-              }}
+            <Link
+              href="/reservations"
+              onClick={() => setIsOpen(false)}
               className="bg-[#D4AF37] text-black font-bold text-sm tracking-[0.2em] px-10 py-4 uppercase rounded-full shadow-[0_0_20px_rgba(212,175,55,0.3)]"
             >
-              Inquire
-            </button>
+              Book Table
+            </Link>
           </div>
         </div>
       </div>

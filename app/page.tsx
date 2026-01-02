@@ -11,7 +11,7 @@ export default async function Home() {
   // 1. Fetch Featured Events (Next 5 upcoming events)
   const { data: featuredEvents } = await supabase
     .from('events')
-    .select('*')
+    .select('*, category')
     .eq('is_featured', true)
     .gte('date', new Date().toISOString())
     .order('date', { ascending: true })

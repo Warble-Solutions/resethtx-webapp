@@ -148,22 +148,24 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
           {/* --- BRAND SLIDE CONTENT --- */}
           {currentSlide.type === 'BRAND' && (
             <>
-              <h2 className="font-display text-[#D4AF37] text-sm md:text-base tracking-[0.3em] uppercase mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                {currentSlide.subtitle}
-              </h2>
-              <h1 className="font-display text-4xl md:text-6xl font-normal text-white mb-6 tracking-tight animate-in fade-in slide-in-from-bottom-6 duration-1000 uppercase">
-                {currentSlide.title}
-              </h1>
-              <p className="font-sans text-slate-300 text-lg md:text-xl max-w-xl mb-10 leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-                {currentSlide.description}
-              </p>
-              <div className="flex gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
-                <button
-                  onClick={onInquire}
-                  className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] tracking-widest text-sm uppercase"
+              <div className="flex flex-col items-center justify-end min-h-[300px]">
+                <h2 className="font-display text-[#D4AF37] text-sm md:text-base tracking-[0.3em] uppercase mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                  {currentSlide.subtitle}
+                </h2>
+                <h1 className="font-display text-4xl md:text-6xl font-normal text-white mb-6 tracking-tight animate-in fade-in slide-in-from-bottom-6 duration-1000 uppercase">
+                  {currentSlide.title}
+                </h1>
+                <p className="font-sans text-slate-300 text-lg md:text-xl max-w-xl mb-0 leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+                  {currentSlide.description}
+                </p>
+              </div>
+              <div className="flex gap-4 mt-8 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+                <Link
+                  href="/reservations"
+                  className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] tracking-widest text-sm uppercase inline-block"
                 >
-                  INQUIRE NOW
-                </button>
+                  Book Table
+                </Link>
               </div>
             </>
           )}
@@ -171,33 +173,32 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
           {/* --- EVENT SLIDE CONTENT --- */}
           {currentSlide.type === 'EVENT' && (
             <>
+              <div className="flex flex-col items-center justify-end min-h-[300px]">
+                <h2 className="font-display text-[#D4AF37] text-sm md:text-base tracking-[0.3em] uppercase mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                  {currentSlide.category || 'NIGHTLIFE'}
+                </h2>
+                <h1 className="font-display text-4xl md:text-6xl font-normal text-white mb-6 leading-tight tracking-tight uppercase drop-shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                  {currentSlide.title}
+                </h1>
 
+                <div className="font-sans flex flex-col md:flex-row items-center gap-2 md:gap-6 text-slate-200 text-lg md:text-xl font-light tracking-wide mb-6 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-100 bg-white/5 backdrop-blur-md px-6 py-3 rounded-full border border-white/10">
+                  <span className="flex items-center gap-2">
+                    <span className="text-[#D4AF37]">🗓</span> {getEventDate(currentSlide.date)}
+                  </span>
+                  <span className="hidden md:inline w-1 h-1 bg-slate-500 rounded-full"></span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-[#D4AF37]">⏰</span> {getEventTime(currentSlide.time)}
+                  </span>
+                </div>
 
-              <h2 className="font-display text-[#D4AF37] text-sm md:text-base tracking-[0.3em] uppercase mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                RESET HTX
-              </h2>
-              <h1 className="font-display text-4xl md:text-6xl font-normal text-white mb-6 leading-tight tracking-tight uppercase drop-shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                {currentSlide.title}
-              </h1>
-
-              <div className="font-sans flex flex-col md:flex-row items-center gap-2 md:gap-6 text-slate-200 text-lg md:text-xl font-light tracking-wide mb-10 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-100 bg-white/5 backdrop-blur-md px-6 py-3 rounded-full border border-white/10">
-                <span className="flex items-center gap-2">
-                  <span className="text-[#D4AF37]">🗓</span> {getEventDate(currentSlide.date)}
-                </span>
-                <span className="hidden md:inline w-1 h-1 bg-slate-500 rounded-full"></span>
-                <span className="flex items-center gap-2">
-                  <span className="text-[#D4AF37]">⏰</span> {getEventTime(currentSlide.time)}
-                </span>
+                {currentSlide.description && (
+                  <p className="font-sans text-slate-300 max-w-xl text-sm md:text-base leading-relaxed mb-0 line-clamp-2 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-150 hidden md:block">
+                    {currentSlide.description}
+                  </p>
+                )}
               </div>
 
-              {/* Removed description from Featured Event to align visually closer to Brand slide structure if needed, or keep it consistent text-lg */}
-              {currentSlide.description && (
-                <p className="font-sans text-slate-300 max-w-xl text-sm md:text-base leading-relaxed mb-10 line-clamp-2 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-150 hidden md:block">
-                  {currentSlide.description}
-                </p>
-              )}
-
-              <div className="flex gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
+              <div className="flex gap-4 mt-8 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
                 <button
                   onClick={() => onEventClick?.(currentSlide as unknown as Event)}
                   className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] uppercase tracking-widest text-sm"

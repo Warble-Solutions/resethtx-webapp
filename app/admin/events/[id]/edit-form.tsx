@@ -17,6 +17,7 @@ interface EventData {
   image_url: string | null
   featured_image_url: string | null
   is_featured: boolean
+  category?: string
 }
 
 export default function EditEventForm({ event }: { event: EventData }) {
@@ -91,6 +92,18 @@ export default function EditEventForm({ event }: { event: EventData }) {
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">Event Title</label>
             <input name="title" defaultValue={event.title} required type="text" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-bold text-slate-300 mb-2">Category</label>
+            <select name="category" defaultValue={event.category || 'Nightlife'} className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white">
+              <option value="Nightlife">Nightlife</option>
+              <option value="Live DJ">Live DJ</option>
+              <option value="Happy Hour">Happy Hour</option>
+              <option value="Live Music">Live Music</option>
+              <option value="Special Event">Special Event</option>
+            </select>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

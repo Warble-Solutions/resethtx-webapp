@@ -14,17 +14,9 @@ interface Event {
   image_url: string | null
   description: string | null
   tickets: number
+  category?: string
   // Allow flexible props since we pass full event object to modal
   [key: string]: any
-}
-
-// 2. Helper Functions
-const getEventTag = (title: string, time: string | null) => {
-  const t = time?.toLowerCase() || ''
-  const name = title.toLowerCase()
-  if (name.includes('happy') || t.includes('pm - 8')) return 'HAPPY HOUR'
-  if (t.includes('am')) return 'NIGHTLIFE'
-  return 'LIVE DJ'
 }
 
 const getMonth = (dateString: string) => {
@@ -95,7 +87,7 @@ export default function UpcomingEventsSection({ events }: { events: Event[] }) {
                     {/* Tag Overlay */}
                     <div className="absolute top-4 left-4 bg-[#D4AF37] rounded-full px-3 py-1 z-10 shadow-md">
                       <span className="text-[10px] font-bold text-black uppercase tracking-wider font-sans leading-none block">
-                        {getEventTag(event.title, event.time)}
+                        {event.category || 'Nightlife'}
                       </span>
                     </div>
                   </div>

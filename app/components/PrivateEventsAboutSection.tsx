@@ -1,11 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
-import InquireModal from './InquireModal'
+import Link from 'next/link'
 
 export default function PrivateEventsAboutSection() {
-    const [isInquireModalOpen, setIsInquireModalOpen] = useState(false)
 
     return (
         <section className="py-24 bg-zinc-900 border-t border-white/5 relative overflow-hidden">
@@ -41,12 +39,12 @@ export default function PrivateEventsAboutSection() {
                     </p>
                     <p className="text-slate-500 text-xs mb-8 uppercase tracking-wider">For guests 21 and up only.</p>
 
-                    <button
-                        onClick={() => setIsInquireModalOpen(true)}
-                        className="bg-[#D4AF37] text-black hover:bg-white font-bold py-4 px-10 rounded-full transition-all uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(197,157,36,0.3)] hover:scale-105 hover:shadow-[0_0_40px_rgba(197,157,36,0.6)]"
+                    <Link
+                        href="/contact"
+                        className="bg-[#D4AF37] text-black hover:bg-white font-bold py-4 px-10 rounded-full transition-all uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(197,157,36,0.3)] hover:scale-105 hover:shadow-[0_0_40px_rgba(197,157,36,0.6)] inline-block"
                     >
                         Inquire For Events
-                    </button>
+                    </Link>
                 </div>
 
                 {/* Right: Image */}
@@ -61,11 +59,6 @@ export default function PrivateEventsAboutSection() {
                 </div>
 
             </div>
-
-            <InquireModal
-                isOpen={isInquireModalOpen}
-                onClose={() => setIsInquireModalOpen(false)}
-            />
         </section>
     )
 }

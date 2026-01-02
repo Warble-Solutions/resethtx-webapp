@@ -78,6 +78,18 @@ export default function CreateEventPage() {
             <input name="title" required type="text" placeholder="e.g. Jazz Night" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white placeholder:text-slate-600" />
           </div>
 
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-bold text-slate-300 mb-2">Category</label>
+            <select name="category" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white">
+              <option value="Nightlife">Nightlife</option>
+              <option value="Live DJ">Live DJ</option>
+              <option value="Happy Hour">Happy Hour</option>
+              <option value="Live Music">Live Music</option>
+              <option value="Special Event">Special Event</option>
+            </select>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Date & Time */}
             <div>

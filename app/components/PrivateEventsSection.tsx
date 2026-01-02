@@ -1,12 +1,9 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 
-interface PrivateEventsSectionProps {
-    onInquire: () => void
-}
-
-export default function PrivateEventsSection({ onInquire }: PrivateEventsSectionProps) {
+export default function PrivateEventsSection() {
     return (
         <section className="w-full bg-zinc-900 border-t border-zinc-800">
             <div className="flex flex-col md:flex-row h-auto md:min-h-[600px] group cursor-default">
@@ -37,12 +34,12 @@ export default function PrivateEventsSection({ onInquire }: PrivateEventsSection
                     </div>
 
                     <div>
-                        <button
-                            onClick={onInquire}
+                        <Link
+                            href="/contact"
                             className="bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] tracking-widest text-sm uppercase inline-block"
                         >
                             INQUIRE NOW
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

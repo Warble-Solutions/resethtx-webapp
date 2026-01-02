@@ -10,6 +10,7 @@ export async function updateEvent(formData: FormData) {
   // 1. Gather Data
   const id = formData.get('id') as string
   const title = formData.get('title') as string
+  const category = formData.get('category') as string
   const date = formData.get('date') as string
   const tickets = formData.get('tickets')
   const description = formData.get('description') as string
@@ -30,6 +31,7 @@ export async function updateEvent(formData: FormData) {
   // 3. Prepare Update Object
   const updates: any = {
     title,
+    category,
     date, // Ensure this is not empty
     time,
     tickets: Number(tickets),

@@ -11,7 +11,7 @@ export default async function Footer() {
 
     return (
         <footer className="bg-[#050505] border-t border-white/10 pt-20 pb-10 px-6">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-20 mb-16">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-20 mb-16">
 
                 {/* COL 1: CONTACT US */}
                 <div>
@@ -42,6 +42,27 @@ export default async function Footer() {
                         <div className="mt-2">
                             <SocialIcons className="flex-row gap-2" />
                         </div>
+                    </div>
+                </div>
+
+                {/* COL 1.5: QUICK LINKS */}
+                <div>
+                    <h3 className="text-xl font-heading font-bold text-white uppercase tracking-wider mb-8">
+                        Quick Links
+                    </h3>
+                    <div className="flex flex-col gap-4 text-sm md:text-base">
+                        <Link href="/reservations" className="text-slate-400 hover:text-[#D4AF37] transition-colors">
+                            Reservations
+                        </Link>
+                        <Link href="/events" className="text-slate-400 hover:text-[#D4AF37] transition-colors">
+                            Events Calendar
+                        </Link>
+                        <Link href="/menu" className="text-slate-400 hover:text-[#D4AF37] transition-colors">
+                            Menu
+                        </Link>
+                        <Link href="/contact" className="text-slate-400 hover:text-[#D4AF37] transition-colors">
+                            Contact
+                        </Link>
                     </div>
                 </div>
 
