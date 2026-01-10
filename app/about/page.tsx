@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { IdCard, Shirt, Users, Ticket } from 'lucide-react'
+import { IdCard, Shirt, Users, Ticket, Car } from 'lucide-react'
 import PrivateEventsAboutSection from '@/app/components/PrivateEventsAboutSection'
 
 export default function AboutPage() {
@@ -35,14 +35,17 @@ export default function AboutPage() {
                 <div className="max-w-3xl mx-auto text-center">
                     <span className="block w-1 h-16 bg-[#C59D24] mx-auto mb-8 animate-in fade-in zoom-in duration-1000 delay-300"></span>
                     <h3 className="font-heading text-3xl md:text-4xl text-white mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-                        "We didn't just build a bar. We curated a feeling."
+                        OUR STORY
                     </h3>
-                    <div className="prose prose-invert prose-lg mx-auto font-sans text-slate-400 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-500">
+                    <div className="prose prose-invert prose-lg mx-auto font-sans text-slate-400 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-500 space-y-6">
                         <p>
-                            In a city known for its hustle, Reset HTX serves as a necessary pause. We believe nightlife shouldn't just be loud—it should be curated. From the frequency of the bass to the thread count of our seating, every detail is engineered to lower your shoulders and raise your spirits.
+                            RESET, officially known as Reset Rooftop Lounge, emerged as a vibrant addition to Houston's Midtown nightlife scene in the summer of 2022. Owned by physician-turned-businessman Dr. Abdulla Kudrath, the venue was built in a newly constructed building at 606 Dennis Street. The project aimed to fill a gap in Houston's rooftop lounge offerings with a focus on high-quality sound systems, crystal-clear acoustics, and a rooftop patio boasting panoramic skyline views.
                         </p>
                         <p>
-                            We exist for the tastemakers, the professionals, and the creatives who demand more from their evening. This is not just a place to be seen; it is a place to be.
+                            Drawing inspiration from the city's growing demand for sophisticated yet energetic spaces, Reset Rooftop Lounge was designed as an intimate spot emphasizing local and regional talent alongside occasional international acts and celebrities.
+                        </p>
+                        <p>
+                            Since opening, Reset has established itself as a premier destination for cocktails, hookah, live DJs, and weekly events. By the mid-2020s, the lounge has continued to thrive under ongoing management tied to Houston nightlife operators, hosting diverse music genres from Afro-Beats, House, R&B, and Techno to Hip-Hop, solidifying its reputation as a Midtown hotspot with stunning views of the city and unforgettable vibes.
                         </p>
                     </div>
                 </div>
@@ -175,49 +178,38 @@ export default function AboutPage() {
                     </div>
 
                     {/* Cards Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
 
-                        {/* Rule 1: Age */}
-                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
-                            <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
-                                <IdCard className="w-8 h-8 text-[#C59D24]" />
-                            </div>
-                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">Age Requirement</h3>
-                            <p className="text-zinc-400 font-sans leading-relaxed">
-                                Strictly 21+ for all guests. Valid physical ID required for entry.
-                            </p>
-                        </div>
-
-                        {/* Rule 2: Dress Code */}
+                        {/* Slot 1: Dress Code */}
                         <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
                             <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
                                 <Shirt className="w-8 h-8 text-[#C59D24]" />
                             </div>
-                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">Dress Code</h3>
+                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">ELEVATED ATTIRE</h3>
                             <p className="text-zinc-400 font-sans leading-relaxed">
-                                Upscale casual. No athletic wear, jerseys, baggy clothing, or flip-flops.
+                                Fashion-forward, upscale, and creative looks are encouraged. No shorts, tank tops, jerseys, sweatpants, or gym bags. Athletic wear may be denied entry.
                             </p>
                         </div>
 
-                        {/* Rule 3: Behavior */}
+                        {/* Slot 2: Age & Vibe */}
                         <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
                             <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
-                                <Users className="w-8 h-8 text-[#C59D24]" />
+                                <IdCard className="w-8 h-8 text-[#C59D24]" />
                             </div>
-                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">Behavior</h3>
+                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">21+ & VIBE</h3>
                             <p className="text-zinc-400 font-sans leading-relaxed">
-                                Respect the vibe. Management reserves the right to refuse service to anyone.
+                                Strictly 21+ at all times. The atmosphere is Elevated, Eclectic, Social, and Intimate.
                             </p>
                         </div>
 
-                        {/* Rule 4: Reservations */}
+                        {/* Slot 3: Parking */}
                         <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
                             <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
-                                <Ticket className="w-8 h-8 text-[#C59D24]" />
+                                <Car className="w-8 h-8 text-[#C59D24]" />
                             </div>
-                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">Reservations</h3>
+                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">VALET & ARRIVAL</h3>
                             <p className="text-zinc-400 font-sans leading-relaxed">
-                                Reservations are recommended for guaranteed seating. 15-minute grace period.
+                                Valet available for $15 ($5 during Happy Hour). Street parking is also available.
                             </p>
                         </div>
 

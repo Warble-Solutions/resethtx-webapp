@@ -118,21 +118,30 @@ export default async function Footer() {
                     &copy; {new Date().getFullYear()} Reset HTX. All rights reserved.
                 </div>
 
-                <a
-                    href="https://kentagiouskollective.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 transition-opacity"
-                >
-                    <span className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold">Powered by</span>
-                    <Image
-                        src="/logos/kentagious.png"
-                        alt="Kentagious Kollective"
-                        width={120}
-                        height={40}
-                        className="h-6 w-auto object-contain"
-                    />
-                </a>
+                <div className="flex items-center justify-center gap-2 mt-8 md:mt-0">
+                    {/* Static Text */}
+                    <span className="text-zinc-500 text-xs uppercase tracking-widest">Powered by</span>
+
+                    {/* Clickable Link Container */}
+                    <a
+                        href="https://kentagiouskollective.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
+                    >
+                        {/* Logo */}
+                        <img
+                            src="/logos/kentagious.png"
+                            alt="KK Logo"
+                            className="h-6 w-auto object-contain"
+                        />
+
+                        {/* Text Name */}
+                        <span className="text-[#D4AF37] text-xs font-bold tracking-wider uppercase group-hover:underline">
+                            Kentagious Kollective
+                        </span>
+                    </a>
+                </div>
             </div>
         </footer>
     )

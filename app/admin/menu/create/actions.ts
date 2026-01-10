@@ -11,13 +11,13 @@ export async function checkMenuConflict(formData: FormData) {
   const { data } = await supabase
     .from('menu_items')
     .select('name, category')
-    .ilike('name', name) 
+    .ilike('name', name)
     .single()
 
   if (data) {
     return { conflict: true, existingItem: data }
   }
-  
+
   return { conflict: false }
 }
 
@@ -28,6 +28,7 @@ export async function createMenuItem(formData: FormData) {
   const name = formData.get('name') as string
   const price = formData.get('price') as string // <--- REMOVED parseFloat
   const category = formData.get('category') as string
+  const subcategory = formData.get('subcategory') as string | null
   const description = formData.get('description') as string
   const isAvailable = formData.get('is_available') === 'on'
 
@@ -43,14 +44,14 @@ export async function createMenuItem(formData: FormData) {
       .upload(fileName, imageFile)
 
     if (uploadError) {
-        console.error('Upload Error', uploadError)
-        // We continue without image if it fails
+      console.error('Upload Error', uploadError)
+      // We continue without image if it fails
     } else {
-        const { data: publicUrlData } = supabase.storage
+      const { data: publicUrlData } = supabase.storage
         .from('images')
         .getPublicUrl(fileName)
-        
-        imageUrl = publicUrlData.publicUrl
+
+      imageUrl = publicUrlData.publicUrl
     }
   }
 
@@ -61,6 +62,7 @@ export async function createMenuItem(formData: FormData) {
       name,
       price, // Stored as Text now
       category,
+      subcategory,
       description,
       image_url: imageUrl,
       is_available: isAvailable
@@ -71,10 +73,11 @@ export async function createMenuItem(formData: FormData) {
     throw new Error('Failed to create menu item')
   }
 
-  // 4. Redirect
+  // 4. Revalidate
   revalidatePath('/menu')
   revalidatePath('/admin/menu')
-  redirect('/admin/menu')
+
+  return { success: true }
 }
 
 export async function deleteMenuItem(formData: FormData) {
@@ -107,8 +110,9 @@ export async function updateMenuItem(formData: FormData) {
   const name = formData.get('name') as string
   const price = formData.get('price') as string // <--- No parseFloat!
   const category = formData.get('category') as string
+  const subcategory = formData.get('subcategory') as string | null
   const description = formData.get('description') as string
-  
+
   // Checkbox logic: If it's checked, formData returns "on". If unchecked, it returns null.
   const isAvailable = formData.get('is_available') === 'on'
 
@@ -117,13 +121,14 @@ export async function updateMenuItem(formData: FormData) {
     name,
     price, // Stored as Text
     category,
+    subcategory,
     description,
     is_available: isAvailable
   }
 
   // 4. Handle Optional Image Update
   const imageFile = formData.get('image') as File
-  
+
   if (imageFile && imageFile.size > 0) {
     const fileName = `menu-${Date.now()}-${imageFile.name.replace(/\s/g, '-')}`
     const { error: uploadError } = await supabase.storage
@@ -131,13 +136,13 @@ export async function updateMenuItem(formData: FormData) {
       .upload(fileName, imageFile)
 
     if (uploadError) {
-        console.error('Upload Error', uploadError)
+      console.error('Upload Error', uploadError)
     } else {
-        const { data: publicUrlData } = supabase.storage
+      const { data: publicUrlData } = supabase.storage
         .from('images')
         .getPublicUrl(fileName)
-        
-        updateData.image_url = publicUrlData.publicUrl
+
+      updateData.image_url = publicUrlData.publicUrl
     }
   }
 
@@ -152,8 +157,9 @@ export async function updateMenuItem(formData: FormData) {
     throw new Error('Failed to update menu item')
   }
 
-  // 6. Redirect
+  // 6. Revalidate
   revalidatePath('/menu')
   revalidatePath('/admin/menu')
-  redirect('/admin/menu')
+
+  return { success: true }
 }
