@@ -1,0 +1,2 @@
+ALTER TABLE tables 
+ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Available';

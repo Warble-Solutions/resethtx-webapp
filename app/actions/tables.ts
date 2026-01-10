@@ -9,6 +9,7 @@ export interface TableData {
     capacity: number
     x: number
     y: number
+    status?: 'Available' | 'Occupied' | 'Reserved'
 }
 
 // CREATE
