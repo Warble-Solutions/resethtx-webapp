@@ -42,7 +42,7 @@ export default function CreatePromoPage() {
               <button
                 type="button"
                 onClick={generateCode}
-                className="text-xs text-blue-400 hover:text-blue-300 font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"
+                className="text-xs text-[#D4AF37] hover:text-[#b5952f] font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.29 8.7 12 13.44 20.71 8.7" /><line x1="12" y1="22.13" x2="12" y2="13.44" /></svg>
                 Auto-Generate
@@ -55,7 +55,7 @@ export default function CreatePromoPage() {
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               placeholder="e.g. SUMMER2024"
-              className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white placeholder:text-slate-600 uppercase font-mono tracking-wider"
+              className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all text-white placeholder:text-slate-600 uppercase font-mono tracking-wider"
             />
             <p className="text-xs text-slate-500 mt-2">Will be saved in UPPERCASE automatically.</p>
           </div>
@@ -71,7 +71,7 @@ export default function CreatePromoPage() {
                 min="1"
                 max="100"
                 placeholder="15"
-                className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white placeholder:text-slate-600 pl-4 pr-12"
+                className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all text-white placeholder:text-slate-600 pl-4 pr-12"
               />
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400 font-bold">%</div>
             </div>
@@ -80,9 +80,9 @@ export default function CreatePromoPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="mt-4 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-purple-500/20 transition-all w-full disabled:opacity-50 flex items-center justify-center gap-2"
+            className="mt-4 bg-[#D4AF37] text-black font-bold hover:bg-[#b5952f] py-3 px-6 rounded-lg shadow-lg transition-all w-full disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {isLoading && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+            {isLoading && <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />}
             {isLoading ? 'Generating Code...' : 'Create Code'}
           </button>
         </form>

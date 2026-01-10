@@ -16,25 +16,52 @@ export default async function ReservationsPage() {
         .select('*')
         .order('created_at', { ascending: false })
 
-    // 2. Fetch Event Bookings with Joins
-    const { data: eventBookings, error } = await supabase
+    // 2. Fetch Event Bookings (Raw)
+    const { data: rawBookings, error: bookingsError } = await supabase
         .from('event_bookings')
-        .select(`
-            *,
-            events ( title, date ),
-            tables ( table_number, section_name, seats )
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
 
-    if (error) {
-        console.error('Error fetching event bookings:', error)
+    if (bookingsError) {
+        console.error('Error fetching event bookings:', bookingsError)
+    }
+
+    // 3. Manual Join Logic
+    let eventBookings: any[] = []
+
+    if (rawBookings && rawBookings.length > 0) {
+        // Collect IDs
+        const eventIds = Array.from(new Set(rawBookings.map(b => b.event_id).filter(Boolean)))
+        const tableIds = Array.from(new Set(rawBookings.map(b => b.table_id).filter(Boolean)))
+
+        // Fetch Related Data
+        const { data: events } = await supabase
+            .from('events')
+            .select('id, title, date')
+            .in('id', eventIds)
+
+        const { data: tables } = await supabase
+            .from('tables')
+            .select('id, name, category, capacity')
+            .in('id', tableIds)
+
+        // Create Lookups
+        const eventMap = (events || []).reduce((acc: any, e: any) => { acc[e.id] = e; return acc }, {})
+        const tableMap = (tables || []).reduce((acc: any, t: any) => { acc[t.id] = t; return acc }, {})
+
+        // Merge Data
+        eventBookings = rawBookings.map(booking => ({
+            ...booking,
+            events: eventMap[booking.event_id] || null,
+            tables: tableMap[booking.table_id] || null
+        }))
     }
 
     return (
         <div className="max-w-7xl mx-auto p-6 md:p-12">
             <ReservationsClient
                 initialReservations={reservations || []}
-                initialEventBookings={eventBookings || []}
+                initialEventBookings={eventBookings}
             />
         </div>
     )

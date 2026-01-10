@@ -10,8 +10,21 @@ import Link from 'next/link'
 function LoginForm() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
-  
+
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    try {
+      const formData = new FormData(e.currentTarget)
+      await login(formData)
+    } catch (e) {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <SpotlightCard className="max-w-md w-full p-8 z-10">
@@ -30,57 +43,73 @@ function LoginForm() {
         </div>
       )}
 
-      <form className="flex flex-col gap-5">
+      <form onSubmit={handleFormSubmit} className="flex flex-col gap-5">
         <div>
           <label className="block text-sm font-bold text-slate-300 mb-2">Email Address</label>
-          <input 
-            name="email" 
-            type="email" 
-            required 
+          <input
+            name="email"
+            type="email"
+            required
             placeholder="admin@resethtx.com"
-            className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white placeholder:text-slate-600" 
+            className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all text-white placeholder:text-slate-600"
           />
         </div>
-        
+
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="block text-sm font-bold text-slate-300">Password</label>
             {/* Show/Hide Toggle */}
-            <button 
+            <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors"
+              className="text-xs text-slate-500 hover:text-[#D4AF37] font-medium transition-colors"
             >
               {showPassword ? 'Hide Password' : 'Show Password'}
             </button>
           </div>
-          
+
           <div className="relative">
-            <input 
-              name="password" 
-              type={showPassword ? "text" : "password"} 
-              required 
+            <input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              required
               placeholder={showPassword ? "password123" : "••••••••"}
-              className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white placeholder:text-slate-600" 
+              className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all text-white placeholder:text-slate-600"
             />
           </div>
         </div>
 
-        <button 
-          formAction={login} 
-          className="mt-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-3 rounded-lg shadow-lg shadow-purple-500/20 transition-all active:scale-95"
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={`w-full font-bold py-3 rounded transition-all flex items-center justify-center gap-2
+            ${isLoading
+              ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed'
+              : 'bg-[#D4AF37] text-black hover:bg-[#b5952f]'
+            }
+          `}
         >
-          Sign In
+          {isLoading ? (
+            <>
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <span>LOGGING IN...</span>
+            </>
+          ) : (
+            "SIGN IN"
+          )}
         </button>
-        
+
         {/* Forgot Password Link */}
         <div className="text-center mt-2">
-            <Link 
-                href="/admin/forgot-password"
-                className="text-sm text-slate-500 hover:text-slate-300 transition-colors"
-            >
-                Forgot your password?
-            </Link>
+          <Link
+            href="/admin/forgot-password"
+            className="text-sm text-slate-500 hover:text-slate-300 transition-colors"
+          >
+            Forgot your password?
+          </Link>
         </div>
       </form>
     </SpotlightCard>
@@ -91,14 +120,14 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 relative overflow-hidden">
-      
+
       {/* Background Decor */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#D4AF37]/20 rounded-full blur-[100px] pointer-events-none" />
 
       <Suspense>
         <LoginForm />
       </Suspense>
-      
+
       <p className="absolute bottom-6 text-slate-600 text-xs">
         &copy; {new Date().getFullYear()} Reset HTX Admin System
       </p>

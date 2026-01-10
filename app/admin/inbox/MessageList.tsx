@@ -29,7 +29,7 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                     key={msg.id}
                     className={`
                 group cursor-pointer transition-all duration-300
-                ${!msg.is_read ? 'border-l-4 border-l-blue-500 bg-blue-500/5' : 'opacity-70 hover:opacity-100'}
+                ${!msg.is_read ? 'border-l-4 border-l-[#D4AF37] bg-[#D4AF37]/5' : 'opacity-70 hover:opacity-100'}
             `}
                     onClick={() => setSelectedMessage(msg)}
                 >
@@ -38,7 +38,7 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                         {/* Avatar / Icon */}
                         <div className={`
                     w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold shrink-0 transition-colors
-                    ${!msg.is_read ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'bg-slate-800 text-slate-500'}
+                    ${!msg.is_read ? 'bg-[#D4AF37] text-black shadow-lg' : 'bg-slate-800 text-slate-500'}
                 `}>
                             {msg.first_name?.charAt(0).toUpperCase()}
                         </div>
@@ -46,9 +46,9 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-start mb-1">
-                                <h3 className={`text-lg text-white group-hover:text-blue-400 transition-colors truncate pr-4 ${!msg.is_read ? 'font-bold' : 'font-medium'}`}>
+                                <h3 className={`text-lg text-white group-hover:text-[#D4AF37] transition-colors truncate pr-4 ${!msg.is_read ? 'font-bold' : 'font-medium'}`}>
                                     {msg.first_name} {msg.last_name}
-                                    {!msg.is_read && <span className="ml-3 inline-block w-2 h-2 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_#3b82f6]"></span>}
+                                    {!msg.is_read && <span className="ml-3 inline-block w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse shadow-[0_0_10px_#D4AF37]"></span>}
                                 </h3>
                                 <span className="text-xs text-slate-500 whitespace-nowrap font-mono">
                                     {new Date(msg.created_at).toLocaleDateString('en-US', {
@@ -94,7 +94,7 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                                         formData.append('id', msg.id);
                                         await markAsRead(formData);
                                     }}
-                                    className="p-2 text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                                    className="p-2 text-slate-500 hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 rounded-lg transition-colors"
                                     title="Mark Read"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
@@ -127,7 +127,7 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                             <div className="bg-slate-950/50 px-8 py-6 border-b border-slate-800 flex justify-between items-start">
                                 <div>
                                     <h3 className="font-bold text-2xl text-white mb-1">{selectedMessage.first_name} {selectedMessage.last_name}</h3>
-                                    <p className="text-sm text-blue-400 font-mono">{selectedMessage.email}</p>
+                                    <p className="text-sm text-[#D4AF37] font-mono">{selectedMessage.email}</p>
                                     {selectedMessage.inquiry_type && <span className="inline-block mt-2 bg-slate-800 text-[10px] px-2 py-0.5 rounded text-slate-400 border border-slate-700">{selectedMessage.inquiry_type}</span>}
                                 </div>
                                 <button
@@ -149,10 +149,10 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                                 </div>
 
                                 {/* ADMIN REMARKS SECTION */}
-                                <div className="mt-8 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
-                                    <h4 className="text-yellow-500/80 text-xs font-bold uppercase tracking-wider mb-2">Internal Admin Remarks</h4>
+                                <div className="mt-8 p-4 bg-[#D4AF37]/5 border border-[#D4AF37]/20 rounded-xl">
+                                    <h4 className="text-[#D4AF37]/80 text-xs font-bold uppercase tracking-wider mb-2">Internal Admin Remarks</h4>
                                     <textarea
-                                        className="w-full bg-slate-950/50 border border-slate-800 rounded-lg p-3 text-sm text-slate-300 focus:outline-none focus:border-yellow-500/40 transition-colors min-h-[80px]"
+                                        className="w-full bg-slate-950/50 border border-slate-800 rounded-lg p-3 text-sm text-slate-300 focus:outline-none focus:border-[#D4AF37]/40 transition-colors min-h-[80px]"
                                         placeholder="Add internal notes about this inquiry..."
                                         value={selectedMessage.remarks || ''}
                                         onChange={(e) => setSelectedMessage({ ...selectedMessage, remarks: e.target.value })}
@@ -172,7 +172,7 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                                                     alert('Failed to save remark')
                                                 }
                                             }}
-                                            className="text-xs font-bold text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10 px-3 py-1.5 rounded transition-colors"
+                                            className="text-xs font-bold text-[#D4AF37] hover:text-[#b5952f] hover:bg-[#D4AF37]/10 px-3 py-1.5 rounded transition-colors"
                                         >
                                             Save Remark
                                         </button>
@@ -197,7 +197,7 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                                             await markAsRead(formData);
                                             setSelectedMessage(prev => prev ? { ...prev, is_read: true } : null);
                                         }}
-                                        className="px-5 py-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-lg transition-all font-bold text-sm shadow-lg shadow-purple-900/20"
+                                        className="px-5 py-2 bg-[#D4AF37] text-black hover:bg-[#b5952f] rounded-lg transition-all font-bold text-sm shadow-lg"
                                     >
                                         Mark as Read
                                     </button>

@@ -38,7 +38,7 @@ function SpotlightCard({ children, className = "" }: { children: React.ReactNode
                 className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100"
                 style={{
                     opacity: isFocused ? 1 : 0,
-                    background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(59, 130, 246, 0.15), transparent 40%)`,
+                    background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(212, 175, 55, 0.15), transparent 40%)`,
                 }}
             />
             {/* Content */}
@@ -85,7 +85,7 @@ export default function DashboardClient({
                 <motion.h1
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-600"
+                    className="text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-[#D4AF37] to-[#F7E7CE]"
                 >
                     Mission Control
                 </motion.h1>
@@ -98,18 +98,18 @@ export default function DashboardClient({
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-slate-400 font-medium mb-1">Total Events</p>
-                            <h3 className="text-4xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                            <h3 className="text-4xl font-bold text-white group-hover:text-[#D4AF37] transition-colors">
                                 {stats.eventsCount}
                             </h3>
                         </div>
-                        <div className="p-3 bg-blue-500/10 rounded-lg text-blue-400 group-hover:animate-pulse">📅</div>
+                        <div className="p-3 bg-[#D4AF37]/10 rounded-lg text-[#D4AF37] group-hover:animate-pulse">📅</div>
                     </div>
                     <div className="mt-4 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: "70%" }}
                             transition={{ delay: 0.5, duration: 1 }}
-                            className="h-full bg-blue-500"
+                            className="h-full bg-[#D4AF37]"
                         />
                     </div>
                 </SpotlightCard>
@@ -118,18 +118,18 @@ export default function DashboardClient({
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-slate-400 font-medium mb-1">Menu Items</p>
-                            <h3 className="text-4xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                            <h3 className="text-4xl font-bold text-white group-hover:text-[#D4AF37] transition-colors">
                                 {stats.menuCount}
                             </h3>
                         </div>
-                        <div className="p-3 bg-purple-500/10 rounded-lg text-purple-400 group-hover:animate-pulse">🍔</div>
+                        <div className="p-3 bg-[#D4AF37]/10 rounded-lg text-[#D4AF37] group-hover:animate-pulse">🍔</div>
                     </div>
                     <div className="mt-4 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: "50%" }}
                             transition={{ delay: 0.6, duration: 1 }}
-                            className="h-full bg-purple-500"
+                            className="h-full bg-[#D4AF37]"
                         />
                     </div>
                 </SpotlightCard>
@@ -138,18 +138,18 @@ export default function DashboardClient({
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-slate-400 font-medium mb-1">Team Members</p>
-                            <h3 className="text-4xl font-bold text-white group-hover:text-emerald-400 transition-colors">
+                            <h3 className="text-4xl font-bold text-white group-hover:text-[#D4AF37] transition-colors">
                                 {stats.staffCount}
                             </h3>
                         </div>
-                        <div className="p-3 bg-emerald-500/10 rounded-lg text-emerald-400 group-hover:animate-pulse">👥</div>
+                        <div className="p-3 bg-[#D4AF37]/10 rounded-lg text-[#D4AF37] group-hover:animate-pulse">👥</div>
                     </div>
                     <div className="mt-4 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: "80%" }}
                             transition={{ delay: 0.7, duration: 1 }}
-                            className="h-full bg-emerald-500"
+                            className="h-full bg-[#D4AF37]"
                         />
                     </div>
                 </SpotlightCard>
@@ -159,10 +159,10 @@ export default function DashboardClient({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
                 {/* NEXT EVENT - Big Card */}
-                <SpotlightCard className="flex flex-col h-full border-l-4 border-l-purple-500">
+                <SpotlightCard className="flex flex-col h-full border-l-4 border-l-[#D4AF37]">
                     <div className="flex justify-between items-center mb-6 border-b border-slate-800 pb-4">
                         <h3 className="text-xl font-bold text-white">Next Event</h3>
-                        <Link href="/admin/events" className="text-xs text-purple-400 hover:text-purple-300 uppercase tracking-widest font-bold">View All →</Link>
+                        <Link href="/admin/events" className="text-xs text-[#D4AF37] hover:text-white uppercase tracking-widest font-bold">View All →</Link>
                     </div>
 
                     {nextEvent ? (
@@ -176,7 +176,7 @@ export default function DashboardClient({
                                 </motion.div>
                             )}
                             <div className="flex-1">
-                                <span className="inline-block px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold mb-3 border border-purple-500/30">
+                                <span className="inline-block px-3 py-1 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-bold mb-3 border border-[#D4AF37]/50">
                                     UPCOMING
                                 </span>
                                 <h2 className="text-2xl font-bold text-white mb-2">{nextEvent.title}</h2>
@@ -200,10 +200,10 @@ export default function DashboardClient({
                 </SpotlightCard>
 
                 {/* FLOOR STATUS */}
-                <SpotlightCard className="h-full border-l-4 border-l-blue-500">
+                <SpotlightCard className="h-full border-l-4 border-l-[#D4AF37]">
                     <div className="flex justify-between items-center mb-6 border-b border-slate-800 pb-4">
                         <h3 className="text-xl font-bold text-white">Live Floor</h3>
-                        <Link href="/admin/tables" className="text-xs text-blue-400 hover:text-blue-300 uppercase tracking-widest font-bold">Manage Tables →</Link>
+                        <Link href="/admin/tables" className="text-xs text-[#D4AF37] hover:text-white uppercase tracking-widest font-bold">Manage Tables →</Link>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

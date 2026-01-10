@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { createTable, updateTable, deleteTable, TableData } from '@/app/actions/tables'
-import { Plus, Edit2, Trash2, X } from 'lucide-react'
+import { Plus, Edit2, Trash2, X, Users } from 'lucide-react'
 
 interface TableWithId extends TableData {
     id: string
@@ -77,71 +77,193 @@ export default function TableManagerClient({ initialTables }: { initialTables: T
         window.location.reload()
     }
 
+    const [activeTab, setActiveTab] = useState<'setup' | 'live'>('setup')
+
+    const toggleStatus = async (table: TableWithId) => {
+        const statusMap: Record<string, 'Available' | 'Occupied' | 'Reserved'> = {
+            'Available': 'Occupied',
+            'Occupied': 'Reserved',
+            'Reserved': 'Available'
+        }
+
+        const currentStatus = (table.status || 'Available') as 'Available' | 'Occupied' | 'Reserved'
+        const newStatus = statusMap[currentStatus] || 'Available'
+
+        // Optimistic Update
+        const updatedTables = tables.map(t => t.id === table.id ? { ...t, status: newStatus } : t)
+        setTables(updatedTables)
+
+        try {
+            await updateTable(table.id, { status: newStatus })
+        } catch (error) {
+            console.error('Failed to update status', error)
+            setTables(tables) // Revert on error
+        }
+    }
+
     const categories = ['Lounge', 'Dance Floor', 'Dj Booth', 'Patio', 'Table Top']
+
+    const groupedTables = tables.reduce((acc, table) => {
+        const cat = table.category || 'Other'
+        if (!acc[cat]) acc[cat] = []
+        acc[cat].push(table)
+        return acc
+    }, {} as Record<string, TableWithId[]>)
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <h1 className="text-3xl font-bold text-white">Floor Plan Manager</h1>
-                <button
-                    onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-[#D4AF37] hover:bg-white text-black font-bold py-3 px-6 rounded-lg transition-colors shadow-[0_0_15px_rgba(212,175,55,0.3)]"
-                >
-                    <Plus size={18} /> Add Table
-                </button>
-            </div>
 
-            {/* List View */}
-            <div className="bg-[#111] border border-white/10 rounded-xl overflow-hidden">
-                <div className="grid grid-cols-12 gap-4 p-4 border-b border-white/10 bg-white/5 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    <div className="col-span-4">Table Name</div>
-                    <div className="col-span-3">Category</div>
-                    <div className="col-span-2">Capacity</div>
-                    <div className="col-span-2">Position (X,Y)</div>
-                    <div className="col-span-1 text-right">Actions</div>
+                {/* TABS CONTROLLER */}
+                <div className="flex bg-[#111] p-1 rounded-lg border border-white/10">
+                    <button
+                        onClick={() => setActiveTab('setup')}
+                        className={`px-6 py-2 rounded-md text-sm font-bold transition-all ${activeTab === 'setup' ? 'bg-[#D4AF37] text-black shadow-lg' : 'text-slate-400 hover:text-white'}`}
+                    >
+                        Setup Mode
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('live')}
+                        className={`px-6 py-2 rounded-md text-sm font-bold transition-all ${activeTab === 'live' ? 'bg-[#D4AF37] text-black shadow-lg' : 'text-slate-400 hover:text-white'}`}
+                    >
+                        Live Operations
+                    </button>
                 </div>
 
-                {tables.length === 0 ? (
-                    <div className="p-12 text-center text-slate-500">
-                        No tables found. Create one to get started.
-                    </div>
-                ) : (
-                    <div className="divide-y divide-white/5">
-                        {tables.map(table => (
-                            <div key={table.id} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors">
-                                <div className="col-span-4 font-bold text-white text-lg">{table.name}</div>
-                                <div className="col-span-3">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${table.category === 'Lounge' ? 'bg-purple-900/30 text-purple-400 border-purple-800' :
-                                            table.category === 'Patio' ? 'bg-green-900/30 text-green-400 border-green-800' :
-                                                table.category === 'Dance Floor' ? 'bg-pink-900/30 text-pink-400 border-pink-800' :
-                                                    'bg-blue-900/30 text-blue-400 border-blue-800'
-                                        }`}>
-                                        {table.category}
-                                    </span>
-                                </div>
-                                <div className="col-span-2 text-slate-300">{table.capacity} People</div>
-                                <div className="col-span-2 text-slate-500 text-xs font-mono">
-                                    {table.x}%, {table.y}%
-                                </div>
-                                <div className="col-span-1 flex justify-end gap-2">
-                                    <button
-                                        onClick={() => handleOpenModal(table)}
-                                        className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors"
-                                    >
-                                        <Edit2 size={16} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(table.id)}
-                                        className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-900/20 rounded transition-colors"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <div className={activeTab === 'setup' ? '' : 'invisible pointer-events-none'}>
+                    <button
+                        onClick={() => handleOpenModal()}
+                        className="flex items-center gap-2 bg-[#D4AF37] hover:bg-white text-black font-bold py-3 px-6 rounded-lg transition-colors shadow-[0_0_15px_rgba(212,175,55,0.3)]"
+                    >
+                        <Plus size={18} /> Add Table
+                    </button>
+                </div>
             </div>
+
+            {/* --- TAB 1: SETUP MODE --- */}
+            {activeTab === 'setup' && (
+                <div className="bg-[#111] border border-white/10 rounded-xl overflow-hidden animate-in fade-in duration-300">
+                    <div className="grid grid-cols-12 gap-4 p-4 border-b border-white/10 bg-white/5 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <div className="col-span-4">Table Name</div>
+                        <div className="col-span-3">Category</div>
+                        <div className="col-span-2">Capacity</div>
+                        <div className="col-span-2">Position (X,Y)</div>
+                        <div className="col-span-1 text-right">Actions</div>
+                    </div>
+
+                    {tables.length === 0 ? (
+                        <div className="p-12 text-center text-slate-500">
+                            No tables found. Create one to get started.
+                        </div>
+                    ) : (
+                        <div className="divide-y divide-white/5">
+                            {tables.map(table => (
+                                <div key={table.id} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors">
+                                    <div className="col-span-4 font-bold text-white text-lg">{table.name}</div>
+                                    <div className="col-span-3">
+                                        <span className="px-3 py-1 rounded-full text-xs font-bold border bg-[#D4AF37]/20 text-[#D4AF37] border-[#D4AF37]/50">
+                                            {table.category}
+                                        </span>
+                                    </div>
+                                    <div className="col-span-2 text-slate-300">{table.capacity} People</div>
+                                    <div className="col-span-2 text-slate-500 text-xs font-mono">
+                                        {table.x}%, {table.y}%
+                                    </div>
+                                    <div className="col-span-1 flex justify-end gap-2">
+                                        <button
+                                            onClick={() => handleOpenModal(table)}
+                                            className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+                                        >
+                                            <Edit2 size={16} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(table.id)}
+                                            className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-900/20 rounded transition-colors"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* --- TAB 2: LIVE OPERATIONS --- */}
+            {activeTab === 'live' && (
+                <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    {Object.entries(groupedTables).map(([category, catTables]) => (
+                        <div key={category}>
+                            <h3 className="text-2xl font-bold text-white mb-6 border-l-4 border-[#D4AF37] pl-4 uppercase tracking-widest">
+                                {category}
+                            </h3>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                {catTables.map((table) => {
+                                    const status = table.status || 'Available'
+                                    const bgColor =
+                                        status === 'Occupied' ? 'bg-red-900/50 border-red-500' :
+                                            status === 'Reserved' ? 'bg-yellow-900/50 border-yellow-500' :
+                                                'bg-green-900/50 border-green-500' // Available
+
+                                    return (
+                                        <button
+                                            key={table.id}
+                                            onClick={() => toggleStatus(table)}
+                                            className={`relative group bg-black/40 backdrop-blur-md border rounded-xl p-6 transition-all duration-300 cursor-pointer flex flex-col items-center justify-between gap-4 min-h-[180px]
+                                                ${status === 'Occupied'
+                                                    ? 'border-red-500/50 hover:border-red-400 hover:shadow-[0_0_20px_rgba(239,68,68,0.2)]'
+                                                    : status === 'Reserved'
+                                                        ? 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]'
+                                                        : 'border-green-500/50 hover:border-green-400 hover:shadow-[0_0_20px_rgba(34,197,94,0.2)]'
+                                                }
+                                            `}
+                                        >
+                                            {/* Top: Name */}
+                                            <h4 className="text-xl font-bold text-white tracking-widest uppercase truncate w-full text-center">
+                                                {table.name}
+                                            </h4>
+
+                                            {/* Middle: Capacity */}
+                                            <div className="flex items-center gap-2 text-slate-400">
+                                                <Users size={20} />
+                                                <span className="text-lg font-bold">{table.capacity}</span>
+                                            </div>
+
+                                            {/* Bottom: Status */}
+                                            <div className="flex items-center gap-3 mt-2">
+                                                <div className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] ${status === 'Occupied' ? 'bg-red-500 text-red-500' :
+                                                    status === 'Reserved' ? 'bg-amber-500 text-amber-500' :
+                                                        'bg-green-500 text-green-500'
+                                                    }`} />
+                                                <span className={`text-xs font-bold tracking-widest uppercase ${status === 'Occupied' ? 'text-red-500' :
+                                                    status === 'Reserved' ? 'text-amber-500' :
+                                                        'text-green-500'
+                                                    }`}>
+                                                    {status}
+                                                </span>
+                                            </div>
+
+                                            {/* Subtle Glow Background Effect */}
+                                            <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 ${status === 'Occupied' ? 'bg-red-500' :
+                                                status === 'Reserved' ? 'bg-amber-500' :
+                                                    'bg-green-500'
+                                                }`} />
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    ))}
+
+                    {tables.length === 0 && (
+                        <div className="text-center py-20 text-slate-500">
+                            No tables configured. Go to Setup View to add tables.
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Modal */}
             {isModalOpen && (

@@ -20,7 +20,7 @@ export default async function InboxPage() {
           <p className="text-slate-400 mt-1">Read messages from customers.</p>
         </div>
         <div className="bg-slate-900 border border-slate-700 px-4 py-2 rounded-full shadow-lg">
-          <span className="text-blue-400 font-bold">{data?.length || 0}</span>
+          <span className="text-[#D4AF37] font-bold">{data?.length || 0}</span>
           <span className="text-slate-500 text-sm ml-2">Messages</span>
         </div>
       </div>

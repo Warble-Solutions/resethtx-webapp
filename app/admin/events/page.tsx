@@ -56,7 +56,7 @@ export default async function EventsPage({
 
             <Link
               href="/admin/events/create"
-              className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 px-5 rounded-lg transition-all shadow-lg shadow-blue-500/20 whitespace-nowrap flex items-center justify-center"
+              className="flex-1 md:flex-none bg-[#D4AF37] hover:bg-[#b5952f] text-black font-medium py-2.5 px-5 rounded-lg transition-all shadow-lg whitespace-nowrap flex items-center justify-center"
             >
               + Add New
             </Link>
@@ -70,7 +70,7 @@ export default async function EventsPage({
             {query ? `No upcoming events match "${query}"` : "No upcoming events scheduled."}
           </p>
           {!query && (
-            <Link href="/admin/events/create" className="text-blue-400 font-semibold hover:text-blue-300">
+            <Link href="/admin/events/create" className="text-[#D4AF37] font-semibold hover:text-[#b5952f]">
               Create your first event
             </Link>
           )}
@@ -93,7 +93,7 @@ export default async function EventsPage({
 
               {/* Content */}
               <div className="flex-1 flex flex-col px-6 pb-6">
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{event.title}</h3>
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#D4AF37] transition-colors">{event.title}</h3>
                 <p className="text-slate-400 text-sm mb-4 line-clamp-2 flex-1">
                   {event.description || "No description."}
                 </p>

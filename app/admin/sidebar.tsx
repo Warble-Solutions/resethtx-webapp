@@ -71,7 +71,7 @@ export default function Sidebar() {
                             onClick={() => setIsOpen(false)} // Close menu when clicked (mobile)
                             className={`
                 px-4 py-3 rounded-lg transition-colors flex items-center gap-3
-                ${isActive(item.href) ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 text-slate-300'}
+                ${isActive(item.href) ? 'bg-[#D4AF37]/10 text-[#D4AF37]' : 'hover:bg-slate-800 text-slate-300'}
               `}
                         >
                             {item.label}
@@ -82,7 +82,7 @@ export default function Sidebar() {
                 {/* User Profile / Logout (Optional placeholder) */}
                 <div className="p-4 border-t border-slate-800">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold">A</div>
+                        <div className="w-8 h-8 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/50 flex items-center justify-center font-bold">A</div>
                         <div className="text-sm">
                             <p className="font-medium">Admin User</p>
                             {/* Logout Button */}
