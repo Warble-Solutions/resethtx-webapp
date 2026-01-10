@@ -212,25 +212,12 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
                                             </button>
                                         ) : (
                                             /* PAID EVENT - DUAL OPTIONS */
-                                            <div className="flex flex-col gap-3">
-                                                <button
-                                                    onClick={() => setView('purchase')}
-                                                    className="w-full bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm"
-                                                >
-                                                    General Admission (${event.ticket_price})
-                                                </button>
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-[1px] bg-white/10 flex-1"></div>
-                                                    <span className="text-slate-500 text-xs font-bold uppercase">OR</span>
-                                                    <div className="h-[1px] bg-white/10 flex-1"></div>
-                                                </div>
-                                                <button
-                                                    onClick={() => setView('booking')}
-                                                    className="w-full border border-white/20 hover:border-[#D4AF37] text-white hover:text-[#D4AF37] font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm"
-                                                >
-                                                    Book a Table
-                                                </button>
-                                            </div>
+                                            <button
+                                                onClick={() => setView('purchase')}
+                                                className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm"
+                                            >
+                                                GET TICKETS (${event.ticket_price})
+                                            </button>
                                         )}
                                     </>
                                 )}
