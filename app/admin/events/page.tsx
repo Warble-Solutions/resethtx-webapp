@@ -7,11 +7,13 @@ import SearchInput from '@/app/components/SearchInput'
 export default async function EventsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string, created?: string, title?: string }>
 }) {
   const supabase = await createClient()
   const params = await searchParams
   const query = params?.search || ''
+  const createdCount = params?.created
+  const createdTitle = params?.title
 
   // 1. Get current time in ISO format
   const now = new Date().toISOString()
@@ -64,62 +66,82 @@ export default async function EventsPage({
         </div>
       </div>
 
-      {events?.length === 0 ? (
-        <SpotlightCard className="text-center py-20 border-dashed border-slate-700">
-          <p className="text-slate-400 mb-4 text-lg">
-            {query ? `No upcoming events match "${query}"` : "No upcoming events scheduled."}
-          </p>
-          {!query && (
-            <Link href="/admin/events/create" className="text-[#D4AF37] font-semibold hover:text-[#b5952f]">
-              Create your first event
+
+      {/* Success Notification */}
+      {
+        createdCount && (
+          <div className="mb-8 p-4 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-4 animate-in fade-in slide-in-from-top-4 border-l-4 border-l-green-500 shadow-lg shadow-green-900/10 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-green-500/5 group-hover:bg-green-500/10 transition-colors" />
+            <div className="relative w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center text-green-500 text-xl border border-green-500/30">✓</div>
+            <div className="relative">
+              <h3 className="text-white font-bold text-base">Success!</h3>
+              <p className="text-green-200 text-sm">Created <span className="font-bold text-white">{createdCount}</span> events for "<span className="font-italic text-white">{createdTitle || 'Untitled Event'}</span>".</p>
+            </div>
+            <Link href="/admin/events" className="relative ml-auto text-xs font-bold text-green-500 hover:text-white uppercase tracking-wider px-3 py-1 rounded bg-green-500/10 hover:bg-green-500 transition-colors">
+              Dismiss
             </Link>
-          )}
-        </SpotlightCard>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events?.map((event) => (
-            <SpotlightCard key={event.id} className="group flex flex-col p-0 h-full">
-              {/* Image Section */}
-              <div className="h-48 bg-slate-800 relative mb-4 -mx-6 -mt-6 w-[calc(100%+3rem)]">
-                {event.image_url ? (
-                  <img src={event.image_url} alt={event.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-600">No Image</div>
-                )}
-                <div className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full border border-slate-700">
-                  {new Date(event.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
-                </div>
-              </div>
+          </div>
+        )
+      }
 
-              {/* Content */}
-              <div className="flex-1 flex flex-col px-6 pb-6">
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#D4AF37] transition-colors">{event.title}</h3>
-                <p className="text-slate-400 text-sm mb-4 line-clamp-2 flex-1">
-                  {event.description || "No description."}
-                </p>
-
-                <div className="flex items-center justify-between pt-4 border-t border-slate-800 mt-auto">
-                  <span className="text-xs font-bold text-slate-500 bg-slate-800 px-2 py-1 rounded border border-slate-700 whitespace-nowrap">
-                    🎟️ {event.tickets_available} Tickets
-                  </span>
-
-                  <div className="flex items-center gap-4">
-                    <Link href={`/admin/events/${event.id}/edit`} className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-wider">
-                      EDIT
-                    </Link>
-                    <form action={deleteEvent} className="flex">
-                      <input type="hidden" name="id" value={event.id} />
-                      <button type="submit" className="text-xs font-bold text-red-500 hover:text-red-400 transition-colors uppercase tracking-wider">
-                        DELETE
-                      </button>
-                    </form>
+      {
+        events?.length === 0 ? (
+          <SpotlightCard className="text-center py-20 border-dashed border-slate-700">
+            <p className="text-slate-400 mb-4 text-lg">
+              {query ? `No upcoming events match "${query}"` : "No upcoming events scheduled."}
+            </p>
+            {!query && (
+              <Link href="/admin/events/create" className="text-[#D4AF37] font-semibold hover:text-[#b5952f]">
+                Create your first event
+              </Link>
+            )}
+          </SpotlightCard>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {events?.map((event) => (
+              <SpotlightCard key={event.id} className="group flex flex-col p-0 h-full">
+                {/* Image Section */}
+                <div className="h-48 bg-slate-800 relative mb-4 -mx-6 -mt-6 w-[calc(100%+3rem)]">
+                  {event.image_url ? (
+                    <img src={event.image_url} alt={event.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-600">No Image</div>
+                  )}
+                  <div className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full border border-slate-700">
+                    {new Date(event.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
                   </div>
                 </div>
-              </div>
-            </SpotlightCard>
-          ))}
-        </div>
-      )}
-    </div>
+
+                {/* Content */}
+                <div className="flex-1 flex flex-col px-6 pb-6">
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#D4AF37] transition-colors">{event.title}</h3>
+                  <p className="text-slate-400 text-sm mb-4 line-clamp-2 flex-1">
+                    {event.description || "No description."}
+                  </p>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-800 mt-auto">
+                    <span className="text-xs font-bold text-slate-500 bg-slate-800 px-2 py-1 rounded border border-slate-700 whitespace-nowrap">
+                      🎟️ {event.tickets_available} Tickets
+                    </span>
+
+                    <div className="flex items-center gap-4">
+                      <Link href={`/admin/events/${event.id}/edit`} className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-wider">
+                        EDIT
+                      </Link>
+                      <form action={deleteEvent} className="flex">
+                        <input type="hidden" name="id" value={event.id} />
+                        <button type="submit" className="text-xs font-bold text-red-500 hover:text-red-400 transition-colors uppercase tracking-wider">
+                          DELETE
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </SpotlightCard>
+            ))}
+          </div>
+        )
+      }
+    </div >
   )
 }

@@ -11,7 +11,8 @@ export default function CreateEventPage() {
   const [conflict, setConflict] = useState<{ title: string } | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isFeatured, setIsFeatured] = useState(false)
-  const [isExternal, setIsExternal] = useState(false) // <--- NEW STATE
+  const [isExternal, setIsExternal] = useState(false)
+  const [isRecurring, setIsRecurring] = useState(false) // <--- NEW STATE
 
   // Helper to handle compression and creation
   const executeCreate = async (formData: FormData) => {
@@ -102,6 +103,41 @@ export default function CreateEventPage() {
                   <select name="time_ampm" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white"><option value="PM">PM</option><option value="AM">AM</option></select>
                 </div>
               </div>
+            </div>
+
+            {/* Recurrence Settings */}
+            <div className="bg-slate-900 border border-slate-700 rounded-lg p-4 animate-in fade-in duration-500">
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <label htmlFor="recurrence-toggle" className="block text-sm font-bold text-slate-300 cursor-pointer select-none">Weekly Recurrence</label>
+                  <p className="text-xs text-slate-500">Repeat this event every week?</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    id="recurrence-toggle"
+                    type="checkbox"
+                    name="is_recurring" // Form data key
+                    checked={isRecurring}
+                    onChange={(e) => setIsRecurring(e.target.checked)}
+                    className="peer sr-only"
+                  />
+                  <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#D4AF37] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#D4AF37]"></div>
+                </label>
+              </div>
+
+              {isRecurring && (
+                <div className="mt-3 pt-3 border-t border-slate-800 animate-in slide-in-from-top-2 duration-200">
+                  <label className="block text-xs font-bold text-[#D4AF37] mb-2 uppercase tracking-wide">Repeat Until</label>
+                  <input
+                    name="recurrence_end_date"
+                    type="date"
+                    required={isRecurring}
+                    defaultValue={new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0]}
+                    className="w-full bg-slate-950 border border-slate-700 p-2 rounded text-white text-sm"
+                  />
+                  <p className="text-xs text-slate-500 mt-2">Events will be created weekly starting from the selected Date & Time above.</p>
+                </div>
+              )}
             </div>
 
             {/* Event Type Toggle */}

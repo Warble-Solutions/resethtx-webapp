@@ -97,9 +97,16 @@ export async function createEvent(formData: FormData) {
   }
 
   // 4. Insert into DB
-  const { error } = await supabase.from('events').insert({
+  // 4. Handle Recurrence & Insertion
+  const is_recurring = formData.get('is_recurring') === 'on'
+  const recurrence_end_date = formData.get('recurrence_end_date') as string
+
+  const eventsToInsert = []
+
+  // Helper to construct event object
+  const createEventObject = (eventDate: string) => ({
     title,
-    date,
+    date: eventDate,
     time,
     tickets: Number(tickets),
     description,
@@ -113,13 +120,34 @@ export async function createEvent(formData: FormData) {
     category: category
   })
 
+  if (is_recurring && recurrence_end_date) {
+    const start = new Date(date)
+    const end = new Date(recurrence_end_date)
+    const current = new Date(start)
+
+    // Loop until we pass the end date
+    while (current <= end) {
+      // Format as YYYY-MM-DD
+      const isoDate = current.toISOString().split('T')[0]
+      eventsToInsert.push(createEventObject(isoDate))
+
+      // Add 7 days
+      current.setDate(current.getDate() + 7)
+    }
+  } else {
+    // Single Event
+    eventsToInsert.push(createEventObject(date))
+  }
+
+  const { error } = await supabase.from('events').insert(eventsToInsert)
+
   if (error) {
     console.error('Database Error:', error)
     throw new Error('Failed to create event')
   }
 
   revalidatePath('/admin/events')
-  redirect('/admin/events')
+  redirect(`/admin/events?created=${eventsToInsert.length}&title=${encodeURIComponent(title)}`)
 }
 
 export async function deleteEvent(formData: FormData) {

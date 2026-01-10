@@ -17,6 +17,7 @@ interface Event {
     external_url?: string
     ticket_price?: number
     ticket_capacity?: number
+    category?: string // Added category field
 }
 
 export default function EventsContent({ events }: { events: Event[] }) {
@@ -159,7 +160,10 @@ export default function EventsContent({ events }: { events: Event[] }) {
 
                             {/* Info */}
                             <div className="flex-1 text-center md:text-left">
-                                <p className="text-[#D4AF37] text-xs font-bold uppercase mb-1">{formatTime(event.time)}</p>
+                                <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2">
+                                    {event.category || 'Nightlife'}
+                                </div>
+                                <p className="text-slate-500 text-xs font-bold uppercase mb-1">{formatTime(event.time)}</p>
                                 <h3 className="text-xl font-heading font-bold text-white">{event.title}</h3>
                                 <p className="text-slate-500 text-sm line-clamp-1">{event.description}</p>
                             </div>
@@ -197,7 +201,10 @@ export default function EventsContent({ events }: { events: Event[] }) {
                                 </div>
                             </div>
                             <div className="p-6">
-                                <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-1">{formatTime(event.time)}</p>
+                                <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2">
+                                    {event.category || 'Nightlife'}
+                                </div>
+                                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">{formatTime(event.time)}</p>
                                 <h3 className="text-2xl font-heading font-bold text-white leading-tight mb-4">{event.title}</h3>
                                 <div className="flex items-center justify-between border-t border-white/10 pt-4">
                                     <span className="text-slate-500 text-xs uppercase font-bold">{event.tickets > 0 ? `${event.tickets} Tickets` : 'Sold Out'}</span>
