@@ -26,10 +26,14 @@ const SPIRIT_SUBCATEGORIES = [
     'Package'
 ]
 
+import ImageUploadWithCrop from '@/app/components/admin/ImageUploadWithCrop'
+import WordCountTextarea from '@/app/components/admin/WordCountTextarea'
+
 export default function EditMenuForm({ item }: { item: any }) {
     const router = useRouter()
     const [selectedCategory, setSelectedCategory] = useState(item.category)
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [imageFile, setImageFile] = useState<Blob | null>(null)
 
     return (
         <div className="max-w-2xl mx-auto py-10 px-4">
@@ -50,6 +54,23 @@ export default function EditMenuForm({ item }: { item: any }) {
                         setIsSubmitting(true)
                         try {
                             const formData = new FormData(e.currentTarget)
+
+                            // Inject cropped image if available
+                            if (imageFile) {
+                                formData.set('image', imageFile, 'menu-item.jpg')
+                                formData.set('image', imageFile, 'menu-item.jpg')
+                            }
+
+                            // Word Count Logic
+                            const description = formData.get('description') as string
+                            if (description) {
+                                const wordCount = description.trim().split(/\s+/).filter(w => w.length > 0).length
+                                if (wordCount > 50) {
+                                    alert("Please shorten the description to 50 words or less.")
+                                    setIsSubmitting(false)
+                                    return
+                                }
+                            }
 
                             // Clean up empty file inputs
                             const file = formData.get('image') as File
@@ -136,36 +157,23 @@ export default function EditMenuForm({ item }: { item: any }) {
                     {/* Description */}
                     <div>
                         <label className="block text-sm font-bold text-slate-300 mb-2 uppercase">Description</label>
-                        <textarea
+                        <WordCountTextarea
                             name="description"
                             defaultValue={item.description}
                             rows={3}
                             className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white"
-                        ></textarea>
+                        />
                     </div>
-
-                    {/* Current Image Preview */}
-                    {item.image_url && (
-                        <div className="flex items-center gap-4 bg-white/5 p-4 rounded-lg">
-                            <div className="w-16 h-16 relative rounded overflow-hidden">
-                                <Image src={item.image_url} alt="Current" fill className="object-cover" />
-                            </div>
-                            <div className="text-xs text-slate-400">
-                                <p className="font-bold text-white">Current Image</p>
-                                <p>Upload a new file below only if you want to replace this.</p>
-                            </div>
-                        </div>
-                    )}
 
                     {/* Image Upload */}
                     {selectedCategory !== 'Hookah' ? (
                         <div>
-                            <label className="block text-sm font-bold text-slate-300 mb-2 uppercase">New Photo (Optional)</label>
-                            <input
-                                name="image"
-                                type="file"
-                                accept="image/*"
-                                className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#D4AF37] file:text-black hover:file:bg-white transition-all cursor-pointer"
+                            <label className="block text-sm font-bold text-slate-300 mb-2 uppercase">Photo (Optional)</label>
+                            <ImageUploadWithCrop
+                                onImageSelected={setImageFile}
+                                aspectRatio={1}
+                                currentImage={item.image_url || undefined}
+                                name="image_ignore"
                             />
                         </div>
                     ) : (

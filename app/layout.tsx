@@ -6,6 +6,7 @@ import FloatingSocials from './components/FloatingSocials'
 import { Cinzel, Manrope } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from 'nextjs-toploader';
+import AdminHidden from './components/AdminHidden'
 
 // 2. Configure them
 const cinzel = Cinzel({
@@ -52,8 +53,10 @@ export default function RootLayout({
         />
         <Navbar />
         {children}
-        <FloatingSocials />
-        <Footer />
+        <AdminHidden>
+          <FloatingSocials />
+          <Footer />
+        </AdminHidden>
       </body>
     </html>
   );

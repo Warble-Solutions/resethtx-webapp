@@ -107,9 +107,9 @@ export async function bookTable(eventId: string, tableId: string, name: string, 
         // 4. Increment Promo Usage
         const { error: promoError } = await supabase.rpc('increment_promo_usage', { code_input: promoCode.toUpperCase() })
         if (promoError) {
-            const { data: currentPromo } = await supabase.from('promos').select('times_used').eq('code', promoCode.toUpperCase()).single()
+            const { data: currentPromo } = await supabase.from('promo_codes').select('times_used').eq('code', promoCode.toUpperCase()).single()
             if (currentPromo) {
-                await supabase.from('promos').update({ times_used: (currentPromo.times_used || 0) + 1 }).eq('code', promoCode.toUpperCase())
+                await supabase.from('promo_codes').update({ times_used: (currentPromo.times_used || 0) + 1 }).eq('code', promoCode.toUpperCase())
             }
         }
 

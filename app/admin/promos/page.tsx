@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
-import { deletePromo, togglePromoStatus } from './create/actions'
+import { deletePromo, togglePromoStatus } from './actions'
 import Link from 'next/link'
 import SpotlightCard from '@/app/components/SpotlightCard'
 import SearchInput from '@/app/components/SearchInput'
@@ -88,6 +88,16 @@ export default async function PromosPage({
                 </div>
               </div>
 
+              {/* Expiration */}
+              <div className="flex-1 mb-6">
+                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Expires</p>
+                <div className="text-lg font-mono text-white">
+                  {promo.expires_at
+                    ? new Date(promo.expires_at).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })
+                    : 'Never'}
+                </div>
+              </div>
+
               {/* Actions */}
               <div className="flex items-center gap-6 border-t border-slate-800 pt-4 mt-auto">
                 <form action={togglePromoStatus} className="flex">
@@ -97,6 +107,13 @@ export default async function PromosPage({
                     {promo.is_active ? 'DISABLE' : 'ENABLE'}
                   </button>
                 </form>
+
+                <Link
+                  href={`/admin/promos/${promo.id}`}
+                  className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-wider flex items-center"
+                >
+                  EDIT
+                </Link>
 
                 <form action={deletePromo} className="flex ml-auto">
                   <input type="hidden" name="id" value={promo.id} />

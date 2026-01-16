@@ -7,7 +7,7 @@ export async function validatePromo(code: string) {
 
     try {
         const { data, error } = await supabase
-            .from('promos')
+            .from('promo_codes')
             .select('*')
             .eq('code', code.toUpperCase())
             .eq('is_active', true)
@@ -17,10 +17,14 @@ export async function validatePromo(code: string) {
             return { valid: false, message: 'Invalid or expired promo code.' }
         }
 
+        if (data.expires_at && new Date(data.expires_at) < new Date()) {
+            return { valid: false, message: 'This promo code has expired.' }
+        }
+
         return {
             valid: true,
-            discount: data.discount_percent,
-            message: `Success! ${data.discount_percent}% discount applied.`
+            discount: data.discount,
+            message: `Success! ${data.discount}% discount applied.`
         }
 
     } catch (err) {

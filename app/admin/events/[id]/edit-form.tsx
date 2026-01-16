@@ -20,11 +20,16 @@ interface EventData {
   category?: string
 }
 
+import ImageUploadWithCrop from '@/app/components/admin/ImageUploadWithCrop'
+import WordCountTextarea from '@/app/components/admin/WordCountTextarea'
+
 export default function EditEventForm({ event }: { event: EventData }) {
   const formRef = useRef<HTMLFormElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isFeatured, setIsFeatured] = useState(event.is_featured)
-  const [isRecursive, setIsRecursive] = useState(false) // <--- NEW STATE
+  const [isRecursive, setIsRecursive] = useState(false)
+  const [imageFile, setImageFile] = useState<Blob | null>(null)
+  const [featuredImageFile, setFeaturedImageFile] = useState<Blob | null>(null)
 
   // --- SAFETY PARSING START ---
   // 1. Fix Date: Ensure strictly YYYY-MM-DD (strips time/timezone info if present)
@@ -53,15 +58,32 @@ export default function EditEventForm({ event }: { event: EventData }) {
   // --- SAFETY PARSING END ---
 
   const executeUpdate = async (formData: FormData) => {
-    const imageFile = formData.get('image') as File
-    if (imageFile && imageFile.size > 0) {
-      try {
-        const compressed = await compressImage(imageFile)
-        formData.set('image', compressed)
-      } catch (err) {
-        console.error("Compression failed", err)
+    // If we have a cropped blob, use it directly.
+    if (imageFile) {
+      formData.set('image', imageFile, 'image.jpg')
+    } else {
+      // If no new cropped image, check if a regular file was uploaded (fallback) or ignore.
+      // But with our new component, file selection creates a blob in state.
+      // We do strictly need to handle the case where user didn't change image.
+      // If imageFile is null, we assume no change to image unless the hidden input has something (which it won't if controlled by component).
+      // However, the component might set internal state.
+      const fileInput = formData.get('image') as File
+      if (fileInput && fileInput.size > 0 && !imageFile) {
+        // This path shouldn't be hit if ImageUploadWithCrop is used correctly, 
+        // but if they somehow bypassed it:
+        try {
+          const compressed = await compressImage(fileInput)
+          formData.set('image', compressed)
+        } catch (err) {
+          console.error("Compression failed", err)
+        }
       }
     }
+
+    if (featuredImageFile) {
+      formData.set('featured_image', featuredImageFile, 'featured_image.jpg')
+    }
+
     await updateEvent(formData)
   }
 
@@ -70,6 +92,16 @@ export default function EditEventForm({ event }: { event: EventData }) {
     if (!formRef.current) return
     setIsSubmitting(true)
     const formData = new FormData(formRef.current)
+
+    // Word Count Validation
+    const description = formData.get('description') as string
+    const wordCount = description.trim().split(/\s+/).filter(w => w.length > 0).length
+    if (wordCount > 50) {
+      alert("Please shorten the description to 50 words or less.")
+      setIsSubmitting(false)
+      return
+    }
+
     await executeUpdate(formData)
   }
 
@@ -189,20 +221,19 @@ export default function EditEventForm({ event }: { event: EventData }) {
           {/* Description */}
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">Description</label>
-            <textarea name="description" defaultValue={event.description || ''} rows={4} className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white"></textarea>
+            <WordCountTextarea name="description" defaultValue={event.description || ''} rows={4} className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
           </div>
 
           {/* Image */}
           <div className="p-4 border border-dashed border-slate-700 rounded-lg bg-slate-900/50">
-            <label className="block text-sm font-bold text-slate-300 mb-2">Cover Image</label>
-            {event.image_url && (
-              <div className="mb-4 relative h-40 w-full rounded-md overflow-hidden border border-slate-700">
-                <Image src={event.image_url} alt="Current" fill className="object-cover opacity-70" />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white text-xs font-bold uppercase tracking-widest">Current Image</div>
-              </div>
-            )}
-            <input name="image" type="file" accept="image/*" className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37] file:text-black hover:file:bg-white hover:file:text-black cursor-pointer transition-colors" />
-            <p className="text-xs text-slate-500 mt-2">Leave empty to keep the current image.</p>
+            <label className="block text-sm font-bold text-slate-300 mb-2">Cover Image (1:1)</label>
+            <ImageUploadWithCrop
+              onImageSelected={setImageFile}
+              aspectRatio={1}
+              currentImage={event.image_url || undefined}
+              name="image_ignore"
+            />
+            <p className="text-xs text-slate-500 mt-2">Crop to specify the event thumbnail.</p>
           </div>
 
           {/* FEATURED TOGGLE (Fixed with Label) */}
@@ -235,18 +266,16 @@ export default function EditEventForm({ event }: { event: EventData }) {
             <div className="p-4 border border-dashed border-[#D4AF37]/50 rounded-lg bg-[#D4AF37]/5 animate-in fade-in slide-in-from-top-4 duration-300">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">🌟</span>
-                <label className="block text-sm font-bold text-[#D4AF37]">Hero Banner (Landscape)</label>
+                <label className="block text-sm font-bold text-[#D4AF37]">Hero Banner (16:9)</label>
               </div>
 
-              {event.featured_image_url && (
-                <div className="mb-4 relative h-32 w-full rounded-md overflow-hidden border border-[#D4AF37]/30">
-                  <Image src={event.featured_image_url} alt="Current Banner" fill className="object-cover opacity-90" />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white text-xs font-bold uppercase tracking-widest">Current Banner</div>
-                </div>
-              )}
-
-              <input name="featured_image" type="file" accept="image/*" className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37] file:text-black hover:file:bg-white hover:file:text-black cursor-pointer transition-colors" />
-              <p className="text-xs text-slate-500 mt-2">Recommended size: 1920x1080px for best results.</p>
+              <ImageUploadWithCrop
+                onImageSelected={setFeaturedImageFile}
+                aspectRatio={16 / 9}
+                currentImage={event.featured_image_url || undefined}
+                name="featured_image_ignore"
+              />
+              <p className="text-xs text-slate-500 mt-2">Recommended size: 1920x1080px (16:9).</p>
             </div>
           )}
 

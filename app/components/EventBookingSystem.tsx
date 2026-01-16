@@ -40,6 +40,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
     const [promoCode, setPromoCode] = useState('')
     const [isBooking, setIsBooking] = useState(false)
     const [discountApplied, setDiscountApplied] = useState(false)
+    const [discountVal, setDiscountVal] = useState(0)
     const [promoMessage, setPromoMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
     const [bookingError, setBookingError] = useState<string | null>(null)
 
@@ -120,6 +121,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
 
         // Reset Promo State on new selection
         setDiscountApplied(false)
+        setDiscountVal(0)
         setPromoCode('')
         setPromoMessage(null)
         setBookingError(null)
@@ -137,9 +139,11 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
         const result = await validatePromo(promoCode)
         if (result.valid) {
             setDiscountApplied(true)
+            setDiscountVal(result.discount || 0)
             setPromoMessage({ type: 'success', text: result.message || 'Code applied!' })
         } else {
             setDiscountApplied(false)
+            setDiscountVal(0)
             setPromoMessage({ type: 'error', text: result.message || 'Invalid code.' })
         }
     }
@@ -168,6 +172,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
             setCustomerDob('')
             setPromoCode('')
             setDiscountApplied(false)
+            setDiscountVal(0)
             setPromoMessage(null)
             setSelectedTable(null)
             setIsCheckoutOpen(false)
@@ -339,6 +344,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
                 isProcessing={isBooking}
                 error={bookingError}
                 guestDob={customerDob}
+                discountPercent={discountVal}
             >
                 {/* Injection of Form Fields logic */}
                 <div className="space-y-4">

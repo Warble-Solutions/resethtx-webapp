@@ -25,10 +25,14 @@ const SPIRIT_SUBCATEGORIES = [
   'Package'
 ]
 
+import ImageUploadWithCrop from '@/app/components/admin/ImageUploadWithCrop'
+import WordCountTextarea from '@/app/components/admin/WordCountTextarea'
+
 export default function CreateMenuPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0])
+  const [imageFile, setImageFile] = useState<Blob | null>(null)
 
   return (
     <div className="max-w-2xl mx-auto py-10 px-4">
@@ -50,8 +54,27 @@ export default function CreateMenuPage() {
             try {
               const formData = new FormData(e.currentTarget)
 
+              // Inject cropped image if available
+              // Inject cropped image if available
+              if (imageFile) {
+                formData.set('image', imageFile, 'menu-item.jpg')
+              }
+
+              // Word Count Validation
+              const description = formData.get('description') as string
+              if (description) {
+                const wordCount = description.trim().split(/\s+/).filter(w => w.length > 0).length
+                if (wordCount > 50) {
+                  alert("Please shorten the description to 50 words or less.")
+                  setIsSubmitting(false)
+                  return
+                }
+              }
+
               // Clean up empty file inputs to prevent parsing errors
-              const file = formData.get('image') as File
+              // Note: FormData might still have the "image_ignore" or similar if we named it. 
+              // Whatever, createMenuItem handles 'image' key.
+              const file = formData.get('image') as File | Blob
               if (file && file.size === 0) {
                 formData.delete('image')
               }
@@ -63,6 +86,7 @@ export default function CreateMenuPage() {
                 // Reset form immediately
                 form.reset()
                 setSelectedCategory(CATEGORIES[0])
+                setImageFile(null) // Reset local state
 
                 // Navigate back
                 router.refresh()
@@ -137,23 +161,22 @@ export default function CreateMenuPage() {
           {/* Description */}
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2 uppercase">Description</label>
-            <textarea
+            <WordCountTextarea
               name="description"
               rows={3}
               placeholder="Details about ingredients or portion size..."
               className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white"
-            ></textarea>
+            />
           </div>
 
           {/* Image Upload */}
           {selectedCategory !== 'Hookah' ? (
             <div>
               <label className="block text-sm font-bold text-slate-300 mb-2 uppercase">Photo (Optional)</label>
-              <input
-                name="image"
-                type="file"
-                accept="image/*"
-                className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#D4AF37] file:text-black hover:file:bg-white transition-all cursor-pointer"
+              <ImageUploadWithCrop
+                onImageSelected={setImageFile}
+                aspectRatio={1}
+                name="image_ignore"
               />
             </div>
           ) : (

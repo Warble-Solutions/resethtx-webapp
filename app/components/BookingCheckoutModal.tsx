@@ -19,6 +19,7 @@ interface BookingCheckoutModalProps {
     isProcessing: boolean
     error: string | null
     guestDob?: string // Added guestDob for summary display
+    discountPercent?: number
     children?: React.ReactNode // For passing form inputs if needed, or specific checkout fields
 }
 
@@ -31,11 +32,14 @@ export default function BookingCheckoutModal({
     isProcessing,
     error,
     guestDob,
+    discountPercent = 0,
     children
 }: BookingCheckoutModalProps) {
     if (!isOpen || !selectedTable) return null
 
     const BOOKING_FEE = 50.00
+    const discountAmount = (BOOKING_FEE * discountPercent) / 100
+    const finalPrice = BOOKING_FEE - discountAmount
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
@@ -65,8 +69,18 @@ export default function BookingCheckoutModal({
                                 <p className="text-slate-400 text-sm mt-1">{selectedTable.category}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-[#D4AF37] font-bold text-xl">${BOOKING_FEE.toFixed(2)}</p>
-                                <p className="text-xs text-slate-500 uppercase font-bold">Res. Fee</p>
+                                {discountPercent > 0 ? (
+                                    <>
+                                        <p className="text-slate-500 font-bold text-sm line-through decoration-red-500/50">${BOOKING_FEE.toFixed(2)}</p>
+                                        <p className="text-[#D4AF37] font-bold text-xl">${finalPrice.toFixed(2)}</p>
+                                        <p className="text-[10px] text-green-400 uppercase font-bold">{discountPercent}% OFF</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="text-[#D4AF37] font-bold text-xl">${BOOKING_FEE.toFixed(2)}</p>
+                                        <p className="text-xs text-slate-500 uppercase font-bold">Res. Fee</p>
+                                    </>
+                                )}
                             </div>
                         </div>
 
@@ -130,7 +144,7 @@ export default function BookingCheckoutModal({
                                 disabled={isProcessing}
                                 className="flex-[2] bg-[#D4AF37] hover:bg-white text-black font-bold py-4 rounded-lg uppercase tracking-widest text-xs shadow-[0_0_20px_rgba(212,175,55,0.2)] transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {isProcessing ? 'Processing...' : `Pay $${BOOKING_FEE.toFixed(2)} & Complete`}
+                                {isProcessing ? 'Processing...' : `Pay $${finalPrice.toFixed(2)} & Complete`}
                             </button>
                         </div>
                     </form>

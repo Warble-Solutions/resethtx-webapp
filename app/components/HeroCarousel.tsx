@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import HeroSection from './HeroSection'
+import InquireModal from '@/app/components/InquireModal'
+import EventModal from '@/app/components/EventModal'
 
 // Define types for our slides
 type SlideType = 'BRAND' | 'EVENT'
@@ -29,6 +30,10 @@ interface EventSlide extends BaseSlide {
   featured_image_url: string | null
   description: string | null
   category?: string
+  // Add fields needed for EventModal compatibility
+  ticket_price?: number
+  is_external_event?: boolean
+  external_url?: string
 }
 
 type Slide = BrandSlide | EventSlide
@@ -41,6 +46,9 @@ interface Event {
   image_url: string | null
   featured_image_url: string | null
   description: string | null
+  ticket_price?: number
+  is_external_event?: boolean
+  external_url?: string
 }
 
 interface HeroCarouselProps {
@@ -72,6 +80,8 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isInquireOpen, setIsInquireOpen] = useState(false)
+  const [selectedHeroEvent, setSelectedHeroEvent] = useState<Event | null>(null)
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % allSlides.length)
@@ -165,13 +175,15 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
                   {currentSlide.description}
                 </p>
               </div>
+
+              {/* BRAND BUTTONS */}
               <div className="flex gap-4 mt-8 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
-                <Link
-                  href="/reservations"
+                <button
+                  onClick={() => setIsInquireOpen(true)}
                   className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] tracking-widest text-sm uppercase inline-block"
                 >
-                  Book Table
-                </Link>
+                  Plan Your Event
+                </button>
               </div>
             </>
           )}
@@ -204,12 +216,22 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
                 )}
               </div>
 
-              <div className="flex gap-4 mt-8 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
-                <button
-                  onClick={() => onEventClick?.(currentSlide as unknown as Event)}
-                  className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] uppercase tracking-widest text-sm"
+              {/* EVENT BUTTONS */}
+              <div className="flex flex-col sm:flex-row gap-4 mt-8 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
+                {/* Primary: Get Tickets */}
+                <Link
+                  href={`/events/${currentSlide.id}#tickets`}
+                  className="font-sans bg-[#D4AF37] text-black font-bold py-3 px-8 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] uppercase tracking-widest text-sm text-center flex items-center justify-center"
                 >
                   Get Tickets
+                </Link>
+
+                {/* Secondary: View Details */}
+                <button
+                  onClick={() => setSelectedHeroEvent(currentSlide as unknown as Event)}
+                  className="px-8 py-3 border border-white text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all rounded-full text-sm text-center flex items-center justify-center"
+                >
+                  View Details
                 </button>
               </div>
             </>
@@ -231,6 +253,17 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
           ))}
         </div>
       )}
+
+      <InquireModal
+        isOpen={isInquireOpen}
+        onClose={() => setIsInquireOpen(false)}
+      />
+
+      <EventModal
+        event={selectedHeroEvent}
+        isOpen={!!selectedHeroEvent}
+        onClose={() => setSelectedHeroEvent(null)}
+      />
 
     </section>
   )

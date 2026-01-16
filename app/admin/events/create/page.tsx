@@ -6,27 +6,34 @@ import Link from 'next/link'
 import SpotlightCard from '@/app/components/SpotlightCard'
 import { useState, useRef } from 'react'
 
+import ImageUploadWithCrop from '@/app/components/admin/ImageUploadWithCrop'
+import WordCountTextarea from '@/app/components/admin/WordCountTextarea'
+
 export default function CreateEventPage() {
   const formRef = useRef<HTMLFormElement>(null)
   const [conflict, setConflict] = useState<{ title: string } | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isFeatured, setIsFeatured] = useState(false)
   const [isExternal, setIsExternal] = useState(false)
-  const [isRecurring, setIsRecurring] = useState(false) // <--- NEW STATE
+  const [isRecurring, setIsRecurring] = useState(false)
+  const [imageFile, setImageFile] = useState<Blob | null>(null)
+  const [featuredImageFile, setFeaturedImageFile] = useState<Blob | null>(null)
 
   // Helper to handle compression and creation
   const executeCreate = async (formData: FormData) => {
-    // 1. Compression Magic
-    const imageFile = formData.get('image') as File
-    if (imageFile && imageFile.size > 0) {
-      try {
-        const compressed = await compressImage(imageFile)
-        formData.set('image', compressed)
-        console.log(`Compressed: ${(imageFile.size / 1024).toFixed(0)}kb -> ${(compressed.size / 1024).toFixed(0)}kb`)
-      } catch (err) {
-        console.error("Compression failed, using original.", err)
-      }
+    // 1. Compression Magic / Blob Handling
+    // If we have a cropped blob, use it.
+    if (imageFile) {
+      formData.set('image', imageFile, 'image.jpg')
     }
+    if (featuredImageFile) {
+      formData.set('featured_image', featuredImageFile, 'featured_image.jpg')
+    }
+
+    const imageInput = formData.get('image') as File | Blob
+    // We can still try to compress if it's a File, but if it's a Blob directly from canvas it might be optimized enough or we compress it too.
+    // existing compressImage utils might expect a File.
+    // For now let's assume the crop output is fine or rely on existing logic if it operates on Blobs.
 
     // 2. Send to server
     await createEvent(formData)
@@ -40,6 +47,16 @@ export default function CreateEventPage() {
     const formData = new FormData(formRef.current)
 
     // Check for conflict
+    // Start Word Count Check
+    const description = formData.get('description') as string
+    const wordCount = description.trim().split(/\s+/).filter(w => w.length > 0).length
+    if (wordCount > 50) {
+      alert("Please shorten the description to 50 words or less.")
+      setIsSubmitting(false)
+      return
+    }
+    // End Word Count Check
+
     const result = await checkEventConflict(formData)
 
     if (result.conflict) {
@@ -188,13 +205,17 @@ export default function CreateEventPage() {
           {/* Description */}
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">Description</label>
-            <textarea name="description" rows={4} placeholder="What is this event about?" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white"></textarea>
+            <WordCountTextarea name="description" rows={4} placeholder="What is this event about?" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
           </div>
 
           {/* Image */}
           <div className="p-4 border border-dashed border-slate-700 rounded-lg bg-slate-900/50">
-            <label className="block text-sm font-bold text-slate-300 mb-2">Cover Image</label>
-            <input name="image" type="file" accept="image/*" className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37] file:text-black hover:file:bg-white hover:file:text-black cursor-pointer transition-colors" />
+            <label className="block text-sm font-bold text-slate-300 mb-2">Cover Image (1:1)</label>
+            <ImageUploadWithCrop
+              onImageSelected={setImageFile}
+              aspectRatio={1}
+              name="image_ignore" // We handle submission manually, but keep a name to avoid form errors if any
+            />
           </div>
 
           {/* --- NEW FEATURED TOGGLE --- */}
@@ -228,10 +249,14 @@ export default function CreateEventPage() {
             <div className="p-4 border border-dashed border-[#D4AF37]/50 rounded-lg bg-[#D4AF37]/5 animate-in fade-in slide-in-from-top-4 duration-300">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">🌟</span>
-                <label className="block text-sm font-bold text-[#D4AF37]">Hero Banner (Landscape)</label>
+                <label className="block text-sm font-bold text-[#D4AF37]">Hero Banner (16:9)</label>
               </div>
-              <input name="featured_image" type="file" accept="image/*" className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37] file:text-black hover:file:bg-white hover:file:text-black cursor-pointer transition-colors" />
-              <p className="text-xs text-slate-500 mt-2">Recommended size: 1920x1080px for best results.</p>
+              <ImageUploadWithCrop
+                onImageSelected={setFeaturedImageFile}
+                aspectRatio={16 / 9}
+                name="featured_image_ignore"
+              />
+              <p className="text-xs text-slate-500 mt-2">Recommended: High resolution landscape.</p>
             </div>
           )}
           {/* --------------------------- */}
