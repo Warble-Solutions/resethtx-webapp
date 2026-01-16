@@ -9,6 +9,7 @@ import { useReservation } from '../context/ReservationContext'
 const navLinks = [
   { name: 'HOME', href: '/' },
   { name: 'CALENDAR', href: '/events' },
+  { name: 'PRIVATE EVENTS', href: '/private-events' },
   { name: 'MENU', href: '/menu' },
   { name: 'ABOUT', href: '/about' },
   { name: 'CONTACT', href: '/contact' },
@@ -69,12 +70,12 @@ export default function Navbar() {
           </Link>
 
           {/* DESKTOP LINKS */}
-          <div className="hidden md:flex items-center gap-12">
+          <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-xs font-bold tracking-[0.2em] relative py-2 transition-all duration-300 font-sans uppercase
+                className={`text-xs font-bold tracking-[0.2em] relative py-2 transition-all duration-300 font-sans uppercase whitespace-nowrap
                   ${pathname === link.href ? 'text-[#D4AF37]' : 'text-slate-300 hover:text-white'}
                 `}
               >
