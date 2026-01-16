@@ -7,6 +7,7 @@ import { Cinzel, Manrope } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from 'nextjs-toploader';
 import AdminHidden from './components/AdminHidden'
+import { ReservationProvider } from './context/ReservationContext'
 
 // 2. Configure them
 const cinzel = Cinzel({
@@ -51,12 +52,14 @@ export default function RootLayout({
           speed={200}
           shadow="0 0 10px #D4AF37,0 0 5px #D4AF37"
         />
-        <Navbar />
-        {children}
-        <AdminHidden>
-          <FloatingSocials />
-          <Footer />
-        </AdminHidden>
+        <ReservationProvider>
+          <Navbar />
+          {children}
+          <AdminHidden>
+            <FloatingSocials />
+            <Footer />
+          </AdminHidden>
+        </ReservationProvider>
       </body>
     </html>
   );

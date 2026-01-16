@@ -167,3 +167,27 @@ export async function getEventForDate(date: string) {
         return { success: false, error: error.message }
     }
 }
+
+export async function getNextEvent() {
+    const supabase = await createClient()
+
+    try {
+        const { data: events, error } = await supabase
+            .from('events')
+            .select('id, date, title')
+            .gte('date', new Date().toISOString())
+            .order('date', { ascending: true })
+            .limit(1)
+
+        if (error) throw error
+
+        if (events && events.length > 0) {
+            return { success: true, event: events[0] }
+        }
+
+        return { success: false, error: 'No upcoming events found.' }
+    } catch (error: any) {
+        console.error('Error fetching next event:', error)
+        return { success: false, error: error.message }
+    }
+}

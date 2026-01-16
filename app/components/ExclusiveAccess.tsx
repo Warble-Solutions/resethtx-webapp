@@ -3,12 +3,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Crown, Star, Briefcase } from 'lucide-react'
+import { useReservation } from '../context/ReservationContext'
 
 interface ExclusiveAccessProps {
     // onInquire: () => void // Removed as we use Links now
 }
 
 export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
+    const { openReservation } = useReservation()
     const cards = [
         {
             id: 1,
@@ -51,52 +53,60 @@ export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
                         </h2>
                     </div>
 
-                    <Link
-                        href="/reservations"
+                    <button
+                        onClick={openReservation}
                         className="text-[#D4AF37] font-bold text-sm tracking-widest hover:text-white transition-colors group"
                     >
                         Book Table <span className="inline-block transition-transform group-hover:translate-x-1">-&gt;</span>
-                    </Link>
+                    </button>
                 </div>
 
                 {/* Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-                    {cards.map((card) => (
-                        <Link
-                            href={card.buttonText === 'CONTACT US' ? '/contact' : '/reservations'}
-                            key={card.id}
-                            className="group relative h-[450px] w-full overflow-hidden rounded-xl cursor-pointer border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-500 block"
-                        >
-                            {/* Background Image */}
-                            <Image
-                                src={card.image}
-                                alt={card.title}
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
+                    {cards.map((card) => {
+                        const isReservation = card.buttonText !== 'CONTACT US'
+                        const Container = isReservation ? 'button' : Link
+                        const props = isReservation
+                            ? { onClick: openReservation, type: 'button' as const }
+                            : { href: '/contact' }
 
-                            {/* Overlay (Gradient) */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+                        return (
+                            // @ts-ignore
+                            <Container
+                                key={card.id}
+                                {...props}
+                                className="group relative h-[450px] w-full overflow-hidden rounded-xl cursor-pointer border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-500 block text-left"
+                            >
+                                {/* Background Image */}
+                                <Image
+                                    src={card.image}
+                                    alt={card.title}
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
 
-                            {/* Content */}
-                            <div className="absolute bottom-0 left-0 w-full p-8">
+                                {/* Overlay (Gradient) */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
 
-                                {/* Icon Circle */}
-                                <div className="w-10 h-10 bg-[#D4AF37] rounded-full flex items-center justify-center mb-6 shadow-lg shadow-[#D4AF37]/20 group-hover:scale-110 transition-transform duration-300">
-                                    {card.icon}
-                                </div>
+                                {/* Content */}
+                                <div className="absolute bottom-0 left-0 w-full p-8">
 
-                                <h3 className="text-2xl font-bold text-white uppercase mb-3 font-heading tracking-wide">
-                                    {card.title}
-                                </h3>
+                                    {/* Icon Circle */}
+                                    <div className="w-10 h-10 bg-[#D4AF37] rounded-full flex items-center justify-center mb-6 shadow-lg shadow-[#D4AF37]/20 group-hover:scale-110 transition-transform duration-300">
+                                        {card.icon}
+                                    </div>
 
-                                <div className="overflow-hidden h-0 group-hover:h-auto transition-all duration-500 opacity-0 group-hover:opacity-100 mb-0 group-hover:mb-6">
-                                    <p className="text-slate-300 text-sm leading-relaxed">
-                                        {card.description}
-                                    </p>
-                                </div>
+                                    <h3 className="text-2xl font-bold text-white uppercase mb-3 font-heading tracking-wide">
+                                        {card.title}
+                                    </h3>
 
-                                {/* Fallback description visibility for mobile or if logic prefers always visible? 
+                                    <div className="overflow-hidden h-0 group-hover:h-auto transition-all duration-500 opacity-0 group-hover:opacity-100 mb-0 group-hover:mb-6">
+                                        <p className="text-slate-300 text-sm leading-relaxed">
+                                            {card.description}
+                                        </p>
+                                    </div>
+
+                                    {/* Fallback description visibility for mobile or if logic prefers always visible? 
                     Request said "Small gray text (visible on hover or always)". 
                     I'll make it always visible on mobile, hover on desktop for cleaner look, 
                     OR just always visible. Let's make it always visible but subtle, 
@@ -105,19 +115,20 @@ export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
                     Re-reading: "Hover Effect: ... overlay gets darker." 
                     Let's keep description always visible but cleaner.
                 */}
-                                <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2 md:line-clamp-none group-hover:text-white transition-colors">
-                                    {card.description}
-                                </p>
+                                    <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2 md:line-clamp-none group-hover:text-white transition-colors">
+                                        {card.description}
+                                    </p>
 
-                                <div className="flex items-center gap-2 text-[#D4AF37] font-bold text-xs tracking-widest uppercase">
-                                    {card.buttonText} <span className="text-lg leading-none">&gt;</span>
+                                    <div className="flex items-center gap-2 text-[#D4AF37] font-bold text-xs tracking-widest uppercase">
+                                        {card.buttonText} <span className="text-lg leading-none">&gt;</span>
+                                    </div>
+
+                                    {/* Animated Line */}
+                                    <div className="absolute bottom-0 left-0 w-0 h-1 bg-[#D4AF37] transition-all duration-500 group-hover:w-full" />
                                 </div>
-
-                                {/* Animated Line */}
-                                <div className="absolute bottom-0 left-0 w-0 h-1 bg-[#D4AF37] transition-all duration-500 group-hover:w-full" />
-                            </div>
-                        </Link>
-                    ))}
+                            </Container>
+                        )
+                    })}
                 </div>
 
             </div>

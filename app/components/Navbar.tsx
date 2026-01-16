@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { useReservation } from '../context/ReservationContext'
 
 const navLinks = [
   { name: 'HOME', href: '/' },
@@ -17,6 +18,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const { openReservation } = useReservation()
   const pathname = usePathname()
 
   // Handle Scroll Transparency
@@ -47,9 +49,9 @@ export default function Navbar() {
     <>
 
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${scrolled || isOpen
-          ? 'bg-black/95 backdrop-blur-md border-white/10 py-4 shadow-2xl'
-          : 'bg-linear-to-b from-black/80 to-transparent border-transparent py-6'
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled || isOpen
+          ? 'bg-black/95 backdrop-blur-md border-b border-white/10 py-4 shadow-2xl'
+          : 'bg-linear-to-b from-black/80 to-transparent border-b-0 border-transparent py-6'
           }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center relative z-50">
@@ -83,12 +85,12 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <Link
-              href="/reservations"
+            <button
+              onClick={openReservation}
               className="relative overflow-hidden bg-[#D4AF37] text-black font-bold text-xs tracking-[0.2em] px-8 py-3 uppercase transition-all duration-300 hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] hover:scale-105"
             >
               <span className="relative z-10 font-sans">Book Table</span>
-            </Link>
+            </button>
           </div>
 
           {/* MOBILE HAMBURGER BUTTON */}
@@ -127,16 +129,19 @@ export default function Navbar() {
           <div
             className={`mt-8 transition-all duration-500 delay-500 transform ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
           >
-            <Link
-              href="/reservations"
-              onClick={() => setIsOpen(false)}
+            <button
+              onClick={() => {
+                setIsOpen(false)
+                openReservation()
+              }}
               className="bg-[#D4AF37] text-black font-bold text-sm tracking-[0.2em] px-10 py-4 uppercase rounded-full shadow-[0_0_20px_rgba(212,175,55,0.3)]"
             >
               Book Table
-            </Link>
+            </button>
           </div>
         </div>
       </div>
+
     </>
   )
 }
