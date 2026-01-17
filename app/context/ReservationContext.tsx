@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import ReservationModal from '@/app/components/ReservationModal'
+import InquireModal from '@/app/components/InquireModal'
 
 interface ReservationContextType {
     openReservation: () => void
@@ -20,7 +20,7 @@ export function ReservationProvider({ children }: { children: ReactNode }) {
     return (
         <ReservationContext.Provider value={{ openReservation, closeReservation, isReservationOpen }}>
             {children}
-            <ReservationModal isOpen={isReservationOpen} onClose={closeReservation} />
+            <InquireModal isOpen={isReservationOpen} onClose={closeReservation} />
         </ReservationContext.Provider>
     )
 }

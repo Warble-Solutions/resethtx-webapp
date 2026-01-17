@@ -90,7 +90,7 @@ export default function Navbar() {
               onClick={openReservation}
               className="relative overflow-hidden bg-[#D4AF37] text-black font-bold text-xs tracking-[0.2em] px-8 py-3 uppercase transition-all duration-300 hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] hover:scale-105"
             >
-              <span className="relative z-10 font-sans">Book Table</span>
+              <span className="relative z-10 font-sans">Celebrate With Us</span>
             </button>
           </div>
 
@@ -137,7 +137,7 @@ export default function Navbar() {
               }}
               className="bg-[#D4AF37] text-black font-bold text-sm tracking-[0.2em] px-10 py-4 uppercase rounded-full shadow-[0_0_20px_rgba(212,175,55,0.3)]"
             >
-              Book Table
+              Celebrate With Us
             </button>
           </div>
         </div>
