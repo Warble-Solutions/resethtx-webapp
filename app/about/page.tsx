@@ -104,120 +104,118 @@ export default function AboutPage() {
                         <p className="font-sans text-slate-400 text-lg leading-relaxed mb-8">
                             Step out onto our expansive terrace, where the energy of the city serves as your backdrop. It’s the perfect vantage point to watch Houston light up. Whether you are enjoying a cigar in our designated smoking area or sipping a chilled glass of champagne, the patio offers a breath of fresh air without leaving the party.
                         </p>
-                        The patio offers a breath of fresh air without leaving the party.
-                    </p>
-                    <BookTableButton />
-                </div>
-
-                {/* Image Side */}
-                <div className="relative h-[600px] w-full rounded-2xl overflow-hidden border border-white/10 group hover:border-[#C59D24]/30 transition-colors duration-500">
-                    <Image
-                        src="/images/event-2.png" // Use a patio/exterior shot
-                        alt="The Patio"
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-[1500ms] ease-out"
-                    />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div>
-                </div>
-
-            </div>
-        </section>
-
-
-            {/* 5. THE EXPERIENCE (3 Pillars) */ }
-    <section className="py-32 px-6">
-        <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-                <h2 className="font-heading text-4xl md:text-5xl text-white mb-4">The Experience</h2>
-                <p className="text-slate-500 font-sans max-w-2xl mx-auto">Three pillars that define every night at Reset HTX.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                {/* Pillar 1 */}
-                <div className="bg-[#111] p-10 rounded-xl border border-white/5 hover:border-[#C59D24]/50 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-[#C59D24]/10 group">
-                    <h3 className="text-[#C59D24] font-heading text-2xl mb-4 group-hover:text-white transition-colors">Sonic Identity</h3>
-                    <p className="font-sans text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
-                        We don't play background music. We curate soundscapes. From deep house grooves to soulful R&B, our residents are chosen for their ability to read a room, not just a playlist.
-                    </p>
-                </div>
-                {/* Pillar 2 */}
-                <div className="bg-[#111] p-10 rounded-xl border border-white/5 hover:border-[#C59D24]/50 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-[#C59D24]/10 group md:-translate-y-8">
-                    <h3 className="text-[#C59D24] font-heading text-2xl mb-4 group-hover:text-white transition-colors">Mixology</h3>
-                    <p className="font-sans text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
-                        Our bar program is rooted in classics but finished with a modern twist. Expect hand-cut ice, premium spirits, and botanicals sourced specifically for our menu.
-                    </p>
-                </div>
-                {/* Pillar 3 */}
-                <div className="bg-[#111] p-10 rounded-xl border border-white/5 hover:border-[#C59D24]/50 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-[#C59D24]/10 group">
-                    <h3 className="text-[#C59D24] font-heading text-2xl mb-4 group-hover:text-white transition-colors">Hospitality</h3>
-                    <p className="font-sans text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
-                        Service is an art form. Our staff is trained to anticipate needs before they arise, ensuring your glass is never empty and your night is never interrupted.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-    {/* 6. HOUSE RULES (Redesigned) */ }
-    <section className="py-24 bg-[#050505] border-t border-white/5 relative overflow-hidden">
-        {/* Watermark */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none opacity-5">
-            <img src="/logos/r_logo.png" alt="Brand" className="w-[600px] opacity-20" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-            {/* Header */}
-            <div className="text-center mb-16">
-                <h2 className="font-heading text-4xl md:text-5xl font-bold text-[#C59D24] uppercase tracking-widest mb-4">House Rules</h2>
-                <p className="font-sans text-slate-500 text-lg max-w-2xl mx-auto">
-                    To ensure a premium experience for all guests, we ask that you adhere to the following standards.
-                </p>
-            </div>
-
-            {/* Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-
-                {/* Slot 1: Dress Code */}
-                <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
-                    <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
-                        <Shirt className="w-8 h-8 text-[#C59D24]" />
+                        <BookTableButton />
                     </div>
-                    <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">ELEVATED ATTIRE</h3>
-                    <p className="text-zinc-400 font-sans leading-relaxed">
-                        Fashion-forward, upscale, and creative looks are encouraged. No shorts, tank tops, jerseys, sweatpants, or gym bags. Athletic wear may be denied entry.
-                    </p>
-                </div>
 
-                {/* Slot 2: Age & Vibe */}
-                <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
-                    <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
-                        <IdCard className="w-8 h-8 text-[#C59D24]" />
+                    {/* Image Side */}
+                    <div className="relative h-[600px] w-full rounded-2xl overflow-hidden border border-white/10 group hover:border-[#C59D24]/30 transition-colors duration-500">
+                        <Image
+                            src="/images/event-2.png" // Use a patio/exterior shot
+                            alt="The Patio"
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-[1500ms] ease-out"
+                        />
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div>
                     </div>
-                    <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">21+ & VIBE</h3>
-                    <p className="text-zinc-400 font-sans leading-relaxed">
-                        Strictly 21+ at all times. The atmosphere is Elevated, Eclectic, Social, and Intimate.
-                    </p>
-                </div>
 
-                {/* Slot 3: Parking */}
-                <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
-                    <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
-                        <Car className="w-8 h-8 text-[#C59D24]" />
+                </div>
+            </section>
+
+
+            {/* 5. THE EXPERIENCE (3 Pillars) */}
+            <section className="py-32 px-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-20">
+                        <h2 className="font-heading text-4xl md:text-5xl text-white mb-4">The Experience</h2>
+                        <p className="text-slate-500 font-sans max-w-2xl mx-auto">Three pillars that define every night at Reset HTX.</p>
                     </div>
-                    <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">VALET & ARRIVAL</h3>
-                    <p className="text-zinc-400 font-sans leading-relaxed">
-                        Valet available for $15 ($5 during Happy Hour). Street parking is also available.
-                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        {/* Pillar 1 */}
+                        <div className="bg-[#111] p-10 rounded-xl border border-white/5 hover:border-[#C59D24]/50 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-[#C59D24]/10 group">
+                            <h3 className="text-[#C59D24] font-heading text-2xl mb-4 group-hover:text-white transition-colors">Sonic Identity</h3>
+                            <p className="font-sans text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
+                                We don't play background music. We curate soundscapes. From deep house grooves to soulful R&B, our residents are chosen for their ability to read a room, not just a playlist.
+                            </p>
+                        </div>
+                        {/* Pillar 2 */}
+                        <div className="bg-[#111] p-10 rounded-xl border border-white/5 hover:border-[#C59D24]/50 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-[#C59D24]/10 group md:-translate-y-8">
+                            <h3 className="text-[#C59D24] font-heading text-2xl mb-4 group-hover:text-white transition-colors">Mixology</h3>
+                            <p className="font-sans text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
+                                Our bar program is rooted in classics but finished with a modern twist. Expect hand-cut ice, premium spirits, and botanicals sourced specifically for our menu.
+                            </p>
+                        </div>
+                        {/* Pillar 3 */}
+                        <div className="bg-[#111] p-10 rounded-xl border border-white/5 hover:border-[#C59D24]/50 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-[#C59D24]/10 group">
+                            <h3 className="text-[#C59D24] font-heading text-2xl mb-4 group-hover:text-white transition-colors">Hospitality</h3>
+                            <p className="font-sans text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
+                                Service is an art form. Our staff is trained to anticipate needs before they arise, ensuring your glass is never empty and your night is never interrupted.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            {/* 6. HOUSE RULES (Redesigned) */}
+            <section className="py-24 bg-[#050505] border-t border-white/5 relative overflow-hidden">
+                {/* Watermark */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none opacity-5">
+                    <img src="/logos/r_logo.png" alt="Brand" className="w-[600px] opacity-20" />
                 </div>
 
-            </div>
-        </div>
-    </section>
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    {/* Header */}
+                    <div className="text-center mb-16">
+                        <h2 className="font-heading text-4xl md:text-5xl font-bold text-[#C59D24] uppercase tracking-widest mb-4">House Rules</h2>
+                        <p className="font-sans text-slate-500 text-lg max-w-2xl mx-auto">
+                            To ensure a premium experience for all guests, we ask that you adhere to the following standards.
+                        </p>
+                    </div>
+
+                    {/* Cards Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+
+                        {/* Slot 1: Dress Code */}
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
+                            <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
+                                <Shirt className="w-8 h-8 text-[#C59D24]" />
+                            </div>
+                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">ELEVATED ATTIRE</h3>
+                            <p className="text-zinc-400 font-sans leading-relaxed">
+                                Fashion-forward, upscale, and creative looks are encouraged. No shorts, tank tops, jerseys, sweatpants, or gym bags. Athletic wear may be denied entry.
+                            </p>
+                        </div>
+
+                        {/* Slot 2: Age & Vibe */}
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
+                            <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
+                                <IdCard className="w-8 h-8 text-[#C59D24]" />
+                            </div>
+                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">21+ & VIBE</h3>
+                            <p className="text-zinc-400 font-sans leading-relaxed">
+                                Strictly 21+ at all times. The atmosphere is Elevated, Eclectic, Social, and Intimate.
+                            </p>
+                        </div>
+
+                        {/* Slot 3: Parking */}
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-xl flex flex-col items-center text-center hover:border-[#C59D24] transition-colors duration-300 group">
+                            <div className="mb-6 p-4 bg-[#C59D24]/10 rounded-full group-hover:bg-[#C59D24]/20 transition-colors">
+                                <Car className="w-8 h-8 text-[#C59D24]" />
+                            </div>
+                            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">VALET & ARRIVAL</h3>
+                            <p className="text-zinc-400 font-sans leading-relaxed">
+                                Valet available for $15 ($5 during Happy Hour). Street parking is also available.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
 
 
-    {/* 7. PRIVATE EVENTS CTA */ }
-    <PrivateEventsAboutSection />
+            {/* 7. PRIVATE EVENTS CTA */}
+            <PrivateEventsAboutSection />
 
         </main >
     )
