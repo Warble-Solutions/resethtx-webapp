@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react'
 import SpotlightCard from '@/app/components/SpotlightCard'
 import { uploadImage, deleteImage, getGalleryImages } from '@/app/actions/gallery'
+import { createClient } from '@/utils/supabase/client'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 interface GalleryImage {
     id: string
@@ -13,8 +15,11 @@ interface GalleryImage {
 
 export default function AdminGalleryPage() {
     const [images, setImages] = useState<GalleryImage[]>([])
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([])
     const [isUploading, setIsUploading] = useState(false)
     const [isDeleting, setIsDeleting] = useState<string | null>(null)
+    const router = useRouter()
+    const supabase = createClient()
 
     // Fetch images on mount
     useEffect(() => {
@@ -26,23 +31,60 @@ export default function AdminGalleryPage() {
         setImages(data || [])
     }
 
-    async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files?.[0]
-        if (!file) return
-
-        setIsUploading(true)
-        const formData = new FormData()
-        formData.append('file', file)
-
-        const res = await uploadImage(formData)
-        if (res.success) {
-            await loadImages() // Refresh list
-            // Reset input
-            e.target.value = ''
-        } else {
-            alert('Upload Failed: ' + res.error)
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const files = Array.from(e.target.files)
+            setSelectedFiles(files)
         }
-        setIsUploading(false)
+    }
+
+    const handleUpload = async () => {
+        if (selectedFiles.length === 0) return
+        setIsUploading(true)
+
+        try {
+            // 1. Upload Images to Storage & Get URLs
+            const uploadPromises = selectedFiles.map(async (file) => {
+                const fileExt = file.name.split('.').pop()
+                const fileName = `gallery-${Date.now()}-${Math.random()}.${fileExt}`
+
+                const { error: uploadError } = await supabase.storage
+                    .from('gallery')
+                    .upload(fileName, file)
+
+                if (uploadError) throw uploadError
+
+                // Get Public URL
+                const { data } = supabase.storage.from('gallery').getPublicUrl(fileName)
+                return data.publicUrl
+            })
+
+            const uploadedUrls = await Promise.all(uploadPromises)
+
+            // 2. Insert into Database (Batch Insert)
+            const dbRows = uploadedUrls.map(url => ({
+                image_url: url,
+                created_at: new Date().toISOString(),
+            }))
+
+            const { error: dbError } = await supabase
+                .from('gallery_images')
+                .insert(dbRows)
+
+            if (dbError) throw dbError
+
+            // 3. Reset
+            alert(`Success! ${uploadedUrls.length} photos added.`)
+            setSelectedFiles([])
+            await loadImages()
+            router.refresh()
+
+        } catch (error) {
+            console.error(error)
+            alert("Error uploading photos")
+        } finally {
+            setIsUploading(false)
+        }
     }
 
     async function handleDelete(id: string, url: string) {
@@ -67,15 +109,30 @@ export default function AdminGalleryPage() {
                 </div>
 
                 {/* Upload Button */}
-                <div className="relative">
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleUpload}
-                        disabled={isUploading}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                    />
-                    <button className="bg-[#D4AF37] text-black font-bold py-2 px-6 rounded-lg hover:bg-white transition-colors flex items-center gap-2">
+                <div className="flex items-center gap-4">
+                    <div className="relative">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleFileSelect}
+                            disabled={isUploading}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                            id="file-input"
+                        />
+                        <label
+                            htmlFor="file-input"
+                            className="bg-slate-800 text-white py-2 px-4 rounded-lg cursor-pointer hover:bg-slate-700 transition-colors border border-slate-700 block"
+                        >
+                            {selectedFiles.length > 0 ? `${selectedFiles.length} photos selected` : "Select Photos"}
+                        </label>
+                    </div>
+
+                    <button
+                        onClick={handleUpload}
+                        disabled={isUploading || selectedFiles.length === 0}
+                        className="bg-[#D4AF37] text-black font-bold py-2 px-6 rounded-lg hover:bg-white transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
                         {isUploading ? (
                             <>
                                 <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -84,7 +141,7 @@ export default function AdminGalleryPage() {
                         ) : (
                             <>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
-                                Add Photo
+                                Upload
                             </>
                         )}
                     </button>
