@@ -72,7 +72,7 @@ export default function UpcomingEventsSection({ events }: { events: Event[] }) {
                   className="group relative flex flex-col bg-[#1e293b] rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                 >
                   {/* 1. IMAGE SECTION (Top Half) */}
-                  <div className="relative h-48 w-full overflow-hidden">
+                  <div className="relative aspect-square w-full overflow-hidden">
                     {event.image_url ? (
                       <Image
                         src={event.image_url}

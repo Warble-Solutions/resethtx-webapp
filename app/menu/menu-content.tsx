@@ -24,6 +24,12 @@ const CATEGORIES = [
     'Hookah'
 ]
 
+const formatPrice = (price: string | number) => {
+    // If it's already got a $, leave it. If it's "MP", leave it.
+    if (String(price).includes('$') || String(price).toLowerCase() === 'mp') return price;
+    return `$${price}`;
+};
+
 export default function MenuContent({ items }: { items: MenuItem[] }) {
     // Default to first category
     const [activeTab, setActiveTab] = useState(CATEGORIES[0])
@@ -116,7 +122,7 @@ export default function MenuContent({ items }: { items: MenuItem[] }) {
                                         </h3>
                                         <div className="flex-grow border-b border-dotted border-white/20 mx-2 opacity-30"></div>
                                         <span className="font-heading font-bold text-white text-xl">
-                                            {item.price}
+                                            {formatPrice(item.price)}
                                         </span>
                                     </div>
                                     {item.description && (
@@ -188,7 +194,7 @@ export default function MenuContent({ items }: { items: MenuItem[] }) {
                             <div className="p-8">
                                 <div className="flex justify-between items-center mb-6">
                                     <h3 className="font-heading text-3xl font-bold text-white">{selectedItem.name}</h3>
-                                    <span className="text-2xl text-[#D4AF37] font-bold font-heading">{selectedItem.price}</span>
+                                    <span className="text-2xl text-[#D4AF37] font-bold font-heading">{formatPrice(selectedItem.price)}</span>
                                 </div>
 
                                 <div className="prose prose-invert prose-sm">
@@ -245,7 +251,7 @@ function MenuItemCard({ item, onClick }: { item: MenuItem, onClick: () => void }
                         {item.name}
                     </h3>
                     <span className="text-[#D4AF37] font-bold text-lg leading-tight whitespace-nowrap">
-                        {item.price}
+                        {formatPrice(item.price)}
                     </span>
                 </div>
 

@@ -102,7 +102,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
                                         </span>
                                     </div>
 
-                                    <div className="flex-1 flex flex-col w-full h-full pt-8">
+                                    <div className="flex-1 flex flex-col w-full h-full">
                                         {dayEvents.length > 0 ? (
                                             dayEvents.map(ev => (
                                                 <div
@@ -154,7 +154,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
                             </div>
 
                             {/* Image (Small) */}
-                            <div className="relative w-full md:w-40 h-24 rounded-lg overflow-hidden hidden md:block">
+                            <div className="relative w-full md:w-40 aspect-square rounded-lg overflow-hidden hidden md:block">
                                 {event.image_url && <Image src={event.image_url} alt={event.title} fill className="object-cover" />}
                             </div>
 
@@ -189,7 +189,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
                             onClick={() => setSelectedEvent(event)}
                             className="group bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden hover:border-[#D4AF37]/50 transition-all duration-300 hover:-translate-y-2 cursor-pointer"
                         >
-                            <div className="relative h-64 w-full overflow-hidden">
+                            <div className="relative aspect-square w-full overflow-hidden">
                                 {event.image_url ? (
                                     <Image src={event.image_url} alt={event.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                                 ) : (

@@ -155,7 +155,7 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
                 {view === 'details' && (
                     <div className="flex flex-col md:flex-row items-stretch h-full min-h-0 overflow-y-auto md:overflow-hidden pb-12 md:pb-0">
                         {/* Image */}
-                        <div className="w-full md:w-1/2 relative min-h-[300px]">
+                        <div className="w-full md:w-1/2 relative aspect-square">
                             {event.image_url ? (
                                 <Image
                                     src={event.image_url}

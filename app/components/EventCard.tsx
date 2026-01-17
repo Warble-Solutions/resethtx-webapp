@@ -25,7 +25,7 @@ const EventCard: React.FC<EventCardProps> = ({
   return (
     <div className="bg-[#1E293B] rounded-2xl overflow-hidden flex flex-col h-full group border border-white/5 hover:border-[#D4AF37]/50 transition-all duration-300">
       {/* Image Container */}
-      <div className="relative h-64 w-full overflow-hidden">
+      <div className="relative aspect-square w-full overflow-hidden">
         <Image
           src={imageUrl}
           alt={title}
