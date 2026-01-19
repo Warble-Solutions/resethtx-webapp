@@ -4,12 +4,14 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isToday } from 'date-fns'
 import EventModal from '../components/EventModal'
+import { formatEventTime } from '../utils/format'
 
 interface Event {
     id: string
     title: string
     date: string
     time: string | null
+    end_time?: string | null
     image_url: string | null
     description: string | null
     tickets: number
@@ -37,14 +39,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
     const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1))
     const getEventsForDay = (day: Date) => events.filter(e => isSameDay(new Date(e.date), day))
 
-    const formatTime = (timeString: string | null) => {
-        if (!timeString) return 'TBA'
-        const [h, m] = timeString.split(':')
-        const hour = parseInt(h)
-        const ampm = hour >= 12 ? 'PM' : 'AM'
-        const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour)
-        return `${displayHour}:${m} ${ampm}`
-    }
+
 
     return (
         <div>
@@ -123,7 +118,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
 
                                                     <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-2 pointer-events-none">
                                                         <span className="text-[#D4AF37] text-[10px] font-bold uppercase leading-none mb-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
-                                                            {formatTime(ev.time)}
+                                                            {formatEventTime(ev.time, ev.end_time)}
                                                         </span>
                                                         <p className="font-heading text-xs md:text-sm text-white truncate w-full leading-tight shadow-black drop-shadow-md">
                                                             {ev.title}
@@ -163,7 +158,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
                                 <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2">
                                     {event.category || 'Nightlife'}
                                 </div>
-                                <p className="text-slate-500 text-xs font-bold uppercase mb-1">{formatTime(event.time)}</p>
+                                <p className="text-slate-500 text-xs font-bold uppercase mb-1">{formatEventTime(event.time, event.end_time)}</p>
                                 <h3 className="text-xl font-heading font-bold text-white">{event.title}</h3>
                                 <p className="text-slate-500 text-sm line-clamp-1">{event.description}</p>
                             </div>
@@ -204,7 +199,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
                                 <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2">
                                     {event.category || 'Nightlife'}
                                 </div>
-                                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">{formatTime(event.time)}</p>
+                                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">{formatEventTime(event.time, event.end_time)}</p>
                                 <h3 className="text-2xl font-heading font-bold text-white leading-tight mb-4">{event.title}</h3>
                                 <div className="flex items-center justify-between border-t border-white/10 pt-4">
                                     <span className="text-slate-500 text-xs uppercase font-bold">{event.tickets > 0 ? `${event.tickets} Tickets` : 'Sold Out'}</span>

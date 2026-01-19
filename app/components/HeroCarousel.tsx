@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { formatEventTime } from '../utils/format'
 import InquireModal from '@/app/components/InquireModal'
 import EventModal from '@/app/components/EventModal'
 
@@ -27,6 +28,7 @@ interface EventSlide extends BaseSlide {
   title: string
   date: string
   time: string | null
+  end_time?: string | null
   featured_image_url: string | null
   description: string | null
   category?: string
@@ -43,6 +45,7 @@ interface Event {
   title: string
   date: string
   time: string | null
+  end_time?: string | null
   image_url: string | null
   featured_image_url: string | null
   description: string | null
@@ -97,15 +100,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
 
   const currentSlide = allSlides[currentIndex]
 
-  // Helper for Event Time Display
-  const getEventTime = (timeStr: string | null) => {
-    if (!timeStr) return "9:00 PM"
-    const [h, m] = timeStr.split(':')
-    const hour = parseInt(h)
-    const ampm = hour >= 12 ? 'PM' : 'AM'
-    const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour)
-    return `${displayHour}:${m} ${ampm}`
-  }
+
 
   const getEventDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -205,7 +200,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
                   </span>
                   <span className="hidden md:inline w-1 h-1 bg-slate-500 rounded-full"></span>
                   <span className="flex items-center gap-2">
-                    <span className="text-[#D4AF37]">⏰</span> {getEventTime(currentSlide.time)}
+                    <span className="text-[#D4AF37]">⏰</span> {formatEventTime(currentSlide.time, currentSlide.end_time)}
                   </span>
                 </div>
 

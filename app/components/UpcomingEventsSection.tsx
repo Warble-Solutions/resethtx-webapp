@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import EventModal from './EventModal'
+import { formatEventTime } from '../utils/format'
 
 // 1. Define the Interface
 interface Event {
@@ -11,6 +12,7 @@ interface Event {
   title: string
   date: string
   time: string | null
+  end_time?: string | null
   image_url: string | null
   description: string | null
   tickets: number
@@ -60,7 +62,6 @@ export default function UpcomingEventsSection({ events }: { events: Event[] }) {
             featuredEvents.map((event) => {
               const dateObj = new Date(event.date)
               const dateStr = dateObj.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" })
-              const timeStr = event.time ? event.time : "9:00 PM"
 
               return (
                 <div
@@ -97,7 +98,7 @@ export default function UpcomingEventsSection({ events }: { events: Event[] }) {
 
                     {/* Date Line */}
                     <div className="text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest mb-2 font-sans">
-                      {dateStr} • {timeStr}
+                      {dateStr} • {formatEventTime(event.time, event.end_time)}
                     </div>
 
                     {/* Title */}

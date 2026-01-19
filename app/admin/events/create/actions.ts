@@ -60,6 +60,19 @@ export async function createEvent(formData: FormData) {
   if (time_ampm === 'AM' && hour === 12) hour = 0
   const time = `${hour.toString().padStart(2, '0')}:${time_minute}:00`
 
+  // 2b. Handle End Time Construction (Optional)
+  const end_time_hour = formData.get('end_time_hour') as string
+  const end_time_minute = formData.get('end_time_minute') as string
+  const end_time_ampm = formData.get('end_time_ampm') as string
+  let end_time: string | null = null
+
+  if (end_time_hour && end_time_minute && end_time_ampm) {
+    let eh = parseInt(end_time_hour)
+    if (end_time_ampm === 'PM' && eh !== 12) eh += 12
+    if (end_time_ampm === 'AM' && eh === 12) eh = 0
+    end_time = `${eh.toString().padStart(2, '0')}:${end_time_minute}:00`
+  }
+
   // 3. Upload Image (if exists)
   let publicUrl = null
   if (imageFile && imageFile.size > 0) {
@@ -108,6 +121,7 @@ export async function createEvent(formData: FormData) {
     title,
     date: eventDate,
     time,
+    end_time,
     tickets: Number(tickets),
     description,
     image_url: publicUrl,

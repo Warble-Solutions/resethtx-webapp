@@ -2,12 +2,14 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { formatTime } from '../utils/format'
 
 interface Event {
     id: string
     title: string
     date: string
     time: string | null
+    end_time?: string | null
     image_url: string | null
     featured_image_url?: string | null
     description?: string | null
@@ -112,7 +114,7 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
                                             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                                             <div className="absolute bottom-2 left-2 right-2">
                                                 <p className="text-[10px] uppercase tracking-widest text-[#D4AF37] mb-0.5 truncate font-sans font-bold">
-                                                    {event.time ? event.time.slice(0, 5) : 'TBA'}
+                                                    {formatTime(event.time)}
                                                 </p>
                                                 <p className="text-xs font-bold text-white leading-tight line-clamp-2 font-heading">{event.title}</p>
                                             </div>

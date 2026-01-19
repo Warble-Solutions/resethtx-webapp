@@ -1,10 +1,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { formatEventTime } from '../utils/format'
 
 interface EventCardProps {
   title: string
   date: string
   time: string
+  endTime?: string | null
   description: string
   imageUrl: string
   price: string
@@ -16,6 +18,7 @@ const EventCard: React.FC<EventCardProps> = ({
   title,
   date,
   time,
+  endTime,
   description,
   imageUrl,
   price,
@@ -41,7 +44,7 @@ const EventCard: React.FC<EventCardProps> = ({
       {/* Content */}
       <div className="p-6 flex flex-col grow">
         <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2">
-          {date} • {time}
+          {date} • {formatEventTime(time, endTime)}
         </div>
         <h3 className="text-2xl font-heading font-bold text-white leading-tight mb-3 group-hover:text-[#D4AF37] transition-colors">
           {title}

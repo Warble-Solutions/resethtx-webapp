@@ -227,24 +227,20 @@ function MenuItemCard({ item, onClick }: { item: MenuItem, onClick: () => void }
             onClick={onClick}
             className="flex bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden cursor-pointer group hover:border-[#D4AF37]/50 transition-all hover:-translate-y-1 h-36 md:h-40"
         >
-            {/* LEFT: Image (Fixed Width) */}
-            <div className="w-1/3 relative h-full bg-slate-900 border-r border-white/5">
-                {item.image_url ? (
+            {/* LEFT: Image (Fixed Width - Only if exists) */}
+            {item.image_url && (
+                <div className="w-1/3 relative h-full bg-slate-900 border-r border-white/5 shrink-0">
                     <Image
                         src={item.image_url}
                         alt={item.name}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
                     />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-700 text-[10px] uppercase font-bold tracking-widest">
-                        Reset HTX
-                    </div>
-                )}
-            </div>
+                </div>
+            )}
 
             {/* RIGHT: Name & Price */}
-            <div className="w-2/3 p-5 flex flex-col justify-center relative">
+            <div className={`p-5 flex flex-col justify-center relative min-w-0 ${item.image_url ? 'w-2/3' : 'flex-1'}`}>
                 {/* Header */}
                 <div className="flex justify-between items-start gap-2 mb-2">
                     <h3 className="font-heading font-bold text-white text-lg leading-tight group-hover:text-[#D4AF37] transition-colors">

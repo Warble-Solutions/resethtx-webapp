@@ -8,6 +8,7 @@ import { useState, useRef } from 'react'
 
 import ImageUploadWithCrop from '@/app/components/admin/ImageUploadWithCrop'
 import WordCountTextarea from '@/app/components/admin/WordCountTextarea'
+import { EVENT_CATEGORIES } from '@/app/constants'
 
 export default function CreateEventPage() {
   const formRef = useRef<HTMLFormElement>(null)
@@ -100,11 +101,9 @@ export default function CreateEventPage() {
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">Category</label>
             <select name="category" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white">
-              <option value="Nightlife">Nightlife</option>
-              <option value="Live DJ">Live DJ</option>
-              <option value="Happy Hour">Happy Hour</option>
-              <option value="Live Music">Live Music</option>
-              <option value="Special Event">Special Event</option>
+              {EVENT_CATEGORIES.map((category) => (
+                <option key={category} value={category}>{category}</option>
+              ))}
             </select>
           </div>
 
@@ -119,6 +118,27 @@ export default function CreateEventPage() {
                   <select name="time_minute" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white"><option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option></select>
                   <select name="time_ampm" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white"><option value="PM">PM</option><option value="AM">AM</option></select>
                 </div>
+              </div>
+            </div>
+
+            {/* End Time (Optional) */}
+            <div>
+              <label className="block text-sm font-bold text-slate-300 mb-2">End Time (Optional)</label>
+              <div className="flex gap-2">
+                <select name="end_time_hour" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white">
+                  <option value="">--</option>
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (<option key={h} value={h}>{h}</option>))}
+                </select>
+                <select name="end_time_minute" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white">
+                  <option value="00">00</option>
+                  <option value="15">15</option>
+                  <option value="30">30</option>
+                  <option value="45">45</option>
+                </select>
+                <select name="end_time_ampm" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white">
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
               </div>
             </div>
 

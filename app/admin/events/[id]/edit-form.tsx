@@ -12,6 +12,7 @@ interface EventData {
   title: string
   date: string
   time: string | null
+  end_time?: string | null
   tickets: number
   description: string
   image_url: string | null
@@ -22,6 +23,7 @@ interface EventData {
 
 import ImageUploadWithCrop from '@/app/components/admin/ImageUploadWithCrop'
 import WordCountTextarea from '@/app/components/admin/WordCountTextarea'
+import { EVENT_CATEGORIES } from '@/app/constants'
 
 export default function EditEventForm({ event }: { event: EventData }) {
   const formRef = useRef<HTMLFormElement>(null)
@@ -52,6 +54,21 @@ export default function EditEventForm({ event }: { event: EventData }) {
   let displayHour = rawHour
   if (rawHour > 12) displayHour -= 12
   if (rawHour === 0) displayHour = 12
+
+  // --- Parse End Time ---
+  let endTimeHour = ''
+  let endTimeMinute = '00'
+  let endTimeAmpm = 'AM'
+
+  if (event.end_time) {
+    const [eh, em] = event.end_time.split(':')
+    let eHour = parseInt(eh || '12')
+    endTimeMinute = em || '00'
+    endTimeAmpm = eHour >= 12 ? 'PM' : 'AM'
+    if (eHour > 12) eHour -= 12
+    if (eHour === 0) eHour = 12
+    endTimeHour = eHour.toString()
+  }
 
   // 3. Fix Tickets: Ensure it's not null/undefined
   const safeTickets = event.tickets ?? 0
@@ -131,11 +148,9 @@ export default function EditEventForm({ event }: { event: EventData }) {
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">Category</label>
             <select name="category" defaultValue={event.category || 'Nightlife'} className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white">
-              <option value="Nightlife">Nightlife</option>
-              <option value="Live DJ">Live DJ</option>
-              <option value="Happy Hour">Happy Hour</option>
-              <option value="Live Music">Live Music</option>
-              <option value="Special Event">Special Event</option>
+              {EVENT_CATEGORIES.map((category) => (
+                <option key={category} value={category}>{category}</option>
+              ))}
             </select>
           </div>
 
@@ -202,6 +217,27 @@ export default function EditEventForm({ event }: { event: EventData }) {
                     <option value="AM">AM</option>
                   </select>
                 </div>
+              </div>
+            </div>
+
+            {/* End Time (Optional) */}
+            <div>
+              <label className="block text-sm font-bold text-slate-300 mb-2">End Time (Optional)</label>
+              <div className="flex gap-2">
+                <select name="end_time_hour" defaultValue={endTimeHour} className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white">
+                  <option value="">--</option>
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (<option key={h} value={h}>{h}</option>))}
+                </select>
+                <select name="end_time_minute" defaultValue={endTimeMinute} className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white">
+                  <option value="00">00</option>
+                  <option value="15">15</option>
+                  <option value="30">30</option>
+                  <option value="45">45</option>
+                </select>
+                <select name="end_time_ampm" defaultValue={endTimeAmpm} className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white">
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
               </div>
             </div>
 

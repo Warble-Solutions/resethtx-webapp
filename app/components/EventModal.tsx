@@ -4,12 +4,14 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import EventBookingSystem from './EventBookingSystem'
 import { purchaseTickets } from '@/app/actions/checkout'
+import { formatEventTime } from '../utils/format'
 
 interface Event {
     id: string
     title: string
     date: string
     time: string | null
+    end_time?: string | null
     image_url: string | null
     featured_image_url?: string | null
     description?: string | null
@@ -183,7 +185,9 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
 
                             <div className="flex flex-col gap-2 text-slate-300 mb-8 font-sans">
                                 <div className="flex items-center gap-2"><span className="text-[#D4AF37]">🗓</span><span className="text-lg">{formatDate(event.date)}</span></div>
-                                <div className="flex items-center gap-2"><span className="text-[#D4AF37]">⏰</span><span className="text-lg">{event.time || '9:00 PM'}</span></div>
+                                <div className="flex items-center gap-2"><span className="text-[#D4AF37]">⏰</span><span className="text-lg">
+                                    {formatEventTime(event.time, event.end_time)}
+                                </span></div>
                             </div>
 
                             <p className="text-slate-400 leading-relaxed mb-10 max-w-md">
