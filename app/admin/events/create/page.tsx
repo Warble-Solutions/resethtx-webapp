@@ -213,6 +213,11 @@ export default function CreateEventPage() {
                   <p className="text-xs text-slate-500 mt-1">Leave 0 for free RSVP.</p>
                 </div>
                 <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                  <label className="block text-sm font-bold text-slate-300 mb-2">Table Reservation Price ($)</label>
+                  <input name="table_price" type="number" placeholder="0 = Free/Inquiry" defaultValue="0" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+                  <p className="text-xs text-slate-500 mt-1">If &gt; 0, booking a table requires payment (VIP).</p>
+                </div>
+                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                   <label className="block text-sm font-bold text-slate-300 mb-2">Total Capacity</label>
                   <input name="ticket_capacity" required type="number" placeholder="100" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
                 </div>

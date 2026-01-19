@@ -15,6 +15,11 @@ export async function updateEvent(formData: FormData) {
   const tickets = formData.get('tickets')
   const description = formData.get('description') as string
   const is_featured = formData.get('is_featured') === 'on'
+  const is_external_event = formData.get('is_external_event') === 'on'
+  const external_url = formData.get('external_url') as string
+  const ticket_price = Number(formData.get('ticket_price')) || 0
+  const table_price = Number(formData.get('table_price')) || 0
+  const ticket_capacity = Number(formData.get('ticket_capacity')) || 0
   const is_recursive = formData.get('is_recursive') === 'on'
   const recurrence_end_date = formData.get('recurrence_end_date') as string
   const eventsToInsert = []
@@ -54,6 +59,11 @@ export async function updateEvent(formData: FormData) {
     tickets: Number(tickets),
     description,
     is_featured,
+    is_external_event,
+    external_url,
+    ticket_price,
+    table_price,
+    ticket_capacity
   }
 
   // 4. Handle Image Upload
@@ -124,12 +134,11 @@ export async function updateEvent(formData: FormData) {
         featured_image_url: updates.featured_image_url,
         is_featured: is_featured,
         category: category,
-        // Inherit price/capacity/external if they were part of the update form (Edit form currently doesn't have these, 
-        // but schema allows nulls or defaults. Ideally we'd fetch the original event to be 100% sure, 
-        // but for now we clone what we have in the form and rely on defaults for hidden fields)
-        // NOTE: The edit form in this codebase seems to be a subset of fields. 
-        // We really should ensure we copy ALL fields. 
-        // For now, let's stick to cloning what is visibly being edited + critical fields.
+        is_external_event: is_external_event,
+        external_url: external_url,
+        ticket_price: ticket_price,
+        table_price: table_price,
+        ticket_capacity: ticket_capacity
       })
       current.setDate(current.getDate() + 7)
     }

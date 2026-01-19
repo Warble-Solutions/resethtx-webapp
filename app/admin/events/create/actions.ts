@@ -48,6 +48,7 @@ export async function createEvent(formData: FormData) {
   const is_external_event = formData.get('is_external_event') === 'on'
   const external_url = formData.get('external_url') as string
   const ticket_price = Number(formData.get('ticket_price')) || 0
+  const table_price = Number(formData.get('table_price')) || 0
   const ticket_capacity = Number(formData.get('ticket_capacity')) || 0
 
   // 2. Handle Time Construction
@@ -130,6 +131,7 @@ export async function createEvent(formData: FormData) {
     is_external_event: is_external_event,
     external_url: external_url,
     ticket_price: ticket_price,
+    table_price: table_price,
     ticket_capacity: ticket_capacity,
     category: category
   })

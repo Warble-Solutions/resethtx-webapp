@@ -19,6 +19,11 @@ interface EventData {
   featured_image_url: string | null
   is_featured: boolean
   category?: string
+  is_external_event?: boolean
+  external_url?: string
+  ticket_price?: number
+  ticket_capacity?: number
+  table_price?: number
 }
 
 import ImageUploadWithCrop from '@/app/components/admin/ImageUploadWithCrop'
@@ -29,6 +34,7 @@ export default function EditEventForm({ event }: { event: EventData }) {
   const formRef = useRef<HTMLFormElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isFeatured, setIsFeatured] = useState(event.is_featured)
+  const [isExternal, setIsExternal] = useState(event.is_external_event || false)
   const [isRecursive, setIsRecursive] = useState(false)
   const [imageFile, setImageFile] = useState<Blob | null>(null)
   const [featuredImageFile, setFeaturedImageFile] = useState<Blob | null>(null)
@@ -189,6 +195,55 @@ export default function EditEventForm({ event }: { event: EventData }) {
             )}
           </div>
 
+          {/* Event Type Toggle */}
+          <div className="md:col-span-2 bg-slate-800 p-4 rounded-lg flex items-center justify-between">
+            <span className="font-bold text-white">Event Type</span>
+            <div className="flex bg-slate-950 p-1 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setIsExternal(false)}
+                className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${!isExternal ? 'bg-[#D4AF37] text-black' : 'text-slate-400 hover:text-white'}`}
+              >
+                Internal Event
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsExternal(true)}
+                className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${isExternal ? 'bg-[#D4AF37] text-black' : 'text-slate-400 hover:text-white'}`}
+              >
+                External Link
+              </button>
+            </div>
+            <input type="hidden" name="is_external_event" value={isExternal ? 'on' : 'off'} />
+          </div>
+
+          {/* Conditional Fields */}
+          {isExternal ? (
+            <div className="md:col-span-2 animate-in fade-in slide-in-from-top-2 duration-300">
+              <label className="block text-sm font-bold text-slate-300 mb-2">External Ticket URL</label>
+              <input name="external_url" defaultValue={event.external_url || ''} required type="url" placeholder="https://ticketmaster.com/..." className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div>
+                <label className="block text-sm font-bold text-slate-300 mb-2">Ticket Price ($)</label>
+                <input name="ticket_price" type="number" placeholder="0 = Free" defaultValue={event.ticket_price || 0} className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+                <p className="text-xs text-slate-500 mt-1">Leave 0 for free RSVP.</p>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-300 mb-2">Table Reservation Price ($)</label>
+                <input name="table_price" type="number" placeholder="0 = Free/Inquiry" defaultValue={event.table_price || 0} className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+                <p className="text-xs text-slate-500 mt-1">If &gt; 0, booking a table requires payment (VIP).</p>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-300 mb-2">Total Capacity</label>
+                <input name="ticket_capacity" required type="number" placeholder="100" defaultValue={event.ticket_capacity || 100} className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+              </div>
+              {/* Maintain backward compatibility or map it */}
+              <input type="hidden" name="tickets" value={event.tickets || 0} />
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Date & Time */}
             <div>
@@ -241,17 +296,7 @@ export default function EditEventForm({ event }: { event: EventData }) {
               </div>
             </div>
 
-            {/* Tickets */}
-            <div>
-              <label className="block text-sm font-bold text-slate-300 mb-2">Total Tickets</label>
-              <input
-                name="tickets"
-                defaultValue={safeTickets}
-                required
-                type="number"
-                className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white"
-              />
-            </div>
+            {/* Tickets hidden input (handled above) or kept if needed for compat, but we replaced the block */}
           </div>
 
           {/* Description */}
