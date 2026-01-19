@@ -67,7 +67,7 @@ export default function PrivateEventsPage() {
                         </p>
                     </div>
                 </div>
-                <div className="relative h-[500px] w-full rounded-lg overflow-hidden border border-zinc-800">
+                <div className="relative h-[250px] md:h-[500px] w-full rounded-lg overflow-hidden border border-zinc-800">
                     <video
                         src="/vids/vid.mp4"
                         autoPlay
