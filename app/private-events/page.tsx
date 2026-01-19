@@ -68,11 +68,13 @@ export default function PrivateEventsPage() {
                     </div>
                 </div>
                 <div className="relative h-[500px] w-full rounded-lg overflow-hidden border border-zinc-800">
-                    <Image
-                        src="/private_page/6.png"
-                        alt="Private Party Vibe"
-                        fill
-                        className="object-cover hover:scale-105 transition-transform duration-700"
+                    <video
+                        src="/vids/vid.mp4"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="object-cover w-full h-full hover:scale-105 transition-transform duration-700"
                     />
                 </div>
             </section>
