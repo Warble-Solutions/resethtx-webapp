@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createPromo } from '../actions' // Fallback or unused if action passed prop
+import { createPromo } from './actions' // Fallback or unused if action passed prop
 // We'll accept action as prop to support both create and update
 
 type Props = {
@@ -91,8 +91,8 @@ export default function PromoForm({ action, initialData, isEdit = false }: Props
                         <label
                             key={type}
                             className={`cursor-pointer border rounded-lg p-2 text-center text-sm font-medium transition-all ${expiryType === type
-                                    ? 'bg-[#D4AF37]/20 border-[#D4AF37] text-[#D4AF37]'
-                                    : 'bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-600'
+                                ? 'bg-[#D4AF37]/20 border-[#D4AF37] text-[#D4AF37]'
+                                : 'bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-600'
                                 }`}
                         >
                             <input

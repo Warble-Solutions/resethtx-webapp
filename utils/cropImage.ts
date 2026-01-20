@@ -78,7 +78,7 @@ export default async function getCroppedImg(
     canvas.height = pixelCrop.height
 
     // paste generated rotate image at the top left corner
-    ctx.putImageData(constdata, 0, 0)
+    ctx.putImageData(data, 0, 0)
 
     // As Blob
     return new Promise((resolve, reject) => {
