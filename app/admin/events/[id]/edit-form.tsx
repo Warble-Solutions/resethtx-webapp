@@ -24,6 +24,7 @@ interface EventData {
   ticket_price?: number
   ticket_capacity?: number
   table_price?: number
+  featured_description?: string
 }
 
 import ImageUploadWithCrop from '@/app/components/admin/ImageUploadWithCrop'
@@ -123,6 +124,17 @@ export default function EditEventForm({ event }: { event: EventData }) {
       alert("Please shorten the description to 50 words or less.")
       setIsSubmitting(false)
       return
+    }
+
+    // Featured Description Check
+    if (isFeatured) {
+      const featuredDesc = formData.get('featured_description') as string
+      const featuredWordCount = featuredDesc.trim().split(/\s+/).filter(w => w.length > 0).length
+      if (featuredWordCount > 15) {
+        alert("Featured description must be 15 words or less.")
+        setIsSubmitting(false)
+        return
+      }
     }
 
     await executeUpdate(formData)
@@ -345,6 +357,19 @@ export default function EditEventForm({ event }: { event: EventData }) {
           {/* Conditional Banner Input */}
           {isFeatured && (
             <div className="p-4 border border-dashed border-[#D4AF37]/50 rounded-lg bg-[#D4AF37]/5 animate-in fade-in slide-in-from-top-4 duration-300">
+              {/* --- FEATURED DESCRIPTION --- */}
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-[#D4AF37] mb-2">Featured Banner Copy (Max 15 words)</label>
+                <WordCountTextarea
+                  name="featured_description"
+                  limit={15}
+                  defaultValue={event.featured_description || ''}
+                  rows={2}
+                  placeholder="Short & punchy text for user slider..."
+                  className="w-full bg-slate-900 border border-[#D4AF37]/30 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white placeholder:text-slate-600"
+                />
+              </div>
+
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">🌟</span>
                 <label className="block text-sm font-bold text-[#D4AF37]">Hero Banner (16:9)</label>

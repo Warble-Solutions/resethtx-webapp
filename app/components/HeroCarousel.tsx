@@ -36,6 +36,7 @@ interface EventSlide extends BaseSlide {
   ticket_price?: number
   is_external_event?: boolean
   external_url?: string
+  featured_description?: string
 }
 
 type Slide = BrandSlide | EventSlide
@@ -49,6 +50,7 @@ interface Event {
   image_url: string | null
   featured_image_url: string | null
   description: string | null
+  featured_description?: string
   ticket_price?: number
   is_external_event?: boolean
   external_url?: string
@@ -204,9 +206,10 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
                   </span>
                 </div>
 
-                {currentSlide.description && (
+                {/* Optimized Description Logic */}
+                {(currentSlide.featured_description || currentSlide.description) && (
                   <p className="font-sans text-slate-300 max-w-xl text-sm md:text-base leading-relaxed mb-0 line-clamp-2 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-150 hidden md:block">
-                    {currentSlide.description}
+                    {currentSlide.featured_description || currentSlide.description}
                   </p>
                 )}
               </div>

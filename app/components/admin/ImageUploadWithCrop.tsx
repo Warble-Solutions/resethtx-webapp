@@ -55,9 +55,11 @@ export default function ImageUploadWithCrop({
                 onImageSelected(croppedBlob)
                 setPreviewUrl(URL.createObjectURL(croppedBlob))
                 setIsCropping(false)
+            } else {
+                console.error('getCroppedImg returned null')
             }
         } catch (e) {
-            console.error(e)
+            console.error('Error in showCroppedImage:', e)
         }
     }, [imageSrc, croppedAreaPixels, onImageSelected])
 

@@ -63,7 +63,8 @@ export async function updateEvent(formData: FormData) {
     external_url,
     ticket_price,
     table_price,
-    ticket_capacity
+    ticket_capacity,
+    featured_description: formData.get('featured_description') as string
   }
 
   // 4. Handle Image Upload

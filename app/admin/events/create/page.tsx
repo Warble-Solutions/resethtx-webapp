@@ -56,6 +56,17 @@ export default function CreateEventPage() {
       setIsSubmitting(false)
       return
     }
+
+    // Featured Description Check
+    if (isFeatured) {
+      const featuredDesc = formData.get('featured_description') as string
+      const featuredWordCount = featuredDesc.trim().split(/\s+/).filter(w => w.length > 0).length
+      if (featuredWordCount > 15) {
+        alert("Featured description must be 15 words or less.")
+        setIsSubmitting(false)
+        return
+      }
+    }
     // End Word Count Check
 
     const result = await checkEventConflict(formData)
@@ -141,91 +152,91 @@ export default function CreateEventPage() {
                 </select>
               </div>
             </div>
+          </div>
 
-            {/* Recurrence Settings */}
-            <div className="bg-slate-900 border border-slate-700 rounded-lg p-4 animate-in fade-in duration-500">
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <label htmlFor="recurrence-toggle" className="block text-sm font-bold text-slate-300 cursor-pointer select-none">Weekly Recurrence</label>
-                  <p className="text-xs text-slate-500">Repeat this event every week?</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    id="recurrence-toggle"
-                    type="checkbox"
-                    name="is_recurring" // Form data key
-                    checked={isRecurring}
-                    onChange={(e) => setIsRecurring(e.target.checked)}
-                    className="peer sr-only"
-                  />
-                  <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#D4AF37] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#D4AF37]"></div>
-                </label>
+          {/* Recurrence Settings */}
+          <div className="bg-slate-900 border border-slate-700 rounded-lg p-4 animate-in fade-in duration-500">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <label htmlFor="recurrence-toggle" className="block text-sm font-bold text-slate-300 cursor-pointer select-none">Weekly Recurrence</label>
+                <p className="text-xs text-slate-500">Repeat this event every week?</p>
               </div>
-
-              {isRecurring && (
-                <div className="mt-3 pt-3 border-t border-slate-800 animate-in slide-in-from-top-2 duration-200">
-                  <label className="block text-xs font-bold text-[#D4AF37] mb-2 uppercase tracking-wide">Repeat Until</label>
-                  <input
-                    name="recurrence_end_date"
-                    type="date"
-                    required={isRecurring}
-                    defaultValue={new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0]}
-                    className="w-full bg-slate-950 border border-slate-700 p-2 rounded text-white text-sm"
-                  />
-                  <p className="text-xs text-slate-500 mt-2">Events will be created weekly starting from the selected Date & Time above.</p>
-                </div>
-              )}
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  id="recurrence-toggle"
+                  type="checkbox"
+                  name="is_recurring" // Form data key
+                  checked={isRecurring}
+                  onChange={(e) => setIsRecurring(e.target.checked)}
+                  className="peer sr-only"
+                />
+                <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#D4AF37] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#D4AF37]"></div>
+              </label>
             </div>
 
-            {/* Event Type Toggle */}
-            <div className="md:col-span-2 bg-slate-800 p-4 rounded-lg flex items-center justify-between">
-              <span className="font-bold text-white">Event Type</span>
-              <div className="flex bg-slate-950 p-1 rounded-lg">
-                <button
-                  type="button"
-                  onClick={() => setIsExternal(false)}
-                  className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${!isExternal ? 'bg-[#D4AF37] text-black' : 'text-slate-400 hover:text-white'}`}
-                >
-                  Internal Event
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsExternal(true)}
-                  className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${isExternal ? 'bg-[#D4AF37] text-black' : 'text-slate-400 hover:text-white'}`}
-                >
-                  External Link
-                </button>
+            {isRecurring && (
+              <div className="mt-3 pt-3 border-t border-slate-800 animate-in slide-in-from-top-2 duration-200">
+                <label className="block text-xs font-bold text-[#D4AF37] mb-2 uppercase tracking-wide">Repeat Until</label>
+                <input
+                  name="recurrence_end_date"
+                  type="date"
+                  required={isRecurring}
+                  defaultValue={new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0]}
+                  className="w-full bg-slate-950 border border-slate-700 p-2 rounded text-white text-sm"
+                />
+                <p className="text-xs text-slate-500 mt-2">Events will be created weekly starting from the selected Date & Time above.</p>
               </div>
-              <input type="hidden" name="is_external_event" value={isExternal ? 'on' : 'off'} />
-            </div>
-
-            {/* Conditional Fields */}
-            {isExternal ? (
-              <div className="md:col-span-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="block text-sm font-bold text-slate-300 mb-2">External Ticket URL</label>
-                <input name="external_url" required type="url" placeholder="https://ticketmaster.com/..." className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
-              </div>
-            ) : (
-              <>
-                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                  <label className="block text-sm font-bold text-slate-300 mb-2">Ticket Price ($)</label>
-                  <input name="ticket_price" type="number" placeholder="0 = Free" defaultValue="0" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
-                  <p className="text-xs text-slate-500 mt-1">Leave 0 for free RSVP.</p>
-                </div>
-                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                  <label className="block text-sm font-bold text-slate-300 mb-2">Table Reservation Price ($)</label>
-                  <input name="table_price" type="number" placeholder="0 = Free/Inquiry" defaultValue="0" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
-                  <p className="text-xs text-slate-500 mt-1">If &gt; 0, booking a table requires payment (VIP).</p>
-                </div>
-                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                  <label className="block text-sm font-bold text-slate-300 mb-2">Total Capacity</label>
-                  <input name="ticket_capacity" required type="number" placeholder="100" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
-                </div>
-                {/* Maintain backward compatibility for 'tickets' field in DB if needed, or map it */}
-                <input type="hidden" name="tickets" value="0" />
-              </>
             )}
           </div>
+
+          {/* Event Type Toggle */}
+          <div className="md:col-span-2 bg-slate-800 p-4 rounded-lg flex items-center justify-between">
+            <span className="font-bold text-white">Event Type</span>
+            <div className="flex bg-slate-950 p-1 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setIsExternal(false)}
+                className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${!isExternal ? 'bg-[#D4AF37] text-black' : 'text-slate-400 hover:text-white'}`}
+              >
+                Internal Event
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsExternal(true)}
+                className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${isExternal ? 'bg-[#D4AF37] text-black' : 'text-slate-400 hover:text-white'}`}
+              >
+                External Link
+              </button>
+            </div>
+            <input type="hidden" name="is_external_event" value={isExternal ? 'on' : 'off'} />
+          </div>
+
+          {/* Conditional Fields */}
+          {isExternal ? (
+            <div className="md:col-span-2 animate-in fade-in slide-in-from-top-2 duration-300">
+              <label className="block text-sm font-bold text-slate-300 mb-2">External Ticket URL</label>
+              <input name="external_url" required type="url" placeholder="https://ticketmaster.com/..." className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+            </div>
+          ) : (
+            <>
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="block text-sm font-bold text-slate-300 mb-2">Ticket Price ($)</label>
+                <input name="ticket_price" type="number" placeholder="0 = Free" defaultValue="0" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+                <p className="text-xs text-slate-500 mt-1">Leave 0 for free RSVP.</p>
+              </div>
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="block text-sm font-bold text-slate-300 mb-2">Table Reservation Price ($)</label>
+                <input name="table_price" type="number" placeholder="0 = Free/Inquiry" defaultValue="0" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+                <p className="text-xs text-slate-500 mt-1">If &gt; 0, booking a table requires payment (VIP).</p>
+              </div>
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="block text-sm font-bold text-slate-300 mb-2">Total Capacity</label>
+                <input name="ticket_capacity" required type="number" placeholder="100" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white" />
+              </div>
+              {/* Maintain backward compatibility for 'tickets' field in DB if needed, or map it */}
+              <input type="hidden" name="tickets" value="0" />
+            </>
+          )}
 
           {/* Description */}
           <div>
@@ -272,6 +283,19 @@ export default function CreateEventPage() {
           {/* Conditional Banner Input */}
           {isFeatured && (
             <div className="p-4 border border-dashed border-[#D4AF37]/50 rounded-lg bg-[#D4AF37]/5 animate-in fade-in slide-in-from-top-4 duration-300">
+              {/* --- FEATURED DESCRIPTION --- */}
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-[#D4AF37] mb-2">Featured Banner Copy (Max 15 words)</label>
+                <WordCountTextarea
+                  name="featured_description"
+                  limit={15}
+                  rows={2}
+                  placeholder="Short & punchy text for user slider..."
+                  className="w-full bg-slate-900 border border-[#D4AF37]/30 p-3 rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all text-white placeholder:text-slate-600"
+                />
+              </div>
+
+              {/* --- FEATURED IMAGE --- */}
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">🌟</span>
                 <label className="block text-sm font-bold text-[#D4AF37]">Hero Banner (16:9)</label>

@@ -50,6 +50,7 @@ export async function createEvent(formData: FormData) {
   const ticket_price = Number(formData.get('ticket_price')) || 0
   const table_price = Number(formData.get('table_price')) || 0
   const ticket_capacity = Number(formData.get('ticket_capacity')) || 0
+  const featured_description = formData.get('featured_description') as string
 
   // 2. Handle Time Construction
   const time_hour = formData.get('time_hour') as string
@@ -125,6 +126,7 @@ export async function createEvent(formData: FormData) {
     end_time,
     tickets: Number(tickets),
     description,
+    featured_description,
     image_url: publicUrl,
     featured_image_url: featuredImageUrl,
     is_featured: is_featured,
