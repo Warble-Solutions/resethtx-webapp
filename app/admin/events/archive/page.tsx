@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import SpotlightCard from '@/app/components/SpotlightCard'
 import SearchInput from '@/app/components/SearchInput'
+import DeleteEventButton from '../DeleteEventButton'
 
 export default async function ArchivePage({
   searchParams,
@@ -82,6 +83,7 @@ export default async function ArchivePage({
                   <span className="text-xs font-bold text-slate-600 bg-slate-900 px-2 py-1 rounded border border-slate-800 whitespace-nowrap">
                     Had {event.tickets_available} Tickets
                   </span>
+                  <DeleteEventButton id={event.id} />
                 </div>
               </div>
             </SpotlightCard>

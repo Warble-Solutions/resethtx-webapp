@@ -186,4 +186,5 @@ export async function deleteEvent(formData: FormData) {
 
   // Refresh the events list so the card disappears
   revalidatePath('/admin/events')
+  revalidatePath('/admin/events/archive')
 }

@@ -39,6 +39,8 @@ export default function EditEventForm({ event }: { event: EventData }) {
   const [isRecursive, setIsRecursive] = useState(false)
   const [imageFile, setImageFile] = useState<Blob | null>(null)
   const [featuredImageFile, setFeaturedImageFile] = useState<Blob | null>(null)
+  const [shouldRemoveImage, setShouldRemoveImage] = useState(false)
+  const [shouldRemoveFeaturedImage, setShouldRemoveFeaturedImage] = useState(false)
 
   // --- SAFETY PARSING START ---
   // 1. Fix Date: Ensure strictly YYYY-MM-DD (strips time/timezone info if present)
@@ -106,6 +108,14 @@ export default function EditEventForm({ event }: { event: EventData }) {
 
     if (featuredImageFile) {
       formData.set('featured_image', featuredImageFile, 'featured_image.jpg')
+    }
+
+    if (shouldRemoveImage && !imageFile) {
+      formData.set('remove_image', 'true')
+    }
+
+    if (shouldRemoveFeaturedImage && !featuredImageFile) {
+      formData.set('remove_featured_image', 'true')
     }
 
     await updateEvent(formData)
@@ -321,10 +331,15 @@ export default function EditEventForm({ event }: { event: EventData }) {
           <div className="p-4 border border-dashed border-slate-700 rounded-lg bg-slate-900/50">
             <label className="block text-sm font-bold text-slate-300 mb-2">Cover Image (1:1)</label>
             <ImageUploadWithCrop
-              onImageSelected={setImageFile}
-              aspectRatio={1}
-              currentImage={event.image_url || undefined}
               name="image_ignore"
+              onRemove={() => {
+                setShouldRemoveImage(true)
+                setImageFile(null)
+              }}
+              onImageSelected={(blob) => {
+                setImageFile(blob)
+                setShouldRemoveImage(false)
+              }}
             />
             <p className="text-xs text-slate-500 mt-2">Crop to specify the event thumbnail.</p>
           </div>
@@ -376,10 +391,15 @@ export default function EditEventForm({ event }: { event: EventData }) {
               </div>
 
               <ImageUploadWithCrop
-                onImageSelected={setFeaturedImageFile}
-                aspectRatio={16 / 9}
-                currentImage={event.featured_image_url || undefined}
                 name="featured_image_ignore"
+                onRemove={() => {
+                  setShouldRemoveFeaturedImage(true)
+                  setFeaturedImageFile(null)
+                }}
+                onImageSelected={(blob) => {
+                  setFeaturedImageFile(blob)
+                  setShouldRemoveFeaturedImage(false)
+                }}
               />
               <p className="text-xs text-slate-500 mt-2">Recommended size: 1920x1080px (16:9).</p>
             </div>

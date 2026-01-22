@@ -103,6 +103,15 @@ export async function updateEvent(formData: FormData) {
     updates.featured_image_url = urlData.publicUrl
   }
 
+  // 4c. Handle Image Removals (If requested and no new image uploaded)
+  if (formData.get('remove_image') === 'true' && (!imageFile || imageFile.size === 0)) {
+    updates.image_url = null
+  }
+
+  if (formData.get('remove_featured_image') === 'true' && (!featuredImageFile || featuredImageFile.size === 0)) {
+    updates.featured_image_url = null
+  }
+
   // 5. Update DB
   const { error } = await supabase
     .from('events')

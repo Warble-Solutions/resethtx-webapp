@@ -10,6 +10,7 @@ interface ImageUploadWithCropProps {
     currentImage?: string
     name?: string
     required?: boolean
+    onRemove?: () => void
 }
 
 export default function ImageUploadWithCrop({
@@ -17,7 +18,8 @@ export default function ImageUploadWithCrop({
     aspectRatio = 1,
     currentImage,
     name = 'image',
-    required = false
+    required = false,
+    onRemove
 }: ImageUploadWithCropProps) {
     const [imageSrc, setImageSrc] = useState<string | null>(null)
     const [crop, setCrop] = useState({ x: 0, y: 0 })
@@ -46,7 +48,9 @@ export default function ImageUploadWithCrop({
         setCroppedAreaPixels(croppedAreaPixels)
     }, [])
 
-    const showCroppedImage = useCallback(async () => {
+    const showCroppedImage = useCallback(async (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
         if (!imageSrc || !croppedAreaPixels) return
 
         try {
@@ -63,9 +67,20 @@ export default function ImageUploadWithCrop({
         }
     }, [imageSrc, croppedAreaPixels, onImageSelected])
 
-    const handleCancel = () => {
+    const handleCancel = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
         setIsCropping(false)
         setImageSrc(null)
+    }
+
+    const handleRemove = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setPreviewUrl(null)
+        setImageSrc(null)
+        setFileName('')
+        if (onRemove) onRemove()
     }
 
     return (
@@ -82,9 +97,9 @@ export default function ImageUploadWithCrop({
                                 alt="Preview"
                                 className="h-full w-full object-contain"
                             />
-                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                 <label className="cursor-pointer bg-[#D4AF37] hover:bg-white text-black font-bold py-2 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105">
-                                    Change Image
+                                    Change
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -92,6 +107,16 @@ export default function ImageUploadWithCrop({
                                         className="hidden"
                                     />
                                 </label>
+                                {onRemove && (
+                                    <button
+                                        type="button"
+                                        onClick={handleRemove}
+                                        className="bg-red-600 hover:bg-red-500 text-white p-2 rounded-full shadow-lg transition-transform transform hover:scale-105"
+                                        title="Remove Image"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     ) : (
@@ -117,7 +142,7 @@ export default function ImageUploadWithCrop({
                     <div className="w-full max-w-2xl bg-slate-900 rounded-xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col h-[80vh]">
                         <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
                             <h3 className="font-bold text-white text-lg">Crop Image</h3>
-                            <button onClick={handleCancel} className="text-slate-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                            <button type="button" onClick={handleCancel} className="text-slate-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                         </div>
 
                         <div className="relative flex-1 bg-black">
@@ -152,12 +177,14 @@ export default function ImageUploadWithCrop({
 
                             <div className="flex gap-3">
                                 <button
+                                    type="button"
                                     onClick={handleCancel}
                                     className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
+                                    type="button"
                                     onClick={showCroppedImage}
                                     className="flex-[2] py-3 bg-[#D4AF37] hover:bg-white text-black font-bold rounded-lg transition-colors shadow-lg shadow-[#D4AF37]/20"
                                 >
