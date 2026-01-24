@@ -39,6 +39,14 @@ export default function EventsContent({ events }: { events: Event[] }) {
     const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1))
     const getEventsForDay = (day: Date) => events.filter(e => isSameDay(new Date(e.date), day))
 
+    // Filter for List/Grid views (Future + Today only)
+    const upcomingEvents = events.filter(event => {
+        const eventDate = new Date(event.date)
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        return eventDate >= today
+    })
+
 
 
     return (
@@ -140,7 +148,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
             {/* --- VIEW 2: LIST VIEW --- */}
             {viewMode === 'list' && (
                 <div className="flex flex-col gap-4 animate-in fade-in duration-500">
-                    {events.map((event) => (
+                    {upcomingEvents.map((event) => (
                         <div key={event.id} className="group flex flex-col md:flex-row items-center gap-6 bg-[#0a0a0a] border border-white/10 p-4 rounded-xl hover:border-[#D4AF37]/50 transition-all">
                             {/* Date Box */}
                             <div className="shrink-0 w-full md:w-24 h-24 bg-white/5 rounded-lg flex flex-col items-center justify-center border border-white/5 group-hover:border-[#D4AF37] transition-colors">
@@ -178,7 +186,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
             {/* --- VIEW 3: GRID VIEW --- */}
             {viewMode === 'grid' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in duration-500">
-                    {events.map((event) => (
+                    {upcomingEvents.map((event) => (
                         <div
                             key={event.id}
                             onClick={() => setSelectedEvent(event)}
@@ -202,7 +210,7 @@ export default function EventsContent({ events }: { events: Event[] }) {
                                 <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">{formatEventTime(event.time, event.end_time)}</p>
                                 <h3 className="text-2xl font-heading font-bold text-white leading-tight mb-4">{event.title}</h3>
                                 <div className="flex items-center justify-between border-t border-white/10 pt-4">
-                                    <span className="text-slate-500 text-xs uppercase font-bold">{event.tickets > 0 ? `${event.tickets} Tickets` : 'Sold Out'}</span>
+                                    <span className="text-slate-500 text-xs uppercase font-bold">{(event.ticket_capacity || 0) > 0 ? `${event.ticket_capacity} Tickets` : 'Sold Out'}</span>
                                     <button className="text-white hover:text-[#D4AF37] font-bold text-sm uppercase tracking-wide transition-colors">Details →</button>
                                 </div>
                             </div>

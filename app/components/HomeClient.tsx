@@ -28,10 +28,12 @@ interface Event {
 
 export default function HomeClient({
     featuredEvents,
+    upcomingEvents,
     allEvents,
     testimonials
 }: {
     featuredEvents: any[],
+    upcomingEvents: any[],
     allEvents: any[],
     testimonials: any[]
 }) {
@@ -59,7 +61,7 @@ export default function HomeClient({
             />
 
             {/* Restored Upcoming Events Section */}
-            <UpcomingEventsSection events={featuredEvents} />
+            <UpcomingEventsSection events={upcomingEvents} />
 
             <ExclusiveAccess />
 

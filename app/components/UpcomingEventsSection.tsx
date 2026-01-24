@@ -36,8 +36,8 @@ export default function UpcomingEventsSection({ events }: { events: Event[] }) {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // Display only first 3 events
-  const featuredEvents = events ? events.slice(0, 3) : []
+  // Display only first 4 events
+  const featuredEvents = events ? events.slice(0, 4) : []
 
   return (
     <section className="bg-black py-24 px-6">
@@ -57,7 +57,7 @@ export default function UpcomingEventsSection({ events }: { events: Event[] }) {
         </div>
 
         {/* CARDS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredEvents.length > 0 ? (
             featuredEvents.map((event) => {
               const dateObj = new Date(event.date)
@@ -118,7 +118,9 @@ export default function UpcomingEventsSection({ events }: { events: Event[] }) {
 
                     {/* Footer Row */}
                     <div className="border-t border-white/10 pt-4 flex justify-between items-center mt-2 group-hover:border-[#D4AF37]/30 transition-colors">
-                      <span className="text-white font-bold font-sans text-lg">$20</span>
+                      <span className="text-white font-bold font-sans text-lg">
+                        {(event.ticket_price === 0 || event.ticket_price === null) ? 'Free' : `$${event.ticket_price}`}
+                      </span>
                       <span className="text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest font-sans group-hover:text-white transition-colors">
                         DETAILS -&gt;
                       </span>

@@ -11,7 +11,7 @@ export default async function EventsPage() {
   const { data: events } = await supabase
     .from('events')
     .select('*')
-    .gte('date', new Date().toISOString()) // Only show today/future
+    // .gte('date', new Date().toISOString()) // REMOVED to allow calendar to show full month history
     .order('date', { ascending: true })
 
   return (
