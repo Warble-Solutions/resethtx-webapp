@@ -34,7 +34,7 @@ export default function TestimonialsSection({ testimonials }: { testimonials: Te
                         <div
                             key={t.id}
                             // Fixed width (w-80 or w-96) ensures cards stay consistent size while scrolling
-                            className="shrink-0 w-[85vw] md:w-96 snap-center bg-black/40 border border-white/5 p-8 relative group hover:border-[#D4AF37]/30 transition-all duration-500"
+                            className="shrink-0 w-[85vw] md:w-96 snap-center bg-black/40 border border-white/5 p-8 relative group hover:border-[#D4AF37]/30 transition-all duration-500 flex flex-col"
                         >
                             {/* Gold Quote Icon */}
                             <div className="absolute top-6 right-6 text-6xl text-[#D4AF37]/40 font-serif leading-none group-hover:text-[#D4AF37] transition-colors">
