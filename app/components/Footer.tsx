@@ -72,6 +72,12 @@ export default async function Footer() {
                         <Link href="/contact" className="text-slate-400 hover:text-[#D4AF37] transition-colors">
                             Contact
                         </Link>
+                        <Link href="/privacy" className="text-slate-400 hover:text-[#D4AF37] transition-colors">
+                            Privacy Policy
+                        </Link>
+                        <Link href="/terms" className="text-slate-400 hover:text-[#D4AF37] transition-colors">
+                            Terms & Conditions
+                        </Link>
                     </div>
                 </div>
 

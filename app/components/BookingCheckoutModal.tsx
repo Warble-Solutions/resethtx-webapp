@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react' // NEW
 import { X, CreditCard } from 'lucide-react'
 
 interface Table {
@@ -37,6 +38,8 @@ export default function BookingCheckoutModal({
     bookingFee = 50, // Default to 50
     children
 }: BookingCheckoutModalProps) {
+    const [hasAgreed, setHasAgreed] = useState(false) // NEW
+
     if (!isOpen || !selectedTable) return null
 
     const finalPrice = bookingFee - ((bookingFee * discountPercent) / 100)
@@ -131,6 +134,19 @@ export default function BookingCheckoutModal({
                             </div>
                         )}
 
+                        <div className="flex items-start gap-3 my-4">
+                            <input
+                                type="checkbox"
+                                id="terms-booking"
+                                checked={hasAgreed}
+                                onChange={(e) => setHasAgreed(e.target.checked)}
+                                className="mt-1 w-4 h-4 rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37] bg-zinc-800 border-zinc-600"
+                            />
+                            <label htmlFor="terms-booking" className="text-sm text-zinc-400 leading-tight">
+                                I agree to the <a href="/terms" target="_blank" className="underline hover:text-[#D4AF37]">Terms & Conditions</a> and <a href="/privacy" target="_blank" className="underline hover:text-[#D4AF37]">Privacy Policy</a>.
+                            </label>
+                        </div>
+
                         <div className="flex gap-3 pt-2">
                             <button
                                 type="button"
@@ -141,7 +157,7 @@ export default function BookingCheckoutModal({
                             </button>
                             <button
                                 type="submit"
-                                disabled={isProcessing}
+                                disabled={isProcessing || !hasAgreed}
                                 className="flex-[2] bg-[#D4AF37] hover:bg-white text-black font-bold py-4 rounded-lg uppercase tracking-widest text-xs shadow-[0_0_20px_rgba(212,175,55,0.2)] transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isProcessing ? 'Processing...' : `Pay $${finalPrice.toFixed(2)} & Complete`}
@@ -149,7 +165,7 @@ export default function BookingCheckoutModal({
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }

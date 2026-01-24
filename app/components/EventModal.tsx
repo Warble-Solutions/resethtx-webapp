@@ -42,6 +42,7 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
     const [userDob, setUserDob] = useState('')
     const [ticketQty, setTicketQty] = useState(1)
     const [couponCode, setCouponCode] = useState('')
+    const [hasAgreed, setHasAgreed] = useState(false) // NEW
 
     // Reset view when modal opens
     useEffect(() => {
@@ -54,6 +55,7 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
             setUserDob('')
             setTicketQty(1)
             setCouponCode('')
+            setHasAgreed(false) // NEW
         }
     }, [isOpen, event])
 
@@ -333,10 +335,23 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
                                         />
                                     </div>
 
+                                    <div className="flex items-start gap-3 my-4">
+                                        <input
+                                            type="checkbox"
+                                            id="terms-event"
+                                            checked={hasAgreed}
+                                            onChange={(e) => setHasAgreed(e.target.checked)}
+                                            className="mt-1 w-4 h-4 rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37] bg-zinc-800 border-zinc-600"
+                                        />
+                                        <label htmlFor="terms-event" className="text-sm text-zinc-400 leading-tight">
+                                            I agree to the <a href="/terms" target="_blank" className="underline hover:text-[#D4AF37]">Terms & Conditions</a> and <a href="/privacy" target="_blank" className="underline hover:text-[#D4AF37]">Privacy Policy</a>.
+                                        </label>
+                                    </div>
+
                                     <button
                                         type="submit"
-                                        disabled={isSubmitting}
-                                        className="bg-[#D4AF37] hover:bg-white text-black font-bold py-4 rounded-lg uppercase tracking-widest mt-2 transition-all disabled:opacity-50"
+                                        disabled={isSubmitting || !hasAgreed}
+                                        className="bg-[#D4AF37] hover:bg-white text-black font-bold py-4 rounded-lg uppercase tracking-widest mt-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? 'Processing...' : (view === 'rsvp' ? 'Confirm RSVP' : 'Complete Purchase')}
                                     </button>
