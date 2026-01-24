@@ -191,3 +191,26 @@ export async function getNextEvent() {
         return { success: false, error: error.message }
     }
 }
+
+export async function getEventById(eventId: string) {
+    const supabase = await createClient()
+
+    try {
+        const { data: event, error } = await supabase
+            .from('events')
+            .select('id, date, title')
+            .eq('id', eventId)
+            .single()
+
+        if (error) throw error
+
+        if (event) {
+            return { success: true, event }
+        }
+
+        return { success: false, error: 'Event not found' }
+    } catch (error: any) {
+        console.error('Error fetching event by id:', error)
+        return { success: false, error: error.message }
+    }
+}

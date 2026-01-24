@@ -1,26 +1,35 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import InquireModal from '@/app/components/InquireModal'
+
+interface ReservationModalProps {
+    eventId?: string
+    tableFee?: number
+}
 
 interface ReservationContextType {
-    openReservation: () => void
+    openReservation: (props?: ReservationModalProps) => void
     closeReservation: () => void
     isReservationOpen: boolean
+    modalProps?: ReservationModalProps
 }
 
 const ReservationContext = createContext<ReservationContextType | undefined>(undefined)
 
 export function ReservationProvider({ children }: { children: ReactNode }) {
     const [isReservationOpen, setIsReservationOpen] = useState(false)
+    const [modalProps, setModalProps] = useState<ReservationModalProps | undefined>(undefined)
 
-    const openReservation = () => setIsReservationOpen(true)
+    const openReservation = (props?: ReservationModalProps) => {
+        setModalProps(props)
+        setIsReservationOpen(true)
+    }
+
     const closeReservation = () => setIsReservationOpen(false)
 
     return (
-        <ReservationContext.Provider value={{ openReservation, closeReservation, isReservationOpen }}>
+        <ReservationContext.Provider value={{ openReservation, closeReservation, isReservationOpen, modalProps }}>
             {children}
-            <InquireModal isOpen={isReservationOpen} onClose={closeReservation} />
         </ReservationContext.Provider>
     )
 }

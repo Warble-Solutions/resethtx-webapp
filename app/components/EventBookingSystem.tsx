@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import anime from 'animejs'
 import { getEventTables, bookTable, getEventForDate } from '@/app/actions/event-booking'
+import { purchaseTickets } from '@/app/actions/checkout' // NEW
 import { validatePromo } from '@/app/actions/promos'
 import BookingCheckoutModal from './BookingCheckoutModal'
 
@@ -17,9 +18,9 @@ interface Table {
     y?: number
 }
 
-const BOOKING_FEE = 50
+// const BOOKING_FEE = 50 // Removed constant, using prop
 
-export default function EventBookingSystem({ eventId: initialEventId, eventDate: initialEventDate }: { eventId: string, eventDate: string }) {
+export default function EventBookingSystem({ eventId: initialEventId, eventDate: initialEventDate, tableFee = 50 }: { eventId: string, eventDate: string, tableFee?: number }) {
     // Current Active Event and Date State
     const [currentEventId, setCurrentEventId] = useState(initialEventId)
     const [selectedDate, setSelectedDate] = useState<Date>(new Date(initialEventDate))
@@ -161,10 +162,27 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
         setIsBooking(true)
         setBookingError(null)
 
-        const result = await bookTable(currentEventId, selectedTable.id, customerName, customerEmail, customerPhone, customerDob, promoCode)
+        // const result = await bookTable(currentEventId, selectedTable.id, customerName, customerEmail, customerPhone, customerDob, promoCode)
+
+        // NEW: Use purchaseTickets for unified flow
+        const result = await purchaseTickets({
+            eventId: currentEventId,
+            userName: customerName,
+            userEmail: customerEmail,
+            userPhone: customerPhone,
+            userDob: customerDob,
+            quantity: 1, // 1 table
+            couponCode: promoCode,
+            ticketType: 'table_reservation',
+            bookingDetails: {
+                tableId: selectedTable.id,
+                tableName: selectedTable.name,
+                tableCategory: selectedTable.category
+            }
+        })
 
         if (result.success) {
-            alert('Table Booked Successfully! Check your email for confirmation.')
+            alert('Table Reserved! Check your email.')
             // Reset to start
             setCustomerName('')
             setCustomerEmail('')
@@ -176,7 +194,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
             setPromoMessage(null)
             setSelectedTable(null)
             setIsCheckoutOpen(false)
-            fetchTables(currentEventId) // Refresh data
+            fetchTables(currentEventId) // Refresh data (though purchase doesn't update 'event_bookings' table directly unless we sync them, but for now we rely on ticket_purchases)
         } else {
             setBookingError(result.error || 'Booking failed')
         }
@@ -235,7 +253,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
                         <div>
                             <p className="text-white font-bold uppercase tracking-wider text-sm mb-1">Reservation Fee Required</p>
                             <p className="text-slate-400 text-sm leading-relaxed">
-                                Table bookings require a <span className="text-white font-bold">${BOOKING_FEE} reservation fee</span>. This fee secures your spot and does not go towards your tab.
+                                Table bookings require a <span className="text-white font-bold">${tableFee} reservation fee</span>. This fee secures your spot and does not go towards your tab.
                             </p>
                         </div>
                     </div>
@@ -327,7 +345,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
                                 onClick={handleOpenCheckout}
                                 className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-12 rounded-full uppercase tracking-widest shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all transform hover:scale-105 flex items-center justify-center gap-2"
                             >
-                                <span>Pay ${BOOKING_FEE.toFixed(2)} & Book</span>
+                                <span>Pay ${tableFee.toFixed(2)} & Book</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
                             </button>
                         </div>
@@ -345,6 +363,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
                 error={bookingError}
                 guestDob={customerDob}
                 discountPercent={discountVal}
+                bookingFee={tableFee}
             >
                 {/* Injection of Form Fields logic */}
                 <div className="space-y-4">

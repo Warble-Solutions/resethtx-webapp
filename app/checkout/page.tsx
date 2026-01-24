@@ -13,6 +13,7 @@ export default function CheckoutPage() {
     const [clientSecret, setClientSecret] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isFree, setIsFree] = useState(false);
 
     useEffect(() => {
         // Create PaymentIntent as soon as the page loads
@@ -26,7 +27,9 @@ export default function CheckoutPage() {
         })
             .then((res) => res.json())
             .then((data) => {
-                if (data.error) {
+                if (data.isFree) {
+                    setIsFree(true);
+                } else if (data.error) {
                     setError(data.error);
                 } else {
                     setClientSecret(data.clientSecret);
@@ -50,6 +53,14 @@ export default function CheckoutPage() {
                 <div className="text-center text-red-500 bg-red-500/10 p-4 rounded max-w-md mx-auto border border-red-500/20">
                     <p className="font-bold">Payment System Offline</p>
                     <p className="text-sm mt-1 opacity-80">{error}</p>
+                </div>
+            )}
+
+            {isFree && (
+                <div className="text-center animate-in fade-in zoom-in">
+                    <div className="w-16 h-16 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">✓</div>
+                    <h3 className="text-2xl font-heading text-white mb-2">RSVP Confirmed</h3>
+                    <p className="text-slate-400 text-sm mb-6">This event is free! Your spot has been reserved.</p>
                 </div>
             )}
 

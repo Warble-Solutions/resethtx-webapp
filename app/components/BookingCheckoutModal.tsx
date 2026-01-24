@@ -20,6 +20,7 @@ interface BookingCheckoutModalProps {
     error: string | null
     guestDob?: string // Added guestDob for summary display
     discountPercent?: number
+    bookingFee?: number // NEW
     children?: React.ReactNode // For passing form inputs if needed, or specific checkout fields
 }
 
@@ -33,13 +34,12 @@ export default function BookingCheckoutModal({
     error,
     guestDob,
     discountPercent = 0,
+    bookingFee = 50, // Default to 50
     children
 }: BookingCheckoutModalProps) {
     if (!isOpen || !selectedTable) return null
 
-    const BOOKING_FEE = 50.00
-    const discountAmount = (BOOKING_FEE * discountPercent) / 100
-    const finalPrice = BOOKING_FEE - discountAmount
+    const finalPrice = bookingFee - ((bookingFee * discountPercent) / 100)
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
@@ -71,13 +71,13 @@ export default function BookingCheckoutModal({
                             <div className="text-right">
                                 {discountPercent > 0 ? (
                                     <>
-                                        <p className="text-slate-500 font-bold text-sm line-through decoration-red-500/50">${BOOKING_FEE.toFixed(2)}</p>
+                                        <p className="text-slate-500 font-bold text-sm line-through decoration-red-500/50">${bookingFee.toFixed(2)}</p>
                                         <p className="text-[#D4AF37] font-bold text-xl">${finalPrice.toFixed(2)}</p>
                                         <p className="text-[10px] text-green-400 uppercase font-bold">{discountPercent}% OFF</p>
                                     </>
                                 ) : (
                                     <>
-                                        <p className="text-[#D4AF37] font-bold text-xl">${BOOKING_FEE.toFixed(2)}</p>
+                                        <p className="text-[#D4AF37] font-bold text-xl">${bookingFee.toFixed(2)}</p>
                                         <p className="text-xs text-slate-500 uppercase font-bold">Res. Fee</p>
                                     </>
                                 )}

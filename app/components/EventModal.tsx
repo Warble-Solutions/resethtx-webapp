@@ -5,6 +5,7 @@ import Image from 'next/image'
 import EventBookingSystem from './EventBookingSystem'
 import { purchaseTickets } from '@/app/actions/checkout'
 import { formatEventTime } from '../utils/format'
+import { useReservation } from '../context/ReservationContext' // NEW
 
 interface Event {
     id: string
@@ -32,6 +33,7 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
     const [view, setView] = useState<'details' | 'booking' | 'rsvp' | 'purchase'>('details')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [purchaseState, setPurchaseState] = useState<{ success: boolean, message: string } | null>(null)
+    const { openReservation } = useReservation()
 
     // Form inputs
     const [userName, setUserName] = useState('')
@@ -197,7 +199,15 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
 
                             {/* --- DYNAMIC CTA --- */}
                             <div className="flex flex-col gap-4">
-                                {event.is_external_event ? (
+                                {new Date(event.date) < new Date() ? (
+                                    /* PAST EVENT */
+                                    <button
+                                        disabled
+                                        className="w-full md:w-auto bg-slate-800 text-slate-500 font-bold py-4 px-8 rounded-full uppercase tracking-widest text-sm cursor-not-allowed border border-white/5"
+                                    >
+                                        EVENT ENDED
+                                    </button>
+                                ) : event.is_external_event ? (
                                     <button
                                         onClick={handleExternalClick}
                                         className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm"
@@ -216,12 +226,25 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
                                                 RSVP FOR FREE
                                             </button>
                                         ) : (
-                                            /* PAID EVENT - DUAL OPTIONS */
+                                            /* PAID EVENT */
                                             <button
                                                 onClick={() => setView('purchase')}
                                                 className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm"
                                             >
                                                 GET TICKETS (${event.ticket_price})
+                                            </button>
+                                        )}
+
+                                        {/* Reserve Table Button */}
+                                        {((event.table_price || 0) > 0) && (
+                                            <button
+                                                onClick={() => {
+                                                    onClose()
+                                                    openReservation({ eventId: event.id, tableFee: event.table_price })
+                                                }}
+                                                className="w-full md:w-auto bg-transparent border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm"
+                                            >
+                                                Reserve Table (${event.table_price})
                                             </button>
                                         )}
                                     </>

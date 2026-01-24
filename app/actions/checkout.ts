@@ -10,11 +10,13 @@ interface PurchaseDetails {
     userPhone: string
     userDob: string
     quantity: number
-    couponCode?: string // Added couponCode
+    couponCode?: string
+    bookingDetails?: any // NEW
+    ticketType?: string // NEW
 }
 
 // NOTE: This currently mocks the Stripe integration
-export async function purchaseTickets({ eventId, userName, userEmail, userPhone, userDob, quantity, couponCode }: PurchaseDetails) {
+export async function purchaseTickets({ eventId, userName, userEmail, userPhone, userDob, quantity, couponCode, bookingDetails, ticketType }: PurchaseDetails) {
     const supabase = await createClient()
 
     // 0. Validate Age (Server-Side)
@@ -29,10 +31,10 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
         return { success: false, error: 'You must be 21+ to purchase tickets.' }
     }
 
-    // 1. Fetch Event Details
+    // 1. Fetch Event Details (Partial fetch OK for simple validation)
     const { data: event, error: eventError } = await supabase
         .from('events')
-        .select('ticket_price, ticket_capacity, title')
+        .select('ticket_price, ticket_capacity, title, table_price') // Added table_price
         .eq('id', eventId)
         .single()
 
@@ -40,7 +42,19 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
         return { success: false, error: 'Event not found' }
     }
 
-    const totalPrice = event.ticket_price * quantity
+    // Calculate Price
+    let totalPrice = 0
+    if (ticketType === 'table_reservation') {
+        // Table Reservation Logic: Price is fixed per table (mock logic) or passed?
+        // Ideally should match event.table_price
+        // For now, trust the fee associated with event or passed logic? 
+        // Better: use event.table_price
+        totalPrice = (event.table_price || 50) * quantity // quantity usually 1 for table
+    } else {
+        // Standard Ticket
+        totalPrice = event.ticket_price * quantity
+    }
+
     const isFree = totalPrice === 0
 
     // 2. Handle Free Tickets / RSVP
@@ -57,12 +71,14 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
                 total_price: 0,
                 status: 'free',
                 payment_intent_id: null,
-                coupon_code: couponCode || null
+                coupon_code: couponCode || null,
+                booking_details: bookingDetails || null, // NEW
+                ticket_type: ticketType || 'standard_ticket' // NEW
             })
 
         if (insertError) {
             console.error('RSVP Error:', insertError)
-            return { success: false, error: 'Failed to process RSVP' }
+            return { success: false, error: `Failed to process RSVP: ${insertError.message}` }
         }
 
         return { success: true, message: 'RSVP Confirmed!' }
@@ -84,12 +100,34 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
             total_price: totalPrice,
             status: 'paid', // Mocking instant success
             payment_intent_id: 'mock_pi_' + Date.now(),
-            coupon_code: couponCode || null
+            coupon_code: couponCode || null,
+            booking_details: bookingDetails || null, // NEW
+            ticket_type: ticketType || 'standard_ticket' // NEW
         })
 
     if (insertError) {
         console.error('Purchase Error:', insertError)
         return { success: false, error: 'Failed to process purchase' }
+    }
+
+    // 4. If Table Reservation, sync with event_bookings for availability
+    if (ticketType === 'table_reservation' && bookingDetails?.tableId) {
+        const { error: bookingError } = await supabase
+            .from('event_bookings')
+            .insert({
+                event_id: eventId,
+                table_id: bookingDetails.tableId,
+                customer_name: userName,
+                customer_email: userEmail,
+                guest_phone: userPhone,
+                guest_dob: userDob,
+                status: 'confirmed' // Mark as taken
+            })
+
+        if (bookingError) {
+            console.error('Table Booking Sync Error:', bookingError)
+            // Optional: Refund/Compensate logic here if strict transaction needed
+        }
     }
 
     // Mocking a redirect URL
