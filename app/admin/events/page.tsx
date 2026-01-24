@@ -110,6 +110,11 @@ export default async function EventsPage({
                   <div className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full border border-slate-700">
                     {new Date(event.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
                   </div>
+                  {event.is_featured && (
+                    <span className="absolute top-3 right-3 bg-[#D4AF37] text-black text-[10px] font-bold px-2 py-1 rounded-full shadow-md shadow-black/50 z-10 border border-white/20 uppercase tracking-wider">
+                      FEATURED
+                    </span>
+                  )}
                 </div>
 
                 {/* Content */}
