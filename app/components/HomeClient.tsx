@@ -14,6 +14,7 @@ import ReviewModal from './ReviewModal'
 import ReviewsCTA from './ReviewsCTA'
 import ExclusiveAccess from './ExclusiveAccess'
 
+
 interface Event {
     id: string
     title: string
@@ -76,6 +77,8 @@ export default function HomeClient({
             <PlanYourNightSection />
 
             <ReviewsCTA onOpenReview={() => setIsReviewModalOpen(true)} />
+
+
 
             <EventModal
                 isOpen={isModalOpen}

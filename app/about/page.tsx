@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { IdCard, Shirt, Users, Ticket, Car } from 'lucide-react'
 import PrivateEventsAboutSection from '@/app/components/PrivateEventsAboutSection'
 import BookTableButton from '@/app/components/BookTableButton'
+import FAQSection from '@/app/components/FAQSection'
 
 export default function AboutPage() {
     return (
@@ -214,7 +215,11 @@ export default function AboutPage() {
             </section>
 
 
-            {/* 7. PRIVATE EVENTS CTA */}
+
+            {/* 7. FAQ Section */}
+            <FAQSection />
+
+            {/* 8. PRIVATE EVENTS CTA */}
             <PrivateEventsAboutSection />
 
         </main >
