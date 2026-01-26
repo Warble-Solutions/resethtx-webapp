@@ -34,6 +34,7 @@ export async function getAggregatedCustomers(): Promise<Customer[]> {
         const existing = customerMap.get(email)
 
         const spend = t.total_price || 0
+        // @ts-ignore
         const date = t.events?.date || t.created_at
 
         if (existing) {

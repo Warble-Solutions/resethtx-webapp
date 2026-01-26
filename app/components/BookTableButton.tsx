@@ -15,7 +15,7 @@ export default function BookTableButton({
 
     return (
         <button
-            onClick={openReservation}
+            onClick={() => openReservation()}
             className={className}
         >
             {text}

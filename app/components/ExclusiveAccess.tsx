@@ -54,7 +54,7 @@ export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
                     </div>
 
                     <button
-                        onClick={openReservation}
+                        onClick={() => openReservation()}
                         className="text-[#D4AF37] font-bold text-sm tracking-widest hover:text-white transition-colors group"
                     >
                         Book Table <span className="inline-block transition-transform group-hover:translate-x-1">-&gt;</span>
@@ -67,7 +67,7 @@ export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
                         const isReservation = card.buttonText !== 'CONTACT US'
                         const Container = isReservation ? 'button' : Link
                         const props = isReservation
-                            ? { onClick: openReservation, type: 'button' as const }
+                            ? { onClick: () => openReservation(), type: 'button' as const }
                             : { href: '/contact' }
 
                         return (

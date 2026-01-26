@@ -43,7 +43,7 @@ export default function HeroSection() {
         {/* BUTTONS: Manrope Font */}
         <div className="flex flex-col md:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
           <button
-            onClick={openReservation}
+            onClick={() => openReservation()}
             className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] tracking-widest text-sm uppercase"
           >
             Book A Table

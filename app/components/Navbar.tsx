@@ -87,7 +87,7 @@ export default function Navbar() {
             ))}
 
             <button
-              onClick={openReservation}
+              onClick={() => openReservation()}
               className="relative overflow-hidden bg-[#D4AF37] text-black font-bold text-xs tracking-[0.2em] px-8 py-3 uppercase transition-all duration-300 hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] hover:scale-105"
             >
               <span className="relative z-10 font-sans">Celebrate With Us</span>
