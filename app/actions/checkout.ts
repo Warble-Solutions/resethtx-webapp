@@ -2,6 +2,17 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { stripe } from '@/lib/stripe'
+
+export async function updatePaymentIntent(paymentIntentId: string, metadata: any) {
+    try {
+        await stripe.paymentIntents.update(paymentIntentId, { metadata });
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error updating payment intent:', error);
+        return { success: false, error: error.message };
+    }
+}
 
 interface PurchaseDetails {
     eventId: string
@@ -132,4 +143,61 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
 
     // Mocking a redirect URL
     return { success: true, message: 'Tickets Purchased!', redirectUrl: '/events/' + eventId + '?success=true' }
+}
+
+export async function finalizeTicketPurchase(paymentIntentId: string) {
+    const supabase = await createClient();
+
+    try {
+        // 1. Verify Payment Intent with Stripe
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+        if (paymentIntent.status !== 'succeeded') {
+            return { success: false, error: 'Payment not successful' };
+        }
+
+        // 2. Check if already recorded to avoid duplicates
+        const { data: existing } = await supabase
+            .from('ticket_purchases')
+            .select('id')
+            .eq('payment_intent_id', paymentIntentId)
+            .single();
+
+        if (existing) {
+            return { success: true, message: 'Ticket already recorded' };
+        }
+
+        // 3. Extract metadata
+        const { eventId, userName, userEmail, userPhone, quantity, ticketType } = paymentIntent.metadata || {};
+
+        if (!eventId || !userName || !userEmail) {
+            return { success: false, error: 'Missing metadata in payment intent' };
+        }
+
+        // 4. Insert Ticket
+        const { error: insertError } = await supabase
+            .from('ticket_purchases')
+            .insert({
+                event_id: eventId,
+                user_name: userName,
+                user_email: userEmail,
+                user_phone: userPhone || null,
+                quantity: parseInt(quantity || '1'),
+                total_price: paymentIntent.amount / 100, // Convert back to dollars (or whatever unit DB expects)
+                status: 'paid',
+                payment_intent_id: paymentIntentId,
+                ticket_type: ticketType || 'standard_ticket'
+            });
+
+        if (insertError) {
+            console.error('Finalize Purchase Error:', insertError);
+            return { success: false, error: 'Failed to record ticket: ' + insertError.message };
+        }
+
+        return { success: true, message: 'Ticket secured!' };
+
+    } catch (error: any) {
+        console.error('Finalize Error:', error);
+        return { success: false, error: error.message };
+    }
 }

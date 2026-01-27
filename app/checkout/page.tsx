@@ -1,29 +1,44 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
+import { useSearchParams } from 'next/navigation';
+
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
 
+import getStripe from '@/utils/get-stripe';
+
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = getStripe();
 
 export default function CheckoutPage() {
+    const searchParams = useSearchParams();
+    const eventId = searchParams.get('eventId');
+    const quantity = searchParams.get('quantity') || '1';
+    const amountParam = searchParams.get('amount'); // Optional override for testing
+
     const [clientSecret, setClientSecret] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isFree, setIsFree] = useState(false);
 
     useEffect(() => {
+        if (!eventId) {
+            setError('No event specified.');
+            setLoading(false);
+            return;
+        }
+
         // Create PaymentIntent as soon as the page loads
         fetch('/api/create-payment-intent', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                amount: 2000,
-                eventId: 'test-event-id'
-            }), // Example amount/id
+                amount: amountParam ? parseInt(amountParam) : 2000,
+                eventId: eventId,
+                quantity: parseInt(quantity) // Pass quantity too if API supports it later
+            }),
         })
             .then((res) => res.json())
             .then((data) => {
@@ -37,7 +52,7 @@ export default function CheckoutPage() {
             })
             .catch((err) => setError('Network Error'))
             .finally(() => setLoading(false));
-    }, []);
+    }, [eventId, amountParam, quantity]);
 
     return (
         <div className="min-h-screen bg-black text-white py-20 px-4">
@@ -66,7 +81,7 @@ export default function CheckoutPage() {
 
             {clientSecret && (
                 <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night', variables: { colorPrimary: '#D4AF37' } } }}>
-                    <CheckoutForm />
+                    <CheckoutForm clientSecret={clientSecret} />
                 </Elements>
             )}
         </div>
