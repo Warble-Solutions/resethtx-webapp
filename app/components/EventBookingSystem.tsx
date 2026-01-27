@@ -359,6 +359,34 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
                 selectedTable={selectedTable}
                 eventDate={selectedDate.toISOString()}
                 onConfirm={handleBooking}
+                onInitiatePayment={async () => {
+                    // Create Payment Intent
+                    try {
+                        const res = await fetch('/api/create-payment-intent', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                amount: tableFee, // Use calculated fee if dynamic? For now tableFee
+                                eventId: currentEventId,
+                                ticketType: 'table_reservation',
+                                metadata: {
+                                    userName: customerName,
+                                    userEmail: customerEmail,
+                                    userPhone: customerPhone,
+                                    userDob: customerDob,
+                                    tableId: selectedTable?.id,
+                                    tableName: selectedTable?.name
+                                }
+                            }),
+                        });
+                        const data = await res.json();
+                        if (data.error) throw new Error(data.error);
+                        return data.clientSecret;
+                    } catch (err: any) {
+                        setBookingError(err.message || 'Payment initialization failed');
+                        return null;
+                    }
+                }}
                 isProcessing={isBooking}
                 error={bookingError}
                 guestDob={customerDob}

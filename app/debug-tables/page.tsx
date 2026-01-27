@@ -1,44 +1,66 @@
 'use client'
 
-import { createClient } from '@/utils/supabase/client'
-import { seedTables } from '@/app/actions/seed'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { getNextEvent, getEventById } from '@/app/actions/event-booking'
 
-export default function Page() {
-    const [tables, setTables] = useState<any[]>([])
+export default function DebugPage() {
+    const [result, setResult] = useState<any>(null)
+    const [loading, setLoading] = useState(false)
 
-    const fetchTables = async () => {
-        const supabase = createClient()
-        const { data } = await supabase.from('tables').select('*')
-        setTables(data || [])
+    const testNextEvent = async () => {
+        setLoading(true)
+        try {
+            console.log('Calling getNextEvent...')
+            const res = await getNextEvent()
+            console.log('Result:', res)
+            setResult({ action: 'getNextEvent', ...res })
+        } catch (error: any) {
+            console.error('Error:', error)
+            setResult({ error: error.message, stack: error.stack })
+        }
+        setLoading(false)
     }
 
-    useEffect(() => {
-        const init = async () => {
-            const supabase = createClient()
-            const { data } = await supabase.from('tables').select('*')
-
-            if (!data || data.length === 0) {
-                await seedTables()
-                const { data: newData } = await supabase.from('tables').select('*')
-                setTables(newData || [])
-            } else {
-                setTables(data)
-            }
+    const testGetEventById = async () => {
+        const id = prompt('Enter Event ID:')
+        if (!id) return
+        setLoading(true)
+        try {
+            console.log(`Calling getEventById(${id})...`)
+            const res = await getEventById(id)
+            console.log('Result:', res)
+            setResult({ action: 'getEventById', ...res })
+        } catch (error: any) {
+            console.error('Error:', error)
+            setResult({ error: error.message, stack: error.stack })
         }
-        init()
-    }, [])
-
-    const handleSeed = async () => {
-        await seedTables()
-        fetchTables()
+        setLoading(false)
     }
 
     return (
-        <div className="p-10 text-white">
-            <h1>Debug Tables</h1>
-            <button onClick={handleSeed} className="bg-blue-500 p-2 rounded mb-4">Seed Tables</button>
-            <pre>{JSON.stringify(tables, null, 2)}</pre>
+        <div className="min-h-screen bg-black text-white p-10 font-mono">
+            <h1 className="text-2xl mb-6 text-[#D4AF37]">Server Action Debugger</h1>
+
+            <div className="flex gap-4 mb-8">
+                <button
+                    onClick={testNextEvent}
+                    className="bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded border border-white/10"
+                >
+                    Test getNextEvent()
+                </button>
+                <button
+                    onClick={testGetEventById}
+                    className="bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded border border-white/10"
+                >
+                    Test getEventById(id)
+                </button>
+            </div>
+
+            {loading && <div className="text-yellow-500 mb-4">Loading...</div>}
+
+            <div className="bg-zinc-900 p-4 rounded border border-white/10 overflow-auto max-h-[600px]">
+                <pre>{JSON.stringify(result, null, 2)}</pre>
+            </div>
         </div>
     )
 }

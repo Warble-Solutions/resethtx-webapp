@@ -44,53 +44,11 @@ export default function ReservationModal({ isOpen, onClose, eventId, tableFee }:
                     // Let's assume we can fetch it or just pass null title until loaded.
 
                     if (eventId) {
-                        // Ideally fetch details. For now, pass ID to child and let child fetch tables.
-                        // But we want title for header.
-                        // I will add a simple fetch or hack it.
-                        // Let's rely on getNextEvent if NO ID. 
-                        // If ID, we skip this fetch? No, we still need title/date for header.
-                        // I'll call a new action `getEventDetails(eventId)` or reuse existing.
-                        // Checkout actions has `getEventDetails`? No.
-                        // Let's keep existing behavior for generic open, and if ID provided, we trust it exists.
-                        // We will add `getEventById` to `event-booking.ts` later or now.
-                        // For now let's just allow `EventBookingSystem` to handle it?
-                        // `ReservationModal` needs `event` object for "Booking for [TITLE]".
-
-                        // Let's leave `getNextEvent` for default flow.
-                        // If `eventId` is passed, we will fetch it.
-
-                        // Creating a small inline fetch/action call if possible or just update logic.
-                        // I will update the logic to fetch specific event if ID provided.
-
-                        // Since I can't import `getEventById` yet, I'll update the loop to fetch appropriately or skip header update?
-                        // I'll update it to use `getEventForDate` if I have date? No.
-
-                        // Let's just update `EventBookingSystem` first, it handles fetching tables.
-                        // If `eventId` is provided, `ReservationModal` should probably fetching the event info to show in header.
-                        // I will stick to `getNextEvent` for now if no ID.
-                        // If ID provided, I'll fetch using `getEventTables`? No that returns tables.
-                        // I'll just skip the header title update for specific event ID for a moment or invoke `getEventTables` which might return event info? No.
-
-                        // I'll use `getEventDetails` (need to create/export it).
-                        // I'll leave the current logic but add a check.
-
-                        if (eventId) {
-                            const result = await getEventById(eventId)
-                            if (result.success && result.event) {
-                                setEvent(result.event)
-                            } else {
-                                // Fallback or error
-                                setError(result.error || 'Event not found.')
-                            }
-                            setLoading(false)
+                        const result = await getEventById(eventId)
+                        if (result.success && result.event) {
+                            setEvent(result.event)
                         } else {
-                            const result = await getNextEvent()
-                            if (result.success && result.event) {
-                                setEvent(result.event)
-                            } else {
-                                setError(result.error || 'No upcoming events found.')
-                            }
-                            setLoading(false)
+                            setError(result.error || 'Event not found.')
                         }
                     } else {
                         const result = await getNextEvent()
@@ -99,9 +57,10 @@ export default function ReservationModal({ isOpen, onClose, eventId, tableFee }:
                         } else {
                             setError(result.error || 'No upcoming events found.')
                         }
-                        setLoading(false)
                     }
+                    setLoading(false)
                 } catch (err) {
+                    console.error('ReservationModal Load Error:', err)
                     setError('Failed to load event data.')
                     setLoading(false)
                 }
