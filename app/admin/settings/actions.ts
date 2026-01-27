@@ -43,6 +43,8 @@ export async function updateSiteSettings(formData: FormData) {
     email: formData.get('email') as string,
     instagram_url: formData.get('instagram_url') as string,
     facebook_url: formData.get('facebook_url') as string,
+    tiktok_url: formData.get('tiktok_url') as string,
+    youtube_url: formData.get('youtube_url') as string,
     hours_mon_tue: formData.get('hours_mon_tue') as string,
     hours_wed_sat: formData.get('hours_wed_sat') as string,
     hours_sun: formData.get('hours_sun') as string,
@@ -63,6 +65,6 @@ export async function updateSiteSettings(formData: FormData) {
   }
 
   // Refresh the layout so the Footer updates immediately across the site
-  revalidatePath('/', 'layout') 
+  revalidatePath('/', 'layout')
   redirect('/admin/settings?success=Settings saved')
 }

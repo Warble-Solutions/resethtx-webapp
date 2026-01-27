@@ -1,7 +1,13 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
-import SocialIcons from './SocialIcons'
+import { Instagram, Facebook, Youtube } from 'lucide-react'
+
+const TikTokIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+        <path d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.394 6.394 0 0 0-5.394 9.365 6.394 6.394 0 0 0 10.964-2.413v-8.25a8.32 8.32 0 0 0 3.663 1.478v-3.51a4.803 4.803 0 0 1-.004-.004z" />
+    </svg>
+);
 
 export default async function Footer() {
     const supabase = await createClient()
@@ -48,8 +54,43 @@ export default async function Footer() {
                         </div>
 
                         {/* Social Icons */}
-                        <div className="mt-2">
-                            <SocialIcons className="flex-row gap-2" />
+                        <div className="mt-2 flex items-center gap-2">
+                            {settings.instagram_url && (
+                                <Link
+                                    href={settings.instagram_url}
+                                    target="_blank"
+                                    className="group relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#D4AF37]/10 transition-all duration-300"
+                                >
+                                    <Instagram className="w-5 h-5 text-zinc-400 group-hover:text-[#D4AF37] transition-colors duration-300" />
+                                </Link>
+                            )}
+                            {settings.facebook_url && (
+                                <Link
+                                    href={settings.facebook_url}
+                                    target="_blank"
+                                    className="group relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#D4AF37]/10 transition-all duration-300"
+                                >
+                                    <Facebook className="w-5 h-5 text-zinc-400 group-hover:text-[#D4AF37] transition-colors duration-300" />
+                                </Link>
+                            )}
+                            {settings.tiktok_url && (
+                                <Link
+                                    href={settings.tiktok_url}
+                                    target="_blank"
+                                    className="group relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#D4AF37]/10 transition-all duration-300"
+                                >
+                                    <TikTokIcon className="w-5 h-5 text-zinc-400 group-hover:text-[#D4AF37] transition-colors duration-300" />
+                                </Link>
+                            )}
+                            {settings.youtube_url && (
+                                <Link
+                                    href={settings.youtube_url}
+                                    target="_blank"
+                                    className="group relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#D4AF37]/10 transition-all duration-300"
+                                >
+                                    <Youtube className="w-5 h-5 text-zinc-400 group-hover:text-[#D4AF37] transition-colors duration-300" />
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </div>
