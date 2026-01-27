@@ -66,6 +66,16 @@ export default function CreateEventPage() {
         setIsSubmitting(false)
         return
       }
+      if (!featuredDesc || featuredDesc.trim() === '') {
+        alert("Featured events must have a Featured Description.")
+        setIsSubmitting(false)
+        return
+      }
+      if (!featuredImageFile) {
+        alert("Featured events must have a Featured Banner Image.")
+        setIsSubmitting(false)
+        return
+      }
     }
     // End Word Count Check
 

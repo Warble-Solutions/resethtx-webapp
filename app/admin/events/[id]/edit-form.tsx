@@ -145,6 +145,18 @@ export default function EditEventForm({ event }: { event: EventData }) {
         setIsSubmitting(false)
         return
       }
+      if (!featuredDesc || featuredDesc.trim() === '') {
+        alert("Featured events must have a Featured Description.")
+        setIsSubmitting(false)
+        return
+      }
+      // Check if image exists OR new file is uploaded
+      // If we are removing the image, we must provide a new one or uncheck featured
+      if (!featuredImageFile && (!event.featured_image_url || shouldRemoveFeaturedImage)) {
+        alert("Featured events must have a Featured Banner Image.")
+        setIsSubmitting(false)
+        return
+      }
     }
 
     await executeUpdate(formData)
