@@ -20,9 +20,10 @@ interface Event {
     ticket_price?: number // NEW
 }
 
-export default function EventsCalendar({ events, onEventClick }: { events: Event[], onEventClick?: (event: Event) => void }) {
+// 1. Update component signature to pass array
+export default function EventsCalendar({ events, onEventClick }: { events: Event[], onEventClick?: (events: Event[]) => void }) {
     const [currentDate, setCurrentDate] = useState(new Date())
-    const [selectedDate, setSelectedDate] = useState(new Date()) // NEW
+    const [selectedDate, setSelectedDate] = useState(new Date())
 
     const getDaysInMonth = (date: Date) => {
         return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
@@ -44,9 +45,7 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
 
     const getEventsForDay = (day: number) => {
         const checkDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
-        // Adjust logic to match local date string
-        const dateStr = checkDate.toLocaleDateString('en-CA') // YYYY-MM-DD format
-        // Return ALL events for that day
+        const dateStr = checkDate.toLocaleDateString('en-CA')
         return events.filter(e => e.date.startsWith(dateStr))
     }
 
@@ -55,9 +54,40 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
         return e.date.startsWith(sDate)
     })
 
-    // Format selected date for display
     const selectedDateDisplay = selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
+
+    // --- DYNAMIC SIDEBAR LOGIC ---
+    const getVisibleCategories = () => {
+        // 1. Determine which months to fetch categories from
+        const today = new Date()
+        const isCurrentMonthView = currentDate.getFullYear() === today.getFullYear() &&
+            currentDate.getMonth() === today.getMonth()
+
+        // Base range: Start of viewed month to end of viewed month
+        let startFilter = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+        let endFilter = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
+
+        // "End of Month" Rule: If today >= 25th and viewing current month, include next month
+        if (isCurrentMonthView && today.getDate() >= 25) {
+            endFilter = new Date(currentDate.getFullYear(), currentDate.getMonth() + 2, 0) // Extend to end of next month
+        }
+
+        // 2. Filter events within range
+        const relevantEvents = events.filter(e => {
+            const eDate = new Date(e.date)
+            // Use local dates for comparison to avoid timezone off-by-one issues on edge days
+            // or simplify by comparing ISO strings but standard Date comparison usually fine if times match
+            // Let's rely on simple timestamp comparison for range check
+            return eDate >= startFilter && eDate <= endFilter
+        })
+
+        // 3. Extract unique categories
+        const categories = Array.from(new Set(relevantEvents.map(e => e.category))).filter(Boolean) as string[]
+        return categories
+    }
+
+    const displayedCategories = getVisibleCategories()
 
     return (
         <section className="bg-black py-10 md:py-20 px-4 md:px-12 border-t border-white/5">
@@ -73,20 +103,20 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
                         There's always something happening at Reset. From midweek happy hours to weekend rooftop raves. Check the calendar to reserve your spot.
                     </p>
 
-                    {/* Legend - Hidden on small mobile to save space? Keep checks simple */}
                     <div className="space-y-4 font-sans mb-8 lg:mb-0">
-                        <div className="flex items-center gap-3">
-                            <div className="w-3 h-3 rounded-full bg-[#D4AF37]"></div>
-                            <span className="text-sm font-bold text-white uppercase tracking-wider">Live DJ Sets</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="w-3 h-3 rounded-full bg-slate-500"></div>
-                            <span className="text-sm font-bold text-white uppercase tracking-wider">Happy Hour Specials</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="w-3 h-3 rounded-full bg-white"></div>
-                            <span className="text-sm font-bold text-white uppercase tracking-wider">Private Events</span>
-                        </div>
+                        {displayedCategories.length > 0 ? (
+                            displayedCategories.map((cat, idx) => (
+                                <div key={idx} className="flex items-center gap-3 animate-in fade-in slide-in-from-left-4" style={{ animationDelay: `${idx * 100}ms` }}>
+                                    <div className={`w-3 h-3 rounded-full ${idx % 2 === 0 ? 'bg-[#D4AF37]' : 'bg-white'}`}></div>
+                                    <span className="text-sm font-bold text-white uppercase tracking-wider">{cat}</span>
+                                </div>
+                            ))
+                        ) : (
+                            // Fallback if no categories found (e.g. empty month)
+                            <div className="flex items-center gap-3 opacity-50">
+                                <span className="text-sm text-slate-500 italic">Check calendar for details</span>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -116,10 +146,8 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
                         {Array.from({ length: daysInMonth }).map((_, i) => {
                             const day = i + 1
                             const dayEvents = getEventsForDay(day)
-                            const hasEvent = dayEvents.length > 0
-                            const event = dayEvents[0] // Primary event for thumbnail
+                            const hasEvents = dayEvents.length > 0
 
-                            // Check if this specific day is selected (Mobile UI state)
                             const isSelected = selectedDate.getDate() === day &&
                                 selectedDate.getMonth() === currentDate.getMonth() &&
                                 selectedDate.getFullYear() === currentDate.getFullYear()
@@ -128,7 +156,6 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
                                 <div
                                     key={day}
                                     onClick={() => {
-                                        // Update selected date for mobile view
                                         const newSelected = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
                                         setSelectedDate(newSelected)
                                     }}
@@ -137,43 +164,62 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
                                         ${isSelected ? 'bg-white/10' : 'bg-[#111]'}
                                     `}
                                 >
-                                    <span className={`absolute top-1 left-1 md:top-2 md:left-3 text-xs md:text-sm font-sans font-bold z-10 transition-colors ${isSelected ? 'text-white' : 'text-slate-500 group-hover:text-white'}`}>{day}</span>
+                                    <span className={`absolute top-1 left-1 md:top-2 md:left-3 text-xs md:text-sm font-sans font-bold z-20 transition-colors ${isSelected ? 'text-white' : 'text-slate-500 group-hover:text-white drop-shadow-md'}`}>{day}</span>
 
                                     {/* --- MOBILE VIEW: DOT ONLY --- */}
                                     <div className="md:hidden w-full h-full flex items-center justify-center">
-                                        {hasEvent && (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] mt-3" />
+                                        {hasEvents && (
+                                            <div className="flex gap-1 justify-center mt-3">
+                                                {dayEvents.slice(0, 3).map((_, idx) => (
+                                                    <div key={idx} className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+                                                ))}
+                                            </div>
                                         )}
                                     </div>
 
-                                    {/* --- DESKTOP VIEW: FULL IMAGE --- */}
-                                    {hasEvent ? (
-                                        <div
-                                            onClick={(e) => {
-                                                // On desktop, click opens modal directly? 
-                                                // Actually, let's keep the dual behavior:
-                                                // Mobile -> Selects date (handled by parent div onClick)
-                                                // Desktop -> Opens modal (we can intercept here if needed, but existing logic was direct)
-                                                // Since md:block hides this on mobile, this click handler only fires on desktop.
-                                                onEventClick?.(event)
-                                                e.stopPropagation() // Prevent selecting date? actually selecting date is fine too.
-                                            }}
-                                            className="hidden md:block absolute inset-0 w-full h-full cursor-pointer"
-                                        >
-                                            {event.image_url && (
-                                                <Image src={event.image_url} alt={event.title} fill className="w-full h-full object-cover object-top opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
-                                            )}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                                            <div className="absolute bottom-2 left-2 right-2">
-                                                <p className="text-[10px] uppercase tracking-widest text-[#D4AF37] mb-0.5 truncate font-sans font-bold">
-                                                    {formatTime(event.time)}
-                                                </p>
-                                                <p className="text-xs font-bold text-white leading-tight line-clamp-2 font-heading">{event.title}</p>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="hidden md:block w-full h-full hover:bg-white/5 transition-colors cursor-default" />
-                                    )}
+                                    {/* --- DESKTOP VIEW: SPLIT OR FULL --- */}
+                                    <div
+                                        onClick={(e) => {
+                                            onEventClick?.(dayEvents)
+                                            e.stopPropagation()
+                                        }}
+                                        className="hidden md:flex w-full h-full absolute inset-0"
+                                    >
+                                        {hasEvents ? (
+                                            dayEvents.length === 1 ? (
+                                                // SINGLE EVENT (Full Size)
+                                                <div className="relative w-full h-full cursor-pointer group/item">
+                                                    {dayEvents[0].image_url && (
+                                                        <Image src={dayEvents[0].image_url} alt={dayEvents[0].title} fill className="w-full h-full object-cover object-top opacity-60 group-hover/item:opacity-100 group-hover/item:scale-110 transition-all duration-500" />
+                                                    )}
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                                                    <div className="absolute bottom-2 left-2 right-2">
+                                                        <p className="text-[10px] uppercase tracking-widest text-[#D4AF37] mb-0.5 truncate font-sans font-bold">
+                                                            {formatTime(dayEvents[0].time)}
+                                                        </p>
+                                                        <p className="text-xs font-bold text-white leading-tight line-clamp-2 font-heading">{dayEvents[0].title}</p>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                // MULTI EVENT (Split View)
+                                                dayEvents.slice(0, 2).map((ev, idx) => (
+                                                    <div key={ev.id} className={`relative w-1/2 h-full cursor-pointer group/item border-r border-[#000] last:border-r-0`}>
+                                                        {ev.image_url && (
+                                                            <Image src={ev.image_url} alt={ev.title} fill className="w-full h-full object-cover object-center opacity-60 group-hover/item:opacity-100 transition-all duration-500" />
+                                                        )}
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                                                        <div className="absolute bottom-2 left-2 right-2">
+                                                            <p className="text-[9px] uppercase tracking-widest text-[#D4AF37] mb-0.5 truncate font-sans font-bold">
+                                                                {formatTime(ev.time)}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            )
+                                        ) : (
+                                            <div className="w-full h-full hover:bg-white/5 transition-colors cursor-default" />
+                                        )}
+                                    </div>
                                 </div>
                             )
                         })}
@@ -191,7 +237,7 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
                     {selectedEvents.length > 0 ? (
                         selectedEvents.map(event => (
                             // Wrapper to handle click -> modal if possible, OR just render card
-                            <div key={event.id} onClick={() => onEventClick?.(event)}>
+                            <div key={event.id} onClick={() => onEventClick?.([event])}>
                                 <EventCard
                                     title={event.title}
                                     date={new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -201,7 +247,7 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
                                     imageUrl={event.image_url || ''}
                                     price={(event.ticket_price === 0 || !event.ticket_price) ? 'Free' : `$${event.ticket_price}`}
                                     tag={event.category || 'Nightlife'}
-                                    link="#" // Using # because onClick on wrapper handles the modal
+                                    link="#"
                                 />
                             </div>
                         ))
