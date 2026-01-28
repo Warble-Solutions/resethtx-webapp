@@ -31,6 +31,11 @@ export default function TermsPage() {
                         <h2 className="text-xl font-bold text-white mb-3">4. Liability</h2>
                         <p>The venue is not responsible for lost or stolen personal items. Guests assume all risks associated with attending events, including risks of personal injury.</p>
                     </section>
+                    <div className="h-px bg-zinc-800" />
+                    <section>
+                        <h2 className="text-xl font-bold text-white mb-3">5. Dress Code</h2>
+                        <p>We enforce a stylish dress code. Management reserves the right to deny entry based on attire. Athletic wear, excessively baggy clothing, and flip-flops are generally not permitted.</p>
+                    </section>
                 </div>
             </div>
         </div>

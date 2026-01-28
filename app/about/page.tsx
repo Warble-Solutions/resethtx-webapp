@@ -206,7 +206,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">VALET & ARRIVAL</h3>
                             <p className="text-zinc-400 font-sans leading-relaxed">
-                                Valet available for $15 ($5 during Happy Hour). Street parking is also available.
+                                Valet available for $15 ($10 during Happy Hour). Street parking is also available.
                             </p>
                         </div>
 

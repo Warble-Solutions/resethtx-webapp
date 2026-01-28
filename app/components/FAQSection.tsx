@@ -5,7 +5,7 @@ import { Plus, Minus } from 'lucide-react';
 const faqs = [
     {
         question: "WHAT IS THE REQUIRED AGE FOR ENTRY?",
-        answer: "You must have a valid government issued photo ID. You must be 21+ to drink from the bar."
+        answer: "You must have a valid government issued photo ID. You must be 21+ to enter the venue."
     },
     {
         question: "WHAT ARE THE ENTRY FEES?",
@@ -13,7 +13,7 @@ const faqs = [
     },
     {
         question: "TABLE PURCHASE MINIMUM AMOUNT?",
-        answer: "Every day of the week except for Sunday, bottle sections start at $500 (you must purchase one bottle).\n\nOn Sundays, select bottles are priced at $200, and there is a two-bottle minimum."
+        answer: "Every day of the week except for Sunday, bottle sections start at $275 (you must purchase one bottle).\n\nOn Sundays, select bottles are priced at $200, and there is a two-bottle minimum."
     },
     {
         question: "IS THERE PARKING AT RESET?",
@@ -33,7 +33,19 @@ const faqs = [
     },
     {
         question: "IS GRATUITY ADDED TO ORDERS?",
-        answer: "Gratuity and tax are not included in the listed price and will be added to your bill."
+        answer: "Yes. A 20% gratuity is applied to all orders."
+    },
+    {
+        question: "DRESS CODE",
+        answer: "Upscale Chic. No athletic wear, flip flops, or oversized clothing. Dress to impress."
+    },
+    {
+        question: "AGE POLICY",
+        answer: "21+ only with valid physical ID. No photos of IDs accepted."
+    },
+    {
+        question: "ENTRY FEES",
+        answer: "Cover charge may apply for special events. Wednesday & Thursday is generally free."
     }
 ];
 
