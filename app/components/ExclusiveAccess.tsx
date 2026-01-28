@@ -1,16 +1,16 @@
 'use client'
 
-import Link from 'next/link'
+import React from 'react' // add explicit React import if needed or just rely on next
 import Image from 'next/image'
 import { Crown, Star, Briefcase } from 'lucide-react'
-import { useReservation } from '../context/ReservationContext'
+import { useInquire } from '../context/InquireContext'
 
 interface ExclusiveAccessProps {
     // onInquire: () => void // Removed as we use Links now
 }
 
 export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
-    const { openReservation } = useReservation()
+    const { openInquiry } = useInquire()
     const cards = [
         {
             id: 1,
@@ -18,7 +18,7 @@ export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
             description: 'Premium spirits, private seating, and personal service for you and your crew.',
             icon: <Crown className="w-5 h-5 text-black" />,
             buttonText: 'BOOK NOW',
-            image: '/images/event-1.jpg', // Placeholder, using existing image
+            image: '/images/event-1.jpg',
         },
         {
             id: 2,
@@ -26,7 +26,7 @@ export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
             description: 'Celebrate in style with a dedicated section and custom packages.',
             icon: <Star className="w-5 h-5 text-black" />,
             buttonText: 'INQUIRE',
-            image: '/images/event-2.png', // Placeholder
+            image: '/images/event-2.png',
         },
         {
             id: 3,
@@ -53,28 +53,17 @@ export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
                         </h2>
                     </div>
 
-                    <button
-                        onClick={() => openReservation()}
-                        className="text-[#D4AF37] font-bold text-sm tracking-widest hover:text-white transition-colors group"
-                    >
-                        Book Table <span className="inline-block transition-transform group-hover:translate-x-1">-&gt;</span>
-                    </button>
+                    {/* Removed Book Table Button */}
                 </div>
 
                 {/* Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
                     {cards.map((card) => {
-                        const isReservation = card.buttonText !== 'CONTACT US'
-                        const Container = isReservation ? 'button' : Link
-                        const props = isReservation
-                            ? { onClick: () => openReservation(), type: 'button' as const }
-                            : { href: '/contact' }
-
                         return (
-                            // @ts-ignore
-                            <Container
+                            <button
                                 key={card.id}
-                                {...props}
+                                onClick={() => openInquiry()}
+                                type="button"
                                 className="group relative h-[450px] w-full overflow-hidden rounded-xl cursor-pointer border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-500 block text-left"
                             >
                                 {/* Background Image */}
@@ -106,15 +95,6 @@ export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
                                         </p>
                                     </div>
 
-                                    {/* Fallback description visibility for mobile or if logic prefers always visible? 
-                    Request said "Small gray text (visible on hover or always)". 
-                    I'll make it always visible on mobile, hover on desktop for cleaner look, 
-                    OR just always visible. Let's make it always visible but subtle, 
-                    and the button emphasizes on hover. 
-                    
-                    Re-reading: "Hover Effect: ... overlay gets darker." 
-                    Let's keep description always visible but cleaner.
-                */}
                                     <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2 md:line-clamp-none group-hover:text-white transition-colors">
                                         {card.description}
                                     </p>
@@ -126,7 +106,7 @@ export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
                                     {/* Animated Line */}
                                     <div className="absolute bottom-0 left-0 w-0 h-1 bg-[#D4AF37] transition-all duration-500 group-hover:w-full" />
                                 </div>
-                            </Container>
+                            </button>
                         )
                     })}
                 </div>

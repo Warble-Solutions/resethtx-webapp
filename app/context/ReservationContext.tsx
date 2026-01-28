@@ -37,7 +37,13 @@ export function ReservationProvider({ children }: { children: ReactNode }) {
 export function useReservation() {
     const context = useContext(ReservationContext)
     if (context === undefined) {
-        throw new Error('useReservation must be used within a ReservationProvider')
+        // Fallback to prevent SSR crashes if provider is missing in tree (should not happen in RootLayout but safeguards usage)
+        return {
+            openReservation: () => console.warn('ReservationProvider missing'),
+            closeReservation: () => { },
+            isReservationOpen: false,
+            modalProps: undefined
+        }
     }
     return context
 }

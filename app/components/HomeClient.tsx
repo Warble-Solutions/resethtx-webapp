@@ -3,16 +3,14 @@
 import { useState } from 'react'
 import HeroCarousel from './HeroCarousel'
 import UpcomingEventsSection from './UpcomingEventsSection'
-import PrivateEventsSection from './PrivateEventsSection'
 import EventsCalendar from './EventsCalendar'
 import TestimonialsSection from './TestimonialsSection'
 import SonicLandscapeSection from './SonicLandscapeSection'
-import PlanYourNightSection from './PlanYourNightSection'
-import ReservationSection from './ReservationSection'
 import EventModal from './EventModal'
 import ReviewModal from './ReviewModal'
 import ReviewsCTA from './ReviewsCTA'
 import ExclusiveAccess from './ExclusiveAccess'
+import HappyHourSection from './HappyHourSection'
 
 
 interface Event {
@@ -38,12 +36,16 @@ export default function HomeClient({
     allEvents: any[],
     testimonials: any[]
 }) {
-    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+    const [selectedEvents, setSelectedEvents] = useState<Event[] | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
 
-    const handleEventClick = (event: Event) => {
-        setSelectedEvent(event)
+    const handleEventClick = (eventOrEvents: Event | Event[]) => {
+        if (Array.isArray(eventOrEvents)) {
+            setSelectedEvents(eventOrEvents)
+        } else {
+            setSelectedEvents([eventOrEvents])
+        }
         setIsModalOpen(true)
     }
 
@@ -66,15 +68,15 @@ export default function HomeClient({
 
             <ExclusiveAccess />
 
-            <PrivateEventsSection />
+            {/* REPLACED: PrivateEventsSection with HappyHourSection */}
+            <HappyHourSection />
 
             <TestimonialsSection testimonials={testimonials} />
 
             <SonicLandscapeSection />
 
-            <ReservationSection />
-
-            <PlanYourNightSection />
+            {/* REMOVED: ReservationSection */}
+            {/* REMOVED: PlanYourNightSection */}
 
             <ReviewsCTA onOpenReview={() => setIsReviewModalOpen(true)} />
 
@@ -83,7 +85,7 @@ export default function HomeClient({
             <EventModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                event={selectedEvent}
+                events={selectedEvents}
             />
 
             <ReviewModal
