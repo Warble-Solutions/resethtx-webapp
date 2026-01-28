@@ -136,8 +136,12 @@ export default async function Footer() {
                             <span className="text-white font-bold">{settings.hours_mon_tue}</span>
                         </div>
                         <div className="flex justify-between border-b border-white/10 pb-4">
-                            <span className="text-slate-400">Wed - Sat</span>
-                            <span className="text-white font-bold">{settings.hours_wed_sat}</span>
+                            <span className="text-slate-400">Wed - Thu</span>
+                            <span className="text-white font-bold">{settings.hours_wed_thu}</span>
+                        </div>
+                        <div className="flex justify-between border-b border-white/10 pb-4">
+                            <span className="text-slate-400">Fri - Sat</span>
+                            <span className="text-white font-bold">{settings.hours_fri_sat}</span>
                         </div>
                         <div className="flex justify-between border-b border-white/10 pb-4">
                             <span className="text-slate-400">Sunday</span>

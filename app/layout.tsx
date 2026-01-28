@@ -9,6 +9,8 @@ import NextTopLoader from 'nextjs-toploader';
 import AdminHidden from './components/AdminHidden'
 import { ReservationProvider } from './context/ReservationContext'
 import GlobalReservationModal from './components/GlobalReservationModal'
+import { InquireProvider } from './context/InquireContext'
+import GlobalInquireModal from './components/GlobalInquireModal'
 
 // 2. Configure them
 const cinzel = Cinzel({
@@ -54,13 +56,16 @@ export default function RootLayout({
           shadow="0 0 10px #D4AF37,0 0 5px #D4AF37"
         />
         <ReservationProvider>
-          <GlobalReservationModal />
-          <Navbar />
-          {children}
-          <AdminHidden>
-            <FloatingSocials />
-            <Footer />
-          </AdminHidden>
+          <InquireProvider>
+            <GlobalReservationModal />
+            <GlobalInquireModal />
+            <Navbar />
+            {children}
+            <AdminHidden>
+              <FloatingSocials />
+              <Footer />
+            </AdminHidden>
+          </InquireProvider>
         </ReservationProvider>
       </body>
     </html>

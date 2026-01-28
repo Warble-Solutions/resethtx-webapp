@@ -1,8 +1,10 @@
-'use client'
-
 import ContactForm from '@/app/components/ContactForm'
+import { createClient } from '@/utils/supabase/server'
 
-export default function ContactPage() {
+export default async function ContactPage() {
+    const supabase = await createClient()
+    const { data: settings } = await supabase.from('site_settings').select('*').single()
+
     return (
         <main className="min-h-screen bg-black text-white selection:bg-[#C59D24] selection:text-black pt-32 pb-20">
 
@@ -29,8 +31,7 @@ export default function ContactPage() {
                         <div>
                             <h3 className="font-heading text-xl font-bold text-white mb-2">Location</h3>
                             <p className="text-slate-400 font-sans">
-                                606 Dennis St Ste 200 <br />
-                                Houston, TX 77006
+                                {settings?.address || '606 Dennis St Ste 200, Houston, TX 77006'}
                             </p>
                         </div>
                     </div>
@@ -43,10 +44,10 @@ export default function ContactPage() {
                         <div>
                             <h3 className="font-heading text-xl font-bold text-white mb-2">Hours</h3>
                             <ul className="text-slate-400 font-sans space-y-1">
-                                <li className="flex justify-between w-48"><span>Mon - Tue:</span> <span>Closed</span></li>
-                                <li className="flex justify-between w-48"><span>Wed - Thu:</span> <span>5PM - 12AM</span></li>
-                                <li className="flex justify-between w-48"><span>Fri - Sat:</span> <span>5PM - 2AM</span></li>
-                                <li className="flex justify-between w-48"><span>Sunday:</span> <span>4PM - 12AM</span></li>
+                                <li className="flex justify-between w-48"><span>Mon - Tue:</span> <span>{settings?.hours_mon_tue || 'Closed'}</span></li>
+                                <li className="flex justify-between w-48"><span>Wed - Thu:</span> <span>{settings?.hours_wed_thu || '4pm - 2am'}</span></li>
+                                <li className="flex justify-between w-48"><span>Fri - Sat:</span> <span>{settings?.hours_fri_sat || '4pm - 3am'}</span></li>
+                                <li className="flex justify-between w-48"><span>Sunday:</span> <span>{settings?.hours_sun || '3pm - 12am'}</span></li>
                             </ul>
                         </div>
                     </div>
@@ -59,8 +60,14 @@ export default function ContactPage() {
                         <div>
                             <h3 className="font-heading text-xl font-bold text-white mb-2">Contact</h3>
                             <p className="text-slate-400 font-sans">
-                                <a href="mailto:info@resethtx.com" className="hover:text-[#C59D24] transition-colors">info@resethtx.com</a> <br />
-                                <a href="tel:+18325550199" className="hover:text-[#C59D24] transition-colors">(832) 555-0199</a>
+                                {settings?.email && (
+                                    <>
+                                        <a href={`mailto:${settings.email}`} className="hover:text-[#C59D24] transition-colors">{settings.email}</a> <br />
+                                    </>
+                                )}
+                                {settings?.phone && (
+                                    <a href={`tel:${settings.phone.replace(/\D/g, '')}`} className="hover:text-[#C59D24] transition-colors">{settings.phone}</a>
+                                )}
                             </p>
                         </div>
                     </div>
@@ -68,7 +75,7 @@ export default function ContactPage() {
                     {/* Map Embed */}
                     <div className="w-full h-64 rounded-2xl overflow-hidden border border-white/10 transition-all duration-500">
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3463.766774659616!2d-95.38152592359614!3d29.755498832168393!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640bf6f6e5229c9%3A0x6296366020586e39!2s606%20Dennis%20St%20STE%20200%2C%20Houston%2C%20TX%2077006!5e0!3m2!1sen!2sus!4v1715000000000!5m2!1sen!2sus"
+                            src={settings?.google_maps_embed_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3463.766774659616!2d-95.38152592359614!3d29.755498832168393!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640bf6f6e5229c9%3A0x6296366020586e39!2s606%20Dennis%20St%20STE%20200%2C%20Houston%2C%20TX%2077006!5e0!3m2!1sen!2sus!4v1715000000000!5m2!1sen!2sus"}
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}

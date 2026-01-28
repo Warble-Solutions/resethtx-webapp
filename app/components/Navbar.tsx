@@ -5,11 +5,11 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { useReservation } from '../context/ReservationContext'
+import { useInquire } from '../context/InquireContext'
 
 const navLinks = [
   { name: 'HOME', href: '/' },
   { name: 'CALENDAR', href: '/events' },
-  { name: 'PRIVATE EVENTS', href: '/private-events' },
   { name: 'MENU', href: '/menu' },
   { name: 'ABOUT', href: '/about' },
   { name: 'CONTACT', href: '/contact' },
@@ -20,6 +20,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const { openReservation } = useReservation()
+  const { openInquiry } = useInquire()
   const pathname = usePathname()
 
   // Handle Scroll Transparency
@@ -87,10 +88,10 @@ export default function Navbar() {
             ))}
 
             <button
-              onClick={() => openReservation()}
+              onClick={() => openInquiry()}
               className="relative overflow-hidden bg-[#D4AF37] text-black font-bold text-xs tracking-[0.2em] px-8 py-3 uppercase transition-all duration-300 hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] hover:scale-105"
             >
-              <span className="relative z-10 font-sans">Celebrate With Us</span>
+              <span className="relative z-10 font-sans">Venue Rental</span>
             </button>
           </div>
 
@@ -133,11 +134,11 @@ export default function Navbar() {
             <button
               onClick={() => {
                 setIsOpen(false)
-                openReservation()
+                openInquiry()
               }}
               className="bg-[#D4AF37] text-black font-bold text-sm tracking-[0.2em] px-10 py-4 uppercase rounded-full shadow-[0_0_20px_rgba(212,175,55,0.3)]"
             >
-              Celebrate With Us
+              Venue Rental
             </button>
           </div>
         </div>

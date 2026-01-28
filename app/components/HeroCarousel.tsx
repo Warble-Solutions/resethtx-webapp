@@ -68,10 +68,10 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
   const staticBaseSlide: BrandSlide = {
     id: 'static-brand-slide',
     type: 'BRAND',
-    title: 'Celebrate With Us',
+    title: 'Venue Rental',
     subtitle: "Reset HTX",
     description: "Now accepting bookings for private parties, corporate events, and special occasions.",
-    image_url: '/images/event-1.jpg'
+    image_url: '/images/def_banner.png'
   }
 
   // 2. Map Events to EventSlides
@@ -217,12 +217,13 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
               {/* EVENT BUTTONS */}
               <div className="flex flex-col sm:flex-row gap-4 mt-8 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
                 {/* Primary: Get Tickets */}
-                <Link
-                  href={`/events/${currentSlide.id}#tickets`}
-                  className="font-sans bg-[#D4AF37] text-black font-bold py-3 px-8 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] uppercase tracking-widest text-sm text-center flex items-center justify-center"
+                {/* Primary: Get Tickets / RSVP */}
+                <button
+                  onClick={() => setSelectedHeroEvent(currentSlide as unknown as Event)}
+                  className="font-sans bg-[#D4AF37] text-black font-bold py-3 px-8 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] uppercase tracking-widest text-sm text-center flex items-center justify-center cursor-pointer"
                 >
                   Get Tickets
-                </Link>
+                </button>
 
                 {/* Secondary: View Details */}
                 <button
