@@ -46,7 +46,8 @@ export async function updateSiteSettings(formData: FormData) {
     tiktok_url: formData.get('tiktok_url') as string,
     youtube_url: formData.get('youtube_url') as string,
     hours_mon_tue: formData.get('hours_mon_tue') as string,
-    hours_wed_sat: formData.get('hours_wed_sat') as string,
+    hours_wed_thu: formData.get('hours_wed_thu') as string,
+    hours_fri_sat: formData.get('hours_fri_sat') as string,
     hours_sun: formData.get('hours_sun') as string,
     google_maps_embed_url: formData.get('google_maps_embed_url') as string,
   }

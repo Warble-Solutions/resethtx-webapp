@@ -14,7 +14,8 @@ interface SettingsData {
     tiktok_url?: string
     youtube_url?: string
     hours_mon_tue?: string
-    hours_wed_sat?: string
+    hours_wed_thu?: string
+    hours_fri_sat?: string
     hours_sun?: string
     google_maps_embed_url?: string
 }
@@ -82,8 +83,12 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
                             <input name="hours_mon_tue" defaultValue={initialSettings?.hours_mon_tue} placeholder="e.g. Closed" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white focus:border-[#D4AF37] outline-none" />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 mb-1">Wed - Sat</label>
-                            <input name="hours_wed_sat" defaultValue={initialSettings?.hours_wed_sat} placeholder="e.g. 4pm - 2am" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white focus:border-[#D4AF37] outline-none" />
+                            <label className="block text-xs font-bold text-slate-400 mb-1">Wed - Thu</label>
+                            <input name="hours_wed_thu" defaultValue={initialSettings?.hours_wed_thu} placeholder="e.g. 4pm - 2am" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white focus:border-[#D4AF37] outline-none" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-slate-400 mb-1">Fri - Sat</label>
+                            <input name="hours_fri_sat" defaultValue={initialSettings?.hours_fri_sat} placeholder="e.g. 4pm - 3am" className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white focus:border-[#D4AF37] outline-none" />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-slate-400 mb-1">Sunday</label>
