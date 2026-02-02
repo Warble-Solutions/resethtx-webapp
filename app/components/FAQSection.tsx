@@ -13,7 +13,7 @@ const faqs = [
     },
     {
         question: "TABLE PURCHASE MINIMUM AMOUNT?",
-        answer: "Every day of the week except for Sunday, bottle sections start at $275 (you must purchase one bottle).\n\nOn Sundays, select bottles are priced at $200, and there is a two-bottle minimum."
+        answer: "Every day of the week except for Sunday, bottle sections start at $275 (you must purchase one bottle).\n\nOn Sundays, select bottles are priced at $200."
     },
     {
         question: "IS THERE PARKING AT RESET?",

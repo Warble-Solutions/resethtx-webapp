@@ -35,10 +35,27 @@ export default function CheckoutResultPage() {
                     case 'succeeded':
                         setMessage('Payment succeeded! Finalizing ticket...');
                         // Trigger server action to finalize
+                        // Trigger server action to finalize
                         finalizeTicketPurchase(paymentIntent.id).then((result) => {
                             if (result.success) {
                                 setStatus('success');
                                 setMessage(result.message || 'Payment succeeded! Your ticket has been reserved.');
+
+                                // Trigger Email if not sent
+                                const sentKey = `email_sent_${paymentIntent.id}`;
+                                if (!sessionStorage.getItem(sentKey) && result.bookingDetails) {
+                                    fetch('/api/send-email', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            to: result.bookingDetails.email,
+                                            details: result.bookingDetails
+                                        })
+                                    }).then(() => {
+                                        sessionStorage.setItem(sentKey, 'true');
+                                        console.log('Confirmation email triggered.');
+                                    }).catch(err => console.error('Email trigger failed', err));
+                                }
                             } else {
                                 setStatus('error');
                                 setMessage(result.error || 'Payment succeeded but ticket recording failed. Please contact support.');

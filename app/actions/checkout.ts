@@ -194,7 +194,24 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
             return { success: false, error: 'Failed to record ticket: ' + insertError.message };
         }
 
-        return { success: true, message: 'Ticket secured!' };
+        // 5. Fetch Event Details for Email
+        const { data: eventData } = await supabase
+            .from('events')
+            .select('title, date')
+            .eq('id', eventId)
+            .single();
+
+        const bookingDetails = {
+            eventName: eventData?.title || 'Event',
+            date: eventData?.date || new Date().toISOString(),
+            ticketType: ticketType || 'standard_ticket',
+            quantity: parseInt(quantity || '1'),
+            totalAmount: paymentIntent.amount / 100,
+            name: userName,
+            email: userEmail // Return email too so client knows where to send
+        };
+
+        return { success: true, message: 'Ticket secured!', bookingDetails };
 
     } catch (error: any) {
         console.error('Finalize Error:', error);

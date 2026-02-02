@@ -41,7 +41,7 @@ export default function AboutPage() {
                     </h3>
                     <div className="prose prose-invert prose-lg mx-auto font-sans text-slate-400 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-500 space-y-6">
                         <p>
-                            RESET, officially known as Reset Rooftop Lounge, emerged as a vibrant addition to Houston's Midtown nightlife scene in the summer of 2022. Owned by physician-turned-businessman Dr. Abdulla Kudrath, the venue was built in a newly constructed building at 606 Dennis Street. The project aimed to fill a gap in Houston's rooftop lounge offerings with a focus on high-quality sound systems, crystal-clear acoustics, and a rooftop patio boasting panoramic skyline views.
+                            RESET, officially known as Reset Rooftop Lounge, emerged as a vibrant addition to Houston's Midtown nightlife scene in the summer of 2022. The venue was built in a newly constructed building at 606 Dennis Street. The project aimed to fill a gap in Houston's rooftop lounge offerings with a focus on high-quality sound systems, crystal-clear acoustics, and a rooftop patio boasting panoramic skyline views.
                         </p>
                         <p>
                             Drawing inspiration from the city's growing demand for sophisticated yet energetic spaces, Reset Rooftop Lounge was designed as an intimate spot emphasizing local and regional talent alongside occasional international acts and celebrities.
