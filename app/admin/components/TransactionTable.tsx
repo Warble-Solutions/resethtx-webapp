@@ -50,8 +50,8 @@ export default function TransactionTable({ transactions }: { transactions: Trans
                 </select>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left text-sm text-slate-400">
                     <thead className="bg-black/50 text-xs uppercase font-bold text-slate-300">
                         <tr>
@@ -100,6 +100,46 @@ export default function TransactionTable({ transactions }: { transactions: Trans
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden flex flex-col divide-y divide-white/5">
+                {filtered.length > 0 ? (
+                    filtered.map((t) => (
+                        <div key={t.id} className="p-4 space-y-3 bg-[#111]">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <div className="text-white font-bold">{t.customer_name}</div>
+                                    <div className="text-xs text-slate-400">{t.event_name}</div>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-[#D4AF37] font-bold">${t.amount.toLocaleString()}</div>
+                                    <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded inline-block mt-1 ${t.status === 'paid' || t.status === 'confirmed' ? 'text-green-500 bg-green-500/10' : 'text-slate-500 bg-slate-500/10'
+                                        }`}>
+                                        {t.status}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-2 text-xs">
+                                <span className={`px-2 py-1 rounded border ${t.type.includes('Table')
+                                    ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+                                    : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                                    }`}>
+                                    {t.type}
+                                </span>
+                                <span className="text-slate-500 py-1">{t.details}</span>
+                            </div>
+
+                            <div className="text-xs text-slate-600 pt-2 border-t border-white/5 flex justify-between">
+                                <span>Date: {new Date(t.date).toLocaleDateString('en-US')}</span>
+                                <span className="font-mono text-[10px] uppercase tracking-wider">#{t.id.slice(0, 8)}</span>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="p-8 text-center text-slate-500 italic">No transactions found.</div>
+                )}
             </div>
         </div>
     )
