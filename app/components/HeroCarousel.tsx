@@ -21,6 +21,8 @@ interface BrandSlide extends BaseSlide {
   title: string
   subtitle: string
   description: string
+  buttonText?: string
+  buttonLink?: string
 }
 
 interface EventSlide extends BaseSlide {
@@ -64,7 +66,18 @@ interface HeroCarouselProps {
 
 export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCarouselProps) {
 
-  // 1. Create the Static Brand Slide
+  // 1. Create the Static Brand Slides
+  const venueIdentitySlide: BrandSlide = {
+    id: 'venue-identity',
+    type: 'BRAND',
+    title: 'RESET ROOFTOP LOUNGE',
+    subtitle: 'Welcome',
+    description: "Experience Midtown's premier rooftop destination. Featuring stunning skyline views, premium hookah, and curated cocktails.",
+    image_url: '/images/reset.jpeg',
+    buttonText: 'View Menu',
+    buttonLink: '/menu'
+  }
+
   const staticBaseSlide: BrandSlide = {
     id: 'static-brand-slide',
     type: 'BRAND',
@@ -81,7 +94,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
   }))
 
   // 3. Combine them
-  const allSlides: Slide[] = [staticBaseSlide, ...eventSlides]
+  const allSlides: Slide[] = [venueIdentitySlide, staticBaseSlide, ...eventSlides]
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -94,9 +107,12 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
 
   useEffect(() => {
     if (allSlides.length <= 1) return
-    const interval = setInterval(nextSlide, 6000)
-    return () => clearInterval(interval)
-  }, [nextSlide, allSlides.length])
+
+    const duration = currentIndex === 0 ? 8000 : 4000
+    const timer = setTimeout(nextSlide, duration)
+
+    return () => clearTimeout(timer)
+  }, [nextSlide, allSlides.length, currentIndex])
 
   useEffect(() => setIsLoaded(true), [])
 
@@ -175,12 +191,21 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
 
               {/* BRAND BUTTONS */}
               <div className="flex gap-4 mt-8 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
-                <button
-                  onClick={() => setIsInquireOpen(true)}
-                  className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] tracking-widest text-sm uppercase inline-block"
-                >
-                  Plan Your Event
-                </button>
+                {currentSlide.buttonLink ? (
+                  <Link
+                    href={currentSlide.buttonLink}
+                    className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] tracking-widest text-sm uppercase inline-block"
+                  >
+                    {currentSlide.buttonText || 'Learn More'}
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => setIsInquireOpen(true)}
+                    className="font-sans bg-[#D4AF37] text-black font-bold py-4 px-10 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] tracking-widest text-sm uppercase inline-block"
+                  >
+                    Plan Your Event
+                  </button>
+                )}
               </div>
             </>
           )}

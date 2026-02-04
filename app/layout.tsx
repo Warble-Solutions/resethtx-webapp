@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       {/* 3. Apply the NEW variables to the body */}
       <body
         className={`${cinzel.variable} ${manrope.variable} antialiased bg-black text-white selection:bg-gold-500 selection:text-black`}
