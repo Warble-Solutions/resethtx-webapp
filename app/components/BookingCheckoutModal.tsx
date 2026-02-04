@@ -31,6 +31,9 @@ interface BookingCheckoutModalProps {
     bookingFee?: number
     children?: React.ReactNode
     clientSecret?: string | null // If passed from parent
+    customerName?: string
+    customerEmail?: string
+    customerPhone?: string
 }
 
 export default function BookingCheckoutModal({
@@ -46,7 +49,10 @@ export default function BookingCheckoutModal({
     discountPercent = 0,
     bookingFee = 50,
     children,
-    clientSecret: propClientSecret
+    clientSecret: propClientSecret,
+    customerName,
+    customerEmail,
+    customerPhone
 }: BookingCheckoutModalProps) {
     const [hasAgreed, setHasAgreed] = useState(false)
     const [internalClientSecret, setInternalClientSecret] = useState<string | null>(null)
@@ -64,6 +70,8 @@ export default function BookingCheckoutModal({
     // Use prop or internal state
     const activeClientSecret = propClientSecret || internalClientSecret
     const showPaymentStep = !!activeClientSecret && bookingFee > 0
+
+    console.log('BookingCheckoutModal Debug:', { isOpen, hasSecret: !!activeClientSecret, secretPrefix: activeClientSecret?.substring(0, 10) })
 
     if (!isOpen || !selectedTable) return null
 
@@ -235,9 +243,12 @@ export default function BookingCheckoutModal({
                                 clientSecret={activeClientSecret}
                                 // User details likely need to be passed here for the PaymentIntent update inside the form component
                                 metadata={{
-                                    userName: "Guest", // Ideally passed from parent
-                                    userEmail: "guest@example.com",
-                                    userPhone: "",
+                                    userName: customerName || "",
+                                    userEmail: customerEmail || "",
+                                    userPhone: customerPhone || "",
+                                    // Add guestName/guestEmail for consistency with Webhook/CheckoutAPI expectations
+                                    guestName: customerName || "",
+                                    guestEmail: customerEmail || ""
                                 }}
                             // Note: We need to pass the REAL user data here. 
                             // Since we can't access `children` state, we rely on the `onInitiatePayment` to update the PaymentIntent on the SERVER side 

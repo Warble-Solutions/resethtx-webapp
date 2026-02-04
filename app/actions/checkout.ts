@@ -168,9 +168,13 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
         }
 
         // 3. Extract metadata
-        const { eventId, userName, userEmail, userPhone, quantity, ticketType } = paymentIntent.metadata || {};
+        // 3. Extract metadata
+        const { eventId, userName, userEmail, userPhone, quantity, ticketType, guestName, guestEmail, dob, tableSelection, tableId } = paymentIntent.metadata || {};
 
-        if (!eventId || !userName || !userEmail) {
+        const finalName = guestName || userName;
+        const finalEmail = guestEmail || userEmail;
+
+        if (!eventId || !finalName || !finalEmail) {
             return { success: false, error: 'Missing metadata in payment intent' };
         }
 
@@ -179,19 +183,66 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
             .from('ticket_purchases')
             .insert({
                 event_id: eventId,
-                user_name: userName,
-                user_email: userEmail,
+                user_name: finalName,
+                user_email: finalEmail,
                 user_phone: userPhone || null,
                 quantity: parseInt(quantity || '1'),
                 total_price: paymentIntent.amount / 100, // Convert back to dollars (or whatever unit DB expects)
                 status: 'paid',
                 payment_intent_id: paymentIntentId,
-                ticket_type: ticketType || 'standard_ticket'
+                ticket_type: ticketType || 'standard_ticket',
+                guest_dob: dob || null,
+                booking_details: tableSelection ? { tableSelection } : null
             });
 
         if (insertError) {
             console.error('Finalize Purchase Error:', insertError);
             return { success: false, error: 'Failed to record ticket: ' + insertError.message };
+        }
+
+        // 4.5. If Table Reservation, Insert into reservations (Client-Side Verification Fallback)
+        if (ticketType === 'table_reservation' || ticketType === 'table') {
+            const { error: reservationError } = await supabase
+                .from('reservations')
+                .insert({
+                    full_name: finalName,
+                    email: finalEmail,
+                    phone: userPhone,
+                    guests: quantity.toString(),
+                    date: new Date().toISOString().split('T')[0], // Default to today/booking date since event date isn't easily avail in metadata
+                    status: 'confirmed',
+                    special_requests: `Paid via Stripe (${paymentIntentId}) - Verified Client-Side. Table: ${tableSelection || 'N/A'}`
+                });
+
+            // 4.6 Sync with event_bookings (CRITICAL for availability check)
+            if (tableId) {
+                const { error: bookingError } = await supabase
+                    .from('event_bookings')
+                    .insert({
+                        event_id: eventId,
+                        table_id: tableId,
+                        customer_name: finalName,
+                        customer_email: finalEmail,
+                        guest_phone: userPhone,
+                        guest_dob: dob,
+                        status: 'confirmed'
+                    });
+
+                if (bookingError) {
+                    console.error('Error syncing event_bookings:', bookingError)
+                } else {
+                    console.log(`Event booking synced for table ${tableId}`)
+                }
+            } else {
+                console.warn("Table reservation but no Table ID found in metadata")
+            }
+
+            if (reservationError) {
+                console.error('Error saving reservation (Client-Side):', reservationError);
+                // Non-critical: Ticket is saved, so we don't fail the whole process
+            } else {
+                console.log(`Reservation synced (Client-Side) for ${finalName}`);
+            }
         }
 
         // 5. Fetch Event Details for Email
@@ -207,8 +258,8 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
             ticketType: ticketType || 'standard_ticket',
             quantity: parseInt(quantity || '1'),
             totalAmount: paymentIntent.amount / 100,
-            name: userName,
-            email: userEmail // Return email too so client knows where to send
+            name: finalName,
+            email: finalEmail
         };
 
         return { success: true, message: 'Ticket secured!', bookingDetails };

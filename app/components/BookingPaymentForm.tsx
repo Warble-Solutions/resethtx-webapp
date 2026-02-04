@@ -12,6 +12,8 @@ interface BookingPaymentFormProps {
         userName: string;
         userEmail: string;
         userPhone: string;
+        guestName?: string;
+        guestEmail?: string;
     };
 }
 

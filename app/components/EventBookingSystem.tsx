@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 import anime from 'animejs'
-import { getEventTables, bookTable, getEventForDate } from '@/app/actions/event-booking'
+import { getEventTables, bookTable, getEventForDate, getEventAvailability, getTakenTables } from '@/app/actions/event-booking'
 import { purchaseTickets } from '@/app/actions/checkout' // NEW
 import { validatePromo } from '@/app/actions/promos'
 import BookingCheckoutModal from './BookingCheckoutModal'
@@ -44,6 +44,8 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
     const [discountVal, setDiscountVal] = useState(0)
     const [promoMessage, setPromoMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
     const [bookingError, setBookingError] = useState<string | null>(null)
+    const [availability, setAvailability] = useState<{ sold: number, available: number, total: number } | null>(null)
+    const [takenTableIds, setTakenTableIds] = useState<Set<string>>(new Set())
 
     // Animation Refs
     const containerRef = useRef<HTMLDivElement>(null)
@@ -75,6 +77,19 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
             setTables([])
         }
         setLoading(false)
+
+        const avail = await getEventAvailability(id)
+        if (avail) {
+            setAvailability(avail)
+        }
+
+        // 3. Fetch Taken Tables
+        const taken = await getTakenTables(id)
+        if (taken.success && taken.takenTables) {
+            setTakenTableIds(new Set(taken.takenTables))
+        } else {
+            setTakenTableIds(new Set())
+        }
     }
 
     // Initial Load
@@ -295,14 +310,15 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
                                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                         {groupedTables[category].map(table => {
                                             const isSelected = selectedTable?.id === table.id
+                                            const isBooked = table.isBooked || takenTableIds.has(table.id)
                                             return (
                                                 <button
                                                     key={table.id}
-                                                    onClick={() => !table.isBooked && handleSelectTable(table)}
-                                                    disabled={table.isBooked}
+                                                    onClick={() => !isBooked && handleSelectTable(table)}
+                                                    disabled={isBooked}
                                                     className={`
                                                             relative p-4 rounded-xl border transition-all duration-300 text-left group flex flex-col justify-between h-full min-h-[100px]
-                                                            ${table.isBooked
+                                                            ${isBooked
                                                             ? 'border-white/5 bg-white/5 opacity-50 cursor-not-allowed grayscale'
                                                             : isSelected
                                                                 ? 'bg-[#D4AF37] border-[#D4AF37] text-black shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-105 z-10'
@@ -311,7 +327,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
                                                         `}
                                                 >
                                                     {/* Status Indicator Dot */}
-                                                    {!table.isBooked && (
+                                                    {!isBooked && (
                                                         <div className={`absolute top-3 right-3 w-2 h-2 rounded-full ${isSelected ? 'bg-black' : 'bg-[#D4AF37]'}`} />
                                                     )}
 
@@ -343,10 +359,17 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
 
                             <button
                                 onClick={handleOpenCheckout}
-                                className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-12 rounded-full uppercase tracking-widest shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                                disabled={!selectedTable || !!(availability && availability.available <= 0)}
+                                className={`w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-12 rounded-full uppercase tracking-widest shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all transform flex items-center justify-center gap-2 ${(!selectedTable || !!(availability && availability.available <= 0)) ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:scale-105'}`}
                             >
-                                <span>Pay ${tableFee.toFixed(2)} & Book</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                                {availability && availability.available <= 0 ? (
+                                    <span>SOLD OUT</span>
+                                ) : (
+                                    <>
+                                        <span>Pay ${tableFee.toFixed(2)} & Book</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                                    </>
+                                )}
                             </button>
                         </div>
                     </div>
@@ -392,6 +415,9 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
                 guestDob={customerDob}
                 discountPercent={discountVal}
                 bookingFee={tableFee}
+                customerName={customerName}
+                customerEmail={customerEmail}
+                customerPhone={customerPhone}
             >
                 {/* Injection of Form Fields logic */}
                 <div className="space-y-4">

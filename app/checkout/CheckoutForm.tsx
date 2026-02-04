@@ -34,8 +34,10 @@ export default function CheckoutForm({ clientSecret }: { clientSecret: string })
         // 1. Update PaymentIntent with User Details (Server-Side)
         const paymentIntentId = clientSecret.split('_secret_')[0];
         const { success, error: updateError } = await updatePaymentIntent(paymentIntentId, {
-            userName: name,
-            userEmail: email,
+            guestName: name, // Primary key for webhook
+            guestEmail: email, // Primary key for webhook
+            userName: name, // Fallback
+            userEmail: email, // Fallback
             userPhone: phone,
             // Assuming quantity/eventId were set during creation, or we can add them here if passed as props
         });

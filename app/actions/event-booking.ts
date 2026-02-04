@@ -214,3 +214,61 @@ export async function getEventById(eventId: string) {
         return { success: false, error: error.message }
     }
 }
+
+import { checkTableAvailability } from '@/utils/checkAvailability'
+
+export async function getEventAvailability(eventId: string) {
+    return await checkTableAvailability(eventId)
+}
+
+export async function getTakenTables(eventId: string) {
+    const supabase = await createClient()
+
+    try {
+        // Query ticket_purchases for table reservations
+        // We look for 'paid' status and ticket_type related to tables
+        // 'booking_details' column is JSONB and likely stores { tableDetails: { id: ..., name: ... } } or similar
+        // Based on checkout action: booking_details: tableSelection ? { tableSelection } : null
+
+        // Wait, checkout.ts saves: special_requests: ... Table: {tableSelection}
+        // And ticket_purchases uses booking_details: { tableSelection: "Table Name (ID)" }
+
+        // Let's select booking_details
+        const { data, error } = await supabase
+            .from('ticket_purchases')
+            .select('booking_details')
+            .eq('event_id', eventId)
+            .in('ticket_type', ['table', 'table_reservation'])
+            .eq('status', 'paid')
+
+        if (error) throw error
+
+        // Extract table info. 
+        // booking_details format from checkout: { tableSelection: "VIP Table (123-abc)" }
+        // We need to return a list that the frontend can match against.
+        // Frontend has 'tables' with 'id' and 'name'.
+        // best to match by ID if possible.
+        // The tableSelection string is "Name (ID)".
+
+        const takenIdentifiers: string[] = []
+
+        data?.forEach((row: any) => {
+            const details = row.booking_details
+            if (details && details.tableSelection) {
+                // Parse "Name (ID)" -> Extract ID
+                const match = details.tableSelection.match(/\(([^)]+)\)$/) // Match content inside last parenthesis
+                if (match && match[1]) {
+                    takenIdentifiers.push(match[1])
+                } else {
+                    // Fallback: push full string in case we match by name?
+                    takenIdentifiers.push(details.tableSelection)
+                }
+            }
+        })
+
+        return { success: true, takenTables: takenIdentifiers }
+    } catch (error: any) {
+        console.error('Error fetching taken tables:', error)
+        return { success: false, error: error.message }
+    }
+}
