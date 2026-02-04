@@ -10,6 +10,7 @@ interface Customer {
     totalSpend: number
     visitCount: number
     lastSeen: string
+    dob?: string
 }
 
 export async function getAggregatedCustomers(): Promise<Customer[]> {
@@ -18,12 +19,12 @@ export async function getAggregatedCustomers(): Promise<Customer[]> {
     // Fetch all tickets
     const { data: tickets } = await supabase
         .from('ticket_purchases')
-        .select('user_name, user_email, user_phone, total_price, created_at, events(date)')
+        .select('user_name, user_email, user_phone, guest_dob, total_price, created_at, events(date)')
 
     // Fetch all bookings
     const { data: bookings } = await supabase
         .from('event_bookings')
-        .select('customer_name, customer_email, created_at, events(date), tables(price)')
+        .select('customer_name, customer_email, guest_dob, created_at, events(date), tables(price)')
         .eq('status', 'confirmed')
 
     const customerMap = new Map<string, Customer>()
@@ -43,8 +44,9 @@ export async function getAggregatedCustomers(): Promise<Customer[]> {
             if (new Date(date) > new Date(existing.lastSeen)) {
                 existing.lastSeen = date
             }
-            // Update missing phone/name if available
+            // Update missing phone/name/dob if available
             if (!existing.phone && t.user_phone) existing.phone = t.user_phone
+            if (!existing.dob && t.guest_dob) existing.dob = t.guest_dob
         } else {
             customerMap.set(email, {
                 id: email, // Use email as ID for aggregation
@@ -53,7 +55,8 @@ export async function getAggregatedCustomers(): Promise<Customer[]> {
                 phone: t.user_phone || '-',
                 totalSpend: spend,
                 visitCount: 1,
-                lastSeen: date
+                lastSeen: date,
+                dob: t.guest_dob
             })
         }
     })
@@ -74,6 +77,7 @@ export async function getAggregatedCustomers(): Promise<Customer[]> {
             if (new Date(date) > new Date(existing.lastSeen)) {
                 existing.lastSeen = date
             }
+            if (!existing.dob && b.guest_dob) existing.dob = b.guest_dob
         } else {
             customerMap.set(email, {
                 id: email,
@@ -82,7 +86,8 @@ export async function getAggregatedCustomers(): Promise<Customer[]> {
                 phone: '-',
                 totalSpend: spend,
                 visitCount: 1,
-                lastSeen: date
+                lastSeen: date,
+                dob: b.guest_dob
             })
         }
     })

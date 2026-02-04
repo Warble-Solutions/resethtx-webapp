@@ -10,6 +10,7 @@ interface Customer {
     totalSpend: number
     visitCount: number
     lastSeen: string
+    dob?: string
 }
 
 export default function CustomerTable({ customers }: { customers: Customer[] }) {
@@ -21,15 +22,21 @@ export default function CustomerTable({ customers }: { customers: Customer[] }) 
     )
 
     const downloadCSV = () => {
-        const headers = ['Name,Email,Phone,Total Spend,Visit Count,Last Seen']
+        const headers = ['Name,Email,Phone,DOB,Total Spend,Visit Count,Last Seen']
         const rows = filtered.map(c =>
-            `"${c.name}","${c.email}","${c.phone}",${c.totalSpend},${c.visitCount},"${c.lastSeen}"`
+            `"${c.name}","${c.email}","${c.phone}","${c.dob || ''}",${c.totalSpend},${c.visitCount},"${c.lastSeen}"`
         )
-        const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].join('\n')
-        const encodedUri = encodeURI(csvContent)
+
+        // Add BOM for Excel compatibility
+        const csvString = '\uFEFF' + [headers, ...rows].join('\n')
+
+        // Use Data URI with strict encoding
+        // This avoids Blob/Object URL issues where Chrome might ignore the 'download' attribute
+        const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvString)
+
         const link = document.createElement("a")
-        link.setAttribute("href", encodedUri)
-        link.setAttribute("download", "customers_export.csv")
+        link.href = encodedUri
+        link.setAttribute("download", "customers.csv")
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
@@ -62,6 +69,7 @@ export default function CustomerTable({ customers }: { customers: Customer[] }) 
                         <tr>
                             <th className="px-6 py-4">Customer Name</th>
                             <th className="px-6 py-4">Contact Info</th>
+                            <th className="px-6 py-4">DOB</th>
                             <th className="px-6 py-4 text-center">Visits</th>
                             <th className="px-6 py-4 text-right">Total Spend</th>
                             <th className="px-6 py-4 text-right">Last Seen</th>
@@ -77,6 +85,9 @@ export default function CustomerTable({ customers }: { customers: Customer[] }) 
                                             <span className="text-white">{c.email}</span>
                                             <span className="text-xs text-slate-500">{c.phone}</span>
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-slate-400 text-sm">
+                                        {c.dob || '-'}
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <span className="bg-slate-800 text-slate-300 px-2 py-1 rounded font-mono font-bold text-xs">{c.visitCount}</span>
