@@ -63,7 +63,8 @@ export default function CustomerTable({ customers }: { customers: Customer[] }) 
                 </button>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left text-sm text-slate-400">
                     <thead className="bg-black/50 text-xs uppercase font-bold text-slate-300">
                         <tr>
@@ -102,11 +103,38 @@ export default function CustomerTable({ customers }: { customers: Customer[] }) 
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={5} className="px-6 py-10 text-center text-slate-500 italic">No customers found.</td>
+                                <td colSpan={6} className="px-6 py-10 text-center text-slate-500 italic">No customers found.</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden flex flex-col divide-y divide-white/5">
+                {filtered.length > 0 ? (
+                    filtered.map((c) => (
+                        <div key={c.id} className="p-4 space-y-3">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <div className="font-bold text-white text-lg">{c.name}</div>
+                                    <div className="text-sm text-slate-400">{c.email}</div>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-[#D4AF37] font-bold text-lg">${c.totalSpend.toLocaleString()}</div>
+                                    <div className="text-xs text-slate-500">{c.visitCount} visits</div>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-between items-center text-xs text-slate-500 pt-2 border-t border-white/5">
+                                <div>{c.phone}</div>
+                                <div>Last Seen: {new Date(c.lastSeen).toLocaleDateString('en-US')}</div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="p-8 text-center text-slate-500 italic">No customers found.</div>
+                )}
             </div>
 
             <div className="p-4 bg-black/50 border-t border-white/10 text-right text-xs text-slate-500">
