@@ -62,7 +62,7 @@ export default function DashboardClient({
     const occupied = tables.filter(t => t.status === 'Occupied').length
     const reserved = tables.filter(t => t.status === 'Reserved').length
     const available = tables.filter(t => t.status === 'Available').length
-    const capacity = tables.reduce((sum, t) => sum + t.seats, 0)
+    const capacity = tables.reduce((sum, t) => sum + (t.capacity || 0), 0)
 
     // Stagger animation for the container
     const container = {
