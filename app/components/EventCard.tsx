@@ -29,12 +29,16 @@ const EventCard: React.FC<EventCardProps> = ({
     <div className="bg-[#1E293B] rounded-2xl overflow-hidden flex flex-col h-full group border border-white/5 hover:border-[#D4AF37]/50 transition-all duration-300">
       {/* Image Container */}
       <div className="relative aspect-square w-full overflow-hidden">
-        <Image
-          src={imageUrl}
-          alt={title}
-          fill
-          className="object-cover group-hover:scale-110 transition-transform duration-700"
-        />
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            className="object-cover group-hover:scale-110 transition-transform duration-700"
+          />
+        ) : (
+          <div className="w-full h-full bg-slate-800" />
+        )}
         {/* Tag */}
         <div className="absolute top-4 left-4 bg-[#D4AF37] text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
           {tag}
