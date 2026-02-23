@@ -16,9 +16,13 @@ export const sendOrderConfirmation = async (to: string, details: any, orderId?: 
   const { eventName, date, ticketType, quantity, totalAmount, name, tableSelection } = details;
 
   const typeDisplay = ticketType === 'table_reservation' ? `Table Reservation: ${tableSelection || 'General'}` : ticketType;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com';
+
   const htmlContent = `
     <div style="font-family: sans-serif; background: #000; color: #fff; padding: 20px; text-align: center;">
-      <h1 style="color: #D4AF37; margin-bottom: 10px;">RESET ROOFTOP LOUNGE</h1>
+      <div style="margin-bottom: 20px;">
+        <img src="${baseUrl}/logos/logo-main.png" alt="Reset HTX" style="max-width: 250px; height: auto;" />
+      </div>
       <p style="font-size: 18px; color: #ccc;">Your Booking is Confirmed</p>
       
       <div style="background: #111; border: 1px solid #333; padding: 20px; margin: 20px auto; border-radius: 8px; max-width: 500px; text-align: left;">
@@ -30,8 +34,11 @@ export const sendOrderConfirmation = async (to: string, details: any, orderId?: 
         <p><strong>Quantity:</strong> ${quantity}</p>
         <p><strong>Total:</strong> $${totalAmount}</p>
       </div>
-      ${orderId ? `<p style="font-size: 14px; color: #aaa; margin-bottom: 20px;">Your Order ID is: <strong>${orderId}</strong>.<br/>If you need to cancel, visit our website at <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/cancel" style="color: #D4AF37;">/cancel</a>.</p>` : ''}
-      <p style="font-size: 12px; color: #666;">Please present this email at the door. 21+ to enter.</p>
+      ${orderId ? `<p style="font-size: 14px; color: #aaa; margin-bottom: 20px;">Your Order ID is: <strong>${orderId}</strong>.<br/>If you need to cancel, visit our website at <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com'}/cancel" style="color: #D4AF37;">/cancel</a>.</p>` : ''}
+      <div style="margin-top: 30px;">
+        <img src="${baseUrl}/logos/r_logo.png" alt="R Icon" style="max-width: 40px; height: auto; opacity: 0.8;" />
+      </div>
+      <p style="font-size: 12px; color: #666; margin-top: 10px;">Please present this email at the door. 21+ to enter.</p>
     </div>
   `;
   try {
@@ -83,16 +90,23 @@ export const sendCustomerCancellation = async (to: string, details: any) => {
     return;
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com';
+
   const htmlContent = `
     <div style="font-family: sans-serif; background: #000; color: #fff; padding: 20px; text-align: center;">
-      <h1 style="color: #D4AF37; margin-bottom: 10px;">RESET ROOFTOP LOUNGE</h1>
+      <div style="margin-bottom: 20px;">
+        <img src="${baseUrl}/logos/logo-main.png" alt="Reset HTX" style="max-width: 250px; height: auto;" />
+      </div>
       <p style="font-size: 18px; color: #ccc;">Booking Cancelled & Refunded</p>
       <div style="background: #111; border: 1px solid #333; padding: 20px; margin: 20px auto; border-radius: 8px; max-width: 500px; text-align: left;">
         <p>Hi ${details.name},</p>
         <p>Your booking for <strong>${details.eventName}</strong> has been successfully cancelled.</p>
         <p>A refund has been initiated to your original payment method. Please allow 5-10 business days for the funds to appear.</p>
       </div>
-      <p style="font-size: 12px; color: #666;">If you have any questions, please reply to this email.</p>
+      <div style="margin-top: 30px;">
+        <img src="${baseUrl}/logos/r_logo.png" alt="R Icon" style="max-width: 40px; height: auto; opacity: 0.8;" />
+      </div>
+      <p style="font-size: 12px; color: #666; margin-top: 10px;">If you have any questions, please reply to this email.</p>
     </div>
   `;
 
