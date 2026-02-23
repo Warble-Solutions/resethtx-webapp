@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 
-export const MAX_TABLES = 10; // Hard limit as per requirements
+const MAX_TABLES = 10; // Hard limit as per requirements
 
 export async function checkTableAvailability(eventId: string) {
     const supabase = await createClient();

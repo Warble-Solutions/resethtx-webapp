@@ -5,11 +5,11 @@ import { stripe } from '@/lib/stripe'
 import { sendCustomerCancellation, sendAdminCancellation } from '@/lib/mail'
 
 interface CancelRequest {
-    orderId: string;
+    bookingRef: string;
     email: string;
 }
 
-export async function cancelBooking({ orderId, email }: CancelRequest) {
+export async function cancelBooking({ bookingRef, email }: CancelRequest) {
     const supabase = await createClient();
 
     try {
@@ -17,13 +17,13 @@ export async function cancelBooking({ orderId, email }: CancelRequest) {
         const { data: ticket, error: fetchError } = await supabase
             .from('ticket_purchases')
             .select('*, events(title, date)')
-            .eq('payment_intent_id', orderId)
+            .eq('booking_ref', bookingRef)
             .eq('user_email', email)
             .single();
 
         if (fetchError || !ticket) {
             console.error('Booking not found or email mismatch:', fetchError);
-            return { success: false, error: 'Booking not found with that Order ID and Email.' };
+            return { success: false, error: 'Booking not found with that Reference ID and Email.' };
         }
 
         if (ticket.status === 'cancelled') {
@@ -31,13 +31,15 @@ export async function cancelBooking({ orderId, email }: CancelRequest) {
         }
 
         // 2. Initiate Stripe Refund
-        try {
-            await stripe.refunds.create({
-                payment_intent: orderId
-            });
-        } catch (stripeError: any) {
-            console.error('Stripe Refund Error:', stripeError);
-            return { success: false, error: 'Failed to process refund with our payment provider.' };
+        if (ticket.payment_intent_id && ticket.payment_intent_id !== 'null' && !ticket.payment_intent_id.startsWith('mock_pi_') && ticket.status !== 'free') {
+            try {
+                await stripe.refunds.create({
+                    payment_intent: ticket.payment_intent_id
+                });
+            } catch (stripeError: any) {
+                console.error('Stripe Refund Error:', stripeError);
+                return { success: false, error: 'Failed to process refund with our payment provider.' };
+            }
         }
 
         // 3. Update Database (ticket_purchases)
@@ -72,7 +74,7 @@ export async function cancelBooking({ orderId, email }: CancelRequest) {
                 .from('reservations')
                 .update({ status: 'cancelled' })
                 .eq('email', email)
-                .ilike('special_requests', `%${orderId}%`); // Simple heuristic since orderId was added to special_requests
+                .ilike('special_requests', `%${ticket.payment_intent_id}%`); // Simple heuristic since payment_intent_id was added to special_requests
 
             if (resUpdateError) {
                 console.error('Failed to update reservations:', resUpdateError);
@@ -84,7 +86,7 @@ export async function cancelBooking({ orderId, email }: CancelRequest) {
             eventName: ticket.events?.title || 'ResetHTX Event',
             name: ticket.user_name,
             email: ticket.user_email,
-            orderId: orderId,
+            orderId: bookingRef,
         };
 
         await sendCustomerCancellation(ticket.user_email, emailDetails);

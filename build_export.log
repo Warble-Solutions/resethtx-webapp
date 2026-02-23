@@ -1,0 +1,83 @@
+
+> reset-htx@0.1.0 build
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 16.0.7 (Turbopack)
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · serverActions
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ✓ Compiled successfully in 7.9s
+   Running TypeScript ...
+   Collecting page data using 7 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 7 workers (0/39) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 7 workers (9/39) 
+   Generating static pages using 7 workers (19/39) 
+   Generating static pages using 7 workers (29/39) 
+ ✓ Generating static pages using 7 workers (39/39) in 988.2ms
+   Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /about
+├ ƒ /admin
+├ ƒ /admin/customers
+├ ƒ /admin/dashboard
+├ ƒ /admin/events
+├ ƒ /admin/events/[id]/edit
+├ ƒ /admin/events/archive
+├ ƒ /admin/events/create
+├ ƒ /admin/forgot-password
+├ ƒ /admin/gallery
+├ ƒ /admin/inbox
+├ ƒ /admin/login
+├ ƒ /admin/menu
+├ ƒ /admin/menu/[id]/edit
+├ ƒ /admin/menu/create
+├ ƒ /admin/promos
+├ ƒ /admin/promos/[id]
+├ ƒ /admin/promos/create
+├ ƒ /admin/reservations
+├ ƒ /admin/reviews
+├ ƒ /admin/sales
+├ ƒ /admin/settings
+├ ƒ /admin/staff
+├ ƒ /admin/staff/[id]/edit
+├ ƒ /admin/staff/create
+├ ƒ /admin/tables
+├ ƒ /admin/tables/create
+├ ƒ /admin/testimonials
+├ ƒ /admin/testimonials/create
+├ ƒ /api/create-payment-intent
+├ ƒ /api/send-email
+├ ƒ /api/webhooks/stripe
+├ ƒ /checkout
+├ ƒ /checkout/result
+├ ƒ /contact
+├ ƒ /events
+├ ƒ /faq
+├ ƒ /gallery
+├ ƒ /menu
+├ ƒ /privacy
+├ ƒ /private-events
+└ ƒ /terms
+
+
+ƒ Proxy (Middleware)
+
+ƒ  (Dynamic)  server-rendered on demand
+

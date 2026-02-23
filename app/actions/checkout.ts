@@ -76,6 +76,8 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
 
     // 2. Handle Free Tickets / RSVP
     if (isFree) {
+        const bookingRef = 'RST-' + Math.random().toString(36).substr(2, 6).toUpperCase()
+
         const { error: insertError } = await supabase
             .from('ticket_purchases')
             .insert({
@@ -90,7 +92,8 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
                 payment_intent_id: null,
                 coupon_code: couponCode || null,
                 booking_details: bookingDetails || null, // NEW
-                ticket_type: ticketType || 'standard_ticket' // NEW
+                ticket_type: ticketType || 'standard_ticket', // NEW
+                booking_ref: bookingRef
             })
 
         if (insertError) {
@@ -105,7 +108,8 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
             quantity: quantity,
             totalAmount: '0.00',
             name: userName,
-            tableSelection: 'N/A'
+            tableSelection: 'N/A',
+            bookingRef: bookingRef
         });
 
         await sendAdminBookingNotification({
@@ -115,7 +119,8 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
             quantity: quantity,
             totalAmount: '0.00',
             name: userName,
-            email: userEmail
+            email: userEmail,
+            bookingRef: bookingRef
         });
 
         return { success: true, message: 'RSVP Confirmed!' }
@@ -125,6 +130,8 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
     // In a real implementation, this would create a Stripe Session and return the URL
 
     // Simulate successful payment record for now (or a "pending" record waiting for webhook)
+    const bookingRef = 'RST-' + Math.random().toString(36).substr(2, 6).toUpperCase()
+
     const { error: insertError } = await supabase
         .from('ticket_purchases')
         .insert({
@@ -139,7 +146,8 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
             payment_intent_id: 'mock_pi_' + Date.now(),
             coupon_code: couponCode || null,
             booking_details: bookingDetails || null, // NEW
-            ticket_type: ticketType || 'standard_ticket' // NEW
+            ticket_type: ticketType || 'standard_ticket', // NEW
+            booking_ref: bookingRef
         })
 
     if (insertError) {
@@ -205,6 +213,8 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
         }
 
         // 4. Insert Ticket
+        const bookingRef = 'RST-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+
         const { error: insertError } = await supabase
             .from('ticket_purchases')
             .insert({
@@ -218,7 +228,8 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
                 payment_intent_id: paymentIntentId,
                 ticket_type: ticketType || 'standard_ticket',
                 guest_dob: dob || null,
-                booking_details: tableSelection ? { tableSelection } : null
+                booking_details: tableSelection ? { tableSelection } : null,
+                booking_ref: bookingRef
             });
 
         if (insertError) {
@@ -286,7 +297,8 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
             totalAmount: paymentIntent.amount / 100,
             name: finalName,
             email: finalEmail,
-            tableSelection: tableSelection
+            tableSelection: tableSelection,
+            bookingRef: bookingRef
         };
 
         // Call this after Supabase insert is successful

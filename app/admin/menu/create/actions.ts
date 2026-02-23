@@ -4,23 +4,6 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
-export async function checkMenuConflict(formData: FormData) {
-  const supabase = await createClient()
-  const name = formData.get('name') as string
-
-  const { data } = await supabase
-    .from('menu_items')
-    .select('name, category')
-    .ilike('name', name)
-    .single()
-
-  if (data) {
-    return { conflict: true, existingItem: data }
-  }
-
-  return { conflict: false }
-}
-
 export async function createMenuItem(formData: FormData) {
   const supabase = await createClient()
 

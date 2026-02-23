@@ -13,7 +13,7 @@ export const sendOrderConfirmation = async (to: string, details: any, orderId?: 
     console.warn('⚠️ Email not sent: Credentials missing in .env');
     return;
   }
-  const { eventName, date, ticketType, quantity, totalAmount, name, tableSelection } = details;
+  const { eventName, date, ticketType, quantity, totalAmount, name, tableSelection, bookingRef } = details;
 
   const typeDisplay = ticketType === 'table_reservation' ? `Table Reservation: ${tableSelection || 'General'}` : ticketType;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com';
@@ -28,13 +28,21 @@ export const sendOrderConfirmation = async (to: string, details: any, orderId?: 
       <div style="background: #111; border: 1px solid #333; padding: 20px; margin: 20px auto; border-radius: 8px; max-width: 500px; text-align: left;">
         <h2 style="margin: 0 0 10px; color: #fff; text-align: center;">${eventName}</h2>
         <p style="color: #888; margin: 0 0 20px; text-align: center;">${new Date(date).toDateString()}</p>
+        <p style="text-align: center; color: #D4AF37; font-size: 20px; font-weight: bold; margin-bottom: 20px;">Booking ID: ${bookingRef || orderId || 'N/A'}</p>
         <hr style="border-color: #333; margin: 20px 0;" />
         <p><strong>Guest:</strong> ${name}</p>
         <p><strong>Type:</strong> ${typeDisplay}</p>
         <p><strong>Quantity:</strong> ${quantity}</p>
         <p><strong>Total:</strong> $${totalAmount}</p>
       </div>
-      ${orderId ? `<p style="font-size: 14px; color: #aaa; margin-bottom: 20px;">Your Order ID is: <strong>${orderId}</strong>.<br/>If you need to cancel, visit our website at <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com'}/cancel" style="color: #D4AF37;">/cancel</a>.</p>` : ''}
+      ${bookingRef ? `
+      <div style="margin-top: 30px; text-align: center;">
+        <p style="color: #ccc; font-size: 14px;">Need to change your plans?</p>
+        <a href="${baseUrl}/cancel?ref=${bookingRef}&email=${encodeURIComponent(to)}" 
+           style="background-color: #333; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+           Cancel Booking
+        </a>
+      </div>` : ''}
       <div style="margin-top: 30px;">
         <img src="${baseUrl}/logos/r_logo.png" alt="R Icon" style="max-width: 40px; height: auto; opacity: 0.8;" />
       </div>
@@ -58,11 +66,12 @@ export const sendAdminBookingNotification = async (details: any) => {
   if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
     return;
   }
-  const { eventName, date, ticketType, quantity, totalAmount, name, email, tableSelection } = details;
+  const { eventName, date, ticketType, quantity, totalAmount, name, email, tableSelection, bookingRef } = details;
   const typeDisplay = ticketType === 'table_reservation' ? `Table Reservation: ${tableSelection || 'General'}` : ticketType;
 
   const htmlContent = `
     <h2>New Booking Received</h2>
+    <p><strong>Booking ID:</strong> ${bookingRef || 'N/A'}</p>
     <p><strong>Event:</strong> ${eventName}</p>
     <p><strong>Date:</strong> ${new Date(date).toDateString()}</p>
     <p><strong>Guest Name:</strong> ${name}</p>
