@@ -14,9 +14,9 @@ interface Event {
   time: string | null
   end_time?: string | null
   image_url: string | null
-  description: string | null
   tickets: number
   category?: string
+  is_sold_out?: boolean
   // Allow flexible props since we pass full event object to modal
   [key: string]: any
 }
@@ -86,10 +86,19 @@ export default function UpcomingEventsSection({ events }: { events: Event[] }) {
                     )}
 
                     {/* Tag Overlay */}
-                    <div className="absolute top-4 left-4 bg-[#D4AF37] rounded-full px-3 py-1 z-10 shadow-md">
-                      <span className="text-[10px] font-bold text-black uppercase tracking-wider font-sans leading-none block">
-                        {event.category || 'Nightlife'}
-                      </span>
+                    <div className="absolute top-4 left-4 flex gap-2 z-10">
+                      <div className="bg-[#D4AF37] rounded-full px-3 py-1 shadow-md">
+                        <span className="text-[10px] font-bold text-black uppercase tracking-wider font-sans leading-none block">
+                          {event.category || 'Nightlife'}
+                        </span>
+                      </div>
+                      {event.is_sold_out && (
+                        <div className="bg-red-500 rounded-full px-3 py-1 shadow-md border border-white/20">
+                          <span className="text-[10px] font-bold text-white uppercase tracking-wider font-sans leading-none block">
+                            Sold Out
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 

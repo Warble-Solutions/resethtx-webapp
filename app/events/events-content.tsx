@@ -20,6 +20,7 @@ interface Event {
     ticket_price?: number
     ticket_capacity?: number
     category?: string // Added category field
+    is_sold_out?: boolean
 }
 
 export default function EventsContent({ events }: { events: Event[] }) {
@@ -161,10 +162,10 @@ export default function EventsContent({ events }: { events: Event[] }) {
                                 {event.image_url && <Image src={event.image_url} alt={event.title} fill className="object-cover" />}
                             </div>
 
-                            {/* Info */}
                             <div className="flex-1 text-center md:text-left">
-                                <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2">
-                                    {event.category || 'Nightlife'}
+                                <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2 flex flex-wrap gap-2 items-center justify-center md:justify-start">
+                                    <span>{event.category || 'Nightlife'}</span>
+                                    {event.is_sold_out && <span className="bg-red-500 text-white px-2 py-0.5 rounded text-[10px]">SOLD OUT</span>}
                                 </div>
                                 <p className="text-slate-500 text-xs font-bold uppercase mb-1">{formatEventTime(event.time, event.end_time)}</p>
                                 <h3 className="text-xl font-heading font-bold text-white">{event.title}</h3>
@@ -204,13 +205,15 @@ export default function EventsContent({ events }: { events: Event[] }) {
                                 </div>
                             </div>
                             <div className="p-6">
-                                <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2">
-                                    {event.category || 'Nightlife'}
+                                <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2 flex flex-wrap gap-2 items-center">
+                                    <span>{event.category || 'Nightlife'}</span>
                                 </div>
                                 <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">{formatEventTime(event.time, event.end_time)}</p>
                                 <h3 className="text-2xl font-heading font-bold text-white leading-tight mb-4">{event.title}</h3>
                                 <div className="flex items-center justify-between border-t border-white/10 pt-4">
-                                    <span className="text-slate-500 text-xs uppercase font-bold">{(event.ticket_capacity || 0) > 0 ? `${event.ticket_capacity} Tickets` : 'Sold Out'}</span>
+                                    <span className="text-slate-500 text-xs uppercase font-bold">
+                                        {event.is_sold_out ? 'Sold Out' : ((event.ticket_capacity || 0) > 0 ? `${event.ticket_capacity} Tickets` : 'No Tickets Provided')}
+                                    </span>
                                     <button className="text-white hover:text-[#D4AF37] font-bold text-sm uppercase tracking-wide transition-colors">Details →</button>
                                 </div>
                             </div>

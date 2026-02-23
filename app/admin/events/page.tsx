@@ -110,11 +110,18 @@ export default async function EventsPage({
                   <div className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full border border-slate-700">
                     {new Date(event.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
                   </div>
-                  {event.is_featured && (
-                    <span className="absolute top-3 right-3 bg-[#D4AF37] text-black text-[10px] font-bold px-2 py-1 rounded-full shadow-md shadow-black/50 z-10 border border-white/20 uppercase tracking-wider">
-                      FEATURED
-                    </span>
-                  )}
+                  <div className="absolute top-3 right-3 flex flex-col gap-2 items-end">
+                    {event.is_sold_out && (
+                      <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md shadow-black/50 z-10 border border-white/20 uppercase tracking-wider">
+                        SOLD OUT
+                      </span>
+                    )}
+                    {event.is_featured && (
+                      <span className="bg-[#D4AF37] text-black text-[10px] font-bold px-2 py-1 rounded-full shadow-md shadow-black/50 z-10 border border-white/20 uppercase tracking-wider">
+                        FEATURED
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Content */}
@@ -124,22 +131,36 @@ export default async function EventsPage({
                     {event.description || "No description."}
                   </p>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-800 mt-auto">
+                  <div className="flex flex-row items-center justify-between gap-2 mt-4 pt-4 border-t border-slate-800">
                     <span className="text-xs font-bold text-slate-500 bg-slate-800 px-2 py-1 rounded border border-slate-700 whitespace-nowrap">
                       🎟️ {event.tickets_available} Tickets
                     </span>
 
-                    <div className="flex items-center gap-4">
-                      <Link href={`/admin/events/${event.id}/edit`} className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-wider">
-                        EDIT
-                      </Link>
-                      <form action={deleteEvent} className="flex">
-                        <input type="hidden" name="id" value={event.id} />
-                        <button type="submit" className="text-xs font-bold text-red-500 hover:text-red-400 transition-colors uppercase tracking-wider">
-                          DELETE
-                        </button>
-                      </form>
-                    </div>
+                    <form action={async () => {
+                      "use server"
+                      const supabase = await createClient()
+                      await supabase.from('events').update({ is_sold_out: !event.is_sold_out }).eq('id', event.id)
+                      const { revalidatePath } = await import('next/cache')
+                      revalidatePath('/admin/events')
+                    }}>
+                      <button
+                        type="submit"
+                        title={event.is_sold_out ? "Mark as Available" : "Mark as Sold Out"}
+                        className={`font-bold text-xs px-4 py-2 rounded-full transition-colors whitespace-nowrap ${event.is_sold_out ? 'bg-gray-600 hover:bg-gray-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white'
+                          }`}
+                      >
+                        {event.is_sold_out ? 'AVAILABLE' : 'MARK SOLD OUT'}
+                      </button>
+                    </form>
+                    <Link href={`/admin/events/${event.id}/edit`} className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-wider ml-auto">
+                      EDIT
+                    </Link>
+                    <form action={deleteEvent} className="flex">
+                      <input type="hidden" name="id" value={event.id} />
+                      <button type="submit" className="text-xs font-bold text-red-500 hover:text-red-400 transition-colors uppercase tracking-wider">
+                        DELETE
+                      </button>
+                    </form>
                   </div>
                 </div>
               </SpotlightCard>

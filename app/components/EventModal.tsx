@@ -22,6 +22,7 @@ interface Event {
     ticket_capacity?: number
     table_price?: number
     category?: string // Added category
+    is_sold_out?: boolean
 }
 
 interface EventModalProps {
@@ -205,6 +206,8 @@ export default function EventModal({ isOpen, onClose, event, events }: EventModa
                 <div className="flex flex-col gap-4">
                     {new Date(ev.date) < new Date() ? (
                         <button disabled className="w-full md:w-auto bg-slate-800 text-slate-500 font-bold py-4 px-8 rounded-full uppercase tracking-widest text-sm cursor-not-allowed border border-white/5">EVENT ENDED</button>
+                    ) : ev.is_sold_out ? (
+                        <button disabled className="w-full md:w-auto bg-red-950/50 text-red-500 font-bold py-4 px-8 rounded-full uppercase tracking-widest text-sm cursor-not-allowed border border-red-900/50 shadow-inner">SOLD OUT</button>
                     ) : ev.is_external_event && ev.external_url ? (
                         <button onClick={() => window.open(ev.external_url, '_blank')} className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-bold py-4 px-8 rounded-full transition-all hover:scale-105 uppercase tracking-widest text-sm">GET TICKETS</button>
                     ) : (

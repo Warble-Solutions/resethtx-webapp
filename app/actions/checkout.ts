@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { stripe } from '@/lib/stripe'
+import { sendOrderConfirmation, sendAdminBookingNotification } from '@/lib/mail'
 
 export async function updatePaymentIntent(paymentIntentId: string, metadata: any) {
     try {
@@ -45,12 +46,17 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
     // 1. Fetch Event Details (Partial fetch OK for simple validation)
     const { data: event, error: eventError } = await supabase
         .from('events')
-        .select('ticket_price, ticket_capacity, title, table_price') // Added table_price
+        .select('ticket_price, ticket_capacity, title, table_price, date, is_sold_out') // Added table_price and date and is_sold_out
         .eq('id', eventId)
         .single()
 
     if (eventError || !event) {
         return { success: false, error: 'Event not found' }
+    }
+
+    // 1.5 Validate Sold Out Status
+    if (event.is_sold_out) {
+        return { success: false, error: 'Sorry, this event is completely sold out.' }
     }
 
     // Calculate Price
@@ -91,6 +97,26 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
             console.error('RSVP Error:', insertError)
             return { success: false, error: `Failed to process RSVP: ${insertError.message}` }
         }
+
+        await sendOrderConfirmation(userEmail, {
+            eventName: event.title,
+            date: event.date || new Date().toISOString(),
+            ticketType: 'General Admission / Free RSVP',
+            quantity: quantity,
+            totalAmount: '0.00',
+            name: userName,
+            tableSelection: 'N/A'
+        });
+
+        await sendAdminBookingNotification({
+            eventName: event.title,
+            date: event.date || new Date().toISOString(),
+            ticketType: 'Free RSVP',
+            quantity: quantity,
+            totalAmount: '0.00',
+            name: userName,
+            email: userEmail
+        });
 
         return { success: true, message: 'RSVP Confirmed!' }
     }
@@ -259,8 +285,13 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
             quantity: parseInt(quantity || '1'),
             totalAmount: paymentIntent.amount / 100,
             name: finalName,
-            email: finalEmail
+            email: finalEmail,
+            tableSelection: tableSelection
         };
+
+        // Call this after Supabase insert is successful
+        await sendOrderConfirmation(finalEmail, bookingDetails, paymentIntentId);
+        await sendAdminBookingNotification(bookingDetails);
 
         return { success: true, message: 'Ticket secured!', bookingDetails };
 

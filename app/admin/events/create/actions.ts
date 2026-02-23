@@ -135,7 +135,8 @@ export async function createEvent(formData: FormData) {
     ticket_price: ticket_price,
     table_price: table_price,
     ticket_capacity: ticket_capacity,
-    category: category
+    category: category,
+    is_sold_out: formData.get('is_sold_out') === 'on'
   })
 
   if (is_recurring && recurrence_end_date) {

@@ -264,6 +264,29 @@ export default function CreateEventPage() {
             />
           </div>
 
+          {/* --- NEW SOLD OUT TOGGLE --- */}
+          <div className="flex items-center justify-between p-4 bg-slate-900 border border-slate-700 rounded-lg group hover:border-red-500/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-red-500/20 rounded-lg text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+              </div>
+              <div>
+                <label htmlFor="sold-out-toggle" className="block text-sm font-bold text-white cursor-pointer select-none">Mark as Sold Out</label>
+                <p className="text-xs text-slate-400">Instantly stop all purchases and RSVPs for this event.</p>
+              </div>
+            </div>
+
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                id="sold-out-toggle"
+                type="checkbox"
+                name="is_sold_out"
+                className="peer sr-only"
+              />
+              <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+            </label>
+          </div>
+
           {/* --- NEW FEATURED TOGGLE --- */}
           <div className="flex items-center justify-between p-4 bg-slate-900 border border-slate-700 rounded-lg group hover:border-[#D4AF37]/50 transition-colors">
             <div className="flex items-center gap-3">
