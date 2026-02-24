@@ -36,7 +36,7 @@ export async function submitContactForm(formData: FormData) {
 
         return { success: true }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Contact Form Error:', error)
         return { success: false, error: 'Failed to send message. Please try again.' }
     }
@@ -59,7 +59,7 @@ export async function updateMessageRemark(id: string, remark: string) {
         revalidatePath('/admin/inbox')
 
         return { success: true }
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Update Remark Error:', error)
         return { success: false, error: 'Failed to update remark.' }
     }

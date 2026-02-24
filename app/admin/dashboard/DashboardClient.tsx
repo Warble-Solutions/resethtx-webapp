@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
+
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import clsx from 'clsx'
@@ -53,9 +56,9 @@ export default function DashboardClient({
     tables,
     nextEvent
 }: {
-    stats: any,
-    tables: any[],
-    nextEvent: any
+    stats: { eventsCount?: number; menuCount?: number; staffCount?: number;[key: string]: unknown } | null,
+    tables: Array<{ status?: string, capacity?: number, [key: string]: unknown }>,
+    nextEvent: { title?: string; description?: string; date?: string; image_url?: string;[key: string]: unknown } | null
 }) {
 
     // Calculate table stats
@@ -99,7 +102,7 @@ export default function DashboardClient({
                         <div>
                             <p className="text-slate-400 font-medium mb-1">Total Events</p>
                             <h3 className="text-4xl font-bold text-white group-hover:text-[#D4AF37] transition-colors">
-                                {stats.eventsCount}
+                                {stats?.eventsCount || 0}
                             </h3>
                         </div>
                         <div className="p-3 bg-[#D4AF37]/10 rounded-lg text-[#D4AF37] group-hover:animate-pulse">📅</div>
@@ -119,7 +122,7 @@ export default function DashboardClient({
                         <div>
                             <p className="text-slate-400 font-medium mb-1">Menu Items</p>
                             <h3 className="text-4xl font-bold text-white group-hover:text-[#D4AF37] transition-colors">
-                                {stats.menuCount}
+                                {stats?.menuCount || 0}
                             </h3>
                         </div>
                         <div className="p-3 bg-[#D4AF37]/10 rounded-lg text-[#D4AF37] group-hover:animate-pulse">🍔</div>
@@ -139,7 +142,7 @@ export default function DashboardClient({
                         <div>
                             <p className="text-slate-400 font-medium mb-1">Team Members</p>
                             <h3 className="text-4xl font-bold text-white group-hover:text-[#D4AF37] transition-colors">
-                                {stats.staffCount}
+                                {stats?.staffCount || 0}
                             </h3>
                         </div>
                         <div className="p-3 bg-[#D4AF37]/10 rounded-lg text-[#D4AF37] group-hover:animate-pulse">👥</div>
@@ -172,7 +175,7 @@ export default function DashboardClient({
                                     whileHover={{ scale: 1.05, rotate: 2 }}
                                     className="w-full sm:w-1/3 h-40 rounded-lg overflow-hidden border border-slate-700 shadow-lg"
                                 >
-                                    <img src={nextEvent.image_url} className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" />
+                                    <Image src={nextEvent.image_url} alt="Next Event" fill className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" />
                                 </motion.div>
                             )}
                             <div className="flex-1">
@@ -184,7 +187,7 @@ export default function DashboardClient({
                                     {nextEvent.description}
                                 </p>
                                 <div className="mt-4 pt-4 border-t border-slate-800 flex items-center gap-2 text-sm text-slate-300">
-                                    🗓️ {new Date(nextEvent.date).toLocaleDateString('en-US', {
+                                    🗓️ {new Date(nextEvent.date || '').toLocaleDateString('en-US', {
                                         month: '2-digit',
                                         day: '2-digit',
                                         year: 'numeric'

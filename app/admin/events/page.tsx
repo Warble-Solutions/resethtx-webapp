@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { createClient } from '@/utils/supabase/server'
 import { deleteEvent } from './create/actions'
 import Link from 'next/link'
@@ -75,7 +76,7 @@ export default async function EventsPage({
             <div className="relative w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center text-green-500 text-xl border border-green-500/30">✓</div>
             <div className="relative">
               <h3 className="text-white font-bold text-base">Success!</h3>
-              <p className="text-green-200 text-sm">Created <span className="font-bold text-white">{createdCount}</span> events for "<span className="font-italic text-white">{createdTitle || 'Untitled Event'}</span>".</p>
+              <p className="text-green-200 text-sm">Created <span className="font-bold text-white">{createdCount}</span> events for &quot;<span className="font-italic text-white">{createdTitle || 'Untitled Event'}</span>&quot;.</p>
             </div>
             <Link href="/admin/events" className="relative ml-auto text-xs font-bold text-green-500 hover:text-white uppercase tracking-wider px-3 py-1 rounded bg-green-500/10 hover:bg-green-500 transition-colors">
               Dismiss

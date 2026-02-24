@@ -120,7 +120,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
                         <div>
                             <label className="block text-xs font-bold text-slate-400 mb-1">Google Maps Embed Source (URL only)</label>
                             <input name="google_maps_embed_url" defaultValue={initialSettings?.google_maps_embed_url} placeholder="https://www.google.com/maps/embed?..." className="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-white focus:border-[#D4AF37] outline-none text-xs" />
-                            <p className="text-[10px] text-slate-500 mt-1">Go to Google Maps {'>'} Share {'>'} Embed a map {'>'} Copy only the link inside the src="..." attribute.</p>
+                            <p className="text-[10px] text-slate-500 mt-1">Go to Google Maps {'>'} Share {'>'} Embed a map {'>'} Copy only the link inside the src=&quot;...&quot; attribute.</p>
                         </div>
                     </div>
 

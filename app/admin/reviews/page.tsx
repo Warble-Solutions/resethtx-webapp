@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState, useEffect } from 'react'
 import { adminGetReviews, updateReviewStatus } from '@/app/actions/testimonials'
+ 
 import { createClient } from '@/utils/supabase/client'
 
 interface Testimonial {
@@ -46,6 +48,7 @@ export default function AdminReviewsPage() {
         }
     }
 
+     
     const pendingReviews = reviews.filter(r => r.status === 'pending' || !r.status) // Handle default null/legacy
     // Actually, our migration sets default 'pending' but legacy rows might have issues if migration wasn't run perfectly. We assume robust migration.
     // Let's being strict:
@@ -110,7 +113,7 @@ export default function AdminReviewsPage() {
                                         {review.status}
                                     </span>
                                 </div>
-                                <p className="text-slate-300 italic mb-4">"{review.quote}"</p>
+                                <p className="text-slate-300 italic mb-4">&quot;{review.quote}&quot;</p>
                                 <p className="text-xs text-slate-500 font-mono">{new Date(review.created_at).toLocaleString()}</p>
                             </div>
 

@@ -64,6 +64,7 @@ interface HeroCarouselProps {
   onInquire?: () => void
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCarouselProps) {
 
   // 1. Create the Static Brand Slides
@@ -97,6 +98,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
   const allSlides: Slide[] = [venueIdentitySlide, staticBaseSlide, ...eventSlides]
 
   const [currentIndex, setCurrentIndex] = useState(0)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoaded, setIsLoaded] = useState(false)
   const [isInquireOpen, setIsInquireOpen] = useState(false)
   const [selectedHeroEvent, setSelectedHeroEvent] = useState<Event | null>(null)
@@ -114,7 +116,10 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
     return () => clearTimeout(timer)
   }, [nextSlide, allSlides.length, currentIndex])
 
-  useEffect(() => setIsLoaded(true), [])
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoaded(true), 0);
+    return () => clearTimeout(t);
+  }, [])
 
   const currentSlide = allSlides[currentIndex]
 
@@ -133,7 +138,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
 
       {/* NETWORK BUG WATERMARK */}
       <div className="absolute top-8 left-8 z-20 opacity-80 mix-blend-overlay pointer-events-none">
-        <img src="/logos/r_logo.png" alt="R Logo" className="w-16 md:w-20" />
+        <Image src="/logos/r_logo.png" alt="R Logo" width={80} height={80} className="w-16 md:w-20" />
       </div>
 
       {/* BACKGROUND */}

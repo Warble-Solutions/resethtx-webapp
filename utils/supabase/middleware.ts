@@ -1,4 +1,5 @@
-import { createServerClient } from '@supabase/ssr'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { createServerClient } from '@supabase/ssr/dist/module/createServerClient'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
@@ -15,6 +16,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           cookiesToSet.forEach(({ name, value, options }) =>
             request.cookies.set(name, value)
           )
@@ -37,14 +39,14 @@ export async function updateSession(request: NextRequest) {
   // PROTECTED ROUTES LOGIC
   // If user is NOT logged in and tries to access /admin pages
   if (request.nextUrl.pathname.startsWith('/admin') && !user) {
-     // Allow access to login page
-     if (request.nextUrl.pathname.includes('/login')) {
-         return supabaseResponse
-     }
-     // Redirect everyone else to login
-     const url = request.nextUrl.clone()
-     url.pathname = '/admin/login'
-     return NextResponse.redirect(url)
+    // Allow access to login page
+    if (request.nextUrl.pathname.includes('/login')) {
+      return supabaseResponse
+    }
+    // Redirect everyone else to login
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin/login'
+    return NextResponse.redirect(url)
   }
 
   return supabaseResponse

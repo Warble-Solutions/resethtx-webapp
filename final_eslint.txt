@@ -1,0 +1,67 @@
+
+/home/sin/HDD/Work/code/reset-htx/app/about/page.tsx
+    4:1    warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  167:128  error    Comments inside children section of tag should be placed inside braces                                                                                                                                                                                                                   react/jsx-no-comment-textnodes
+  169:21   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/customers/actions.ts
+  38:9  error  Include a description after the "@ts-expect-error" directive to explain why the @ts-expect-error is necessary. The description must be 3 characters or longer  @typescript-eslint/ban-ts-comment
+  69:9  error  Include a description after the "@ts-expect-error" directive to explain why the @ts-expect-error is necessary. The description must be 3 characters or longer  @typescript-eslint/ban-ts-comment
+  71:9  error  Include a description after the "@ts-expect-error" directive to explain why the @ts-expect-error is necessary. The description must be 3 characters or longer  @typescript-eslint/ban-ts-comment
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/dashboard/DashboardClient.tsx
+  175:34  error    Comments inside children section of tag should be placed inside braces                                                                                                                                                                                                                   react/jsx-no-comment-textnodes
+  177:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  177:37  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/sales/actions.ts
+   53:9   error  Include a description after the "@ts-expect-error" directive to explain why the @ts-expect-error is necessary. The description must be 3 characters or longer  @typescript-eslint/ban-ts-comment
+   63:9   error  Include a description after the "@ts-expect-error" directive to explain why the @ts-expect-error is necessary. The description must be 3 characters or longer  @typescript-eslint/ban-ts-comment
+   66:9   error  Include a description after the "@ts-expect-error" directive to explain why the @ts-expect-error is necessary. The description must be 3 characters or longer  @typescript-eslint/ban-ts-comment
+   68:9   error  Include a description after the "@ts-expect-error" directive to explain why the @ts-expect-error is necessary. The description must be 3 characters or longer  @typescript-eslint/ban-ts-comment
+   71:9   error  Include a description after the "@ts-expect-error" directive to explain why the @ts-expect-error is necessary. The description must be 3 characters or longer  @typescript-eslint/ban-ts-comment
+  117:9   error  Include a description after the "@ts-expect-error" directive to explain why the @ts-expect-error is necessary. The description must be 3 characters or longer  @typescript-eslint/ban-ts-comment
+  157:13  error  Include a description after the "@ts-expect-error" directive to explain why the @ts-expect-error is necessary. The description must be 3 characters or longer  @typescript-eslint/ban-ts-comment
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/settings/page.tsx
+  2:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/sin/HDD/Work/code/reset-htx/app/checkout/page.tsx
+  55:21  warning  'err' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/components/BookingCheckoutModal.tsx
+  113:133  error    Comments inside children section of tag should be placed inside braces                                                                                                                                                                                                                   react/jsx-no-comment-textnodes
+  115:21   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/components/EventModal.tsx
+  248:133  error    Comments inside children section of tag should be placed inside braces                                                                                                                                                                                                                   react/jsx-no-comment-textnodes
+  250:21   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/components/ExclusiveAccess.tsx
+  8:11  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+/home/sin/HDD/Work/code/reset-htx/app/components/Footer.tsx
+   22:115  error    Comments inside children section of tag should be placed inside braces                                                                                                                                                                                                                   react/jsx-no-comment-textnodes
+   24:17   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  188:37   error    Comments inside children section of tag should be placed inside braces                                                                                                                                                                                                                   react/jsx-no-comment-textnodes
+  190:25   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/components/HeroCarousel.tsx
+   67:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  121:9  error    'timer' is never reassigned. Use 'const' instead                                                                                                                                                                                                                                         prefer-const
+  142:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/components/Navbar.tsx
+  36:9  error  'timer' is never reassigned. Use 'const' instead  prefer-const
+
+/home/sin/HDD/Work/code/reset-htx/app/components/admin/ImageUploadWithCrop.tsx
+  95:203  error    Comments inside children section of tag should be placed inside braces                                                                                                                                                                                                                   react/jsx-no-comment-textnodes
+  97:29   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/components/admin/WordCountTextarea.tsx
+   3:20  warning  'useEffect' is defined but never used                                                                 @typescript-eslint/no-unused-vars
+  19:5   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+✖ 35 problems (20 errors, 15 warnings)
+  2 errors and 4 warnings potentially fixable with the `--fix` option.
+

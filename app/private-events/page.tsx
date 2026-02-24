@@ -62,7 +62,7 @@ export default function PrivateEventsPage() {
                             tailored to suit any occasion.
                         </p>
                         <p>
-                            Whether it's a reception, engagement party, or corporate mixer, we provide the elevated experience
+                            Whether it&apos;s a reception, engagement party, or corporate mixer, we provide the elevated experience
                             your guests deserve.
                         </p>
                     </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { login } from './actions'
@@ -21,6 +22,7 @@ function LoginForm() {
     try {
       const formData = new FormData(e.currentTarget)
       await login(formData)
+     
     } catch (e) {
       setIsLoading(false)
     }

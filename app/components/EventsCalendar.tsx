@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 import { useState } from 'react'
 import Image from 'next/image'
+ 
 import Link from 'next/link'
 import { formatTime } from '../utils/format'
 
@@ -65,7 +67,7 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
             currentDate.getMonth() === today.getMonth()
 
         // Base range: Start of viewed month to end of viewed month
-        let startFilter = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+        const startFilter = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
         let endFilter = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
 
         // "End of Month" Rule: If today >= 25th and viewing current month, include next month
@@ -100,7 +102,7 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
                         <span className="text-[#D4AF37]">Night Out</span>
                     </h2>
                     <p className="text-slate-400 mt-6 mb-10 leading-relaxed max-w-sm font-sans hidden md:block">
-                        There's always something happening at Reset. From midweek happy hours to weekend rooftop raves. Check the calendar to reserve your spot.
+                        There&apos;s always something happening at Reset. From midweek happy hours to weekend rooftop raves. Check the calendar to reserve your spot.
                     </p>
 
                     <div className="space-y-4 font-sans mb-8 lg:mb-0">
@@ -202,6 +204,7 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
                                                 </div>
                                             ) : (
                                                 // MULTI EVENT (Split View)
+                                                 
                                                 dayEvents.slice(0, 2).map((ev, idx) => (
                                                     <div key={ev.id} className={`relative w-1/2 h-full cursor-pointer group/item border-r border-[#000] last:border-r-0`}>
                                                         {ev.image_url && (

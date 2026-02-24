@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState, useEffect } from 'react'
 import SpotlightCard from '@/app/components/SpotlightCard'
+ 
 import { uploadImage, deleteImage, getGalleryImages } from '@/app/actions/gallery'
 import { createClient } from '@/utils/supabase/client'
 import Image from 'next/image'

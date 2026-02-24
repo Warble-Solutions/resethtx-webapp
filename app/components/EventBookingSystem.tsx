@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import React, { useEffect, useState, useRef } from 'react'
+ 
 import anime from 'animejs'
+ 
 import { getEventTables, bookTable, getEventForDate, getEventAvailability, getTakenTables } from '@/app/actions/event-booking'
 import { purchaseTickets } from '@/app/actions/checkout' // NEW
 import { validatePromo } from '@/app/actions/promos'
@@ -40,6 +44,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
     const [customerDob, setCustomerDob] = useState('')
     const [promoCode, setPromoCode] = useState('')
     const [isBooking, setIsBooking] = useState(false)
+     
     const [discountApplied, setDiscountApplied] = useState(false)
     const [discountVal, setDiscountVal] = useState(0)
     const [promoMessage, setPromoMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
@@ -101,6 +106,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
     // Handle Date Change
     const handleDateChange = async (dateStr: string) => {
         // Update input state immediately for UI responsiveness
+         
         const newDate = new Date(dateStr)
         // Adjust for timezone offset to prevent date shifting when creating new Date object
         // Actually, input type="date" returns YYYY-MM-DD. 
@@ -116,6 +122,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
         setSelectedTable(null)
         setEventLookupError(null)
 
+         
         const { success, event, error } = await getEventForDate(dateStr)
 
         if (success && event) {

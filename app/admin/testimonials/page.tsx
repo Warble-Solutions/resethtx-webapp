@@ -29,7 +29,7 @@ export default async function TestimonialsAdminPage() {
           <div key={t.id} className="bg-[#0a0a0a] border border-white/10 p-6 rounded-xl flex flex-col justify-between group hover:border-[#D4AF37]/50 transition-colors">
             <div>
               {/* Quote Icon */}
-              <div className="text-[#D4AF37] text-4xl font-serif leading-none mb-4 opacity-50">"</div>
+              <div className="text-[#D4AF37] text-4xl font-serif leading-none mb-4 opacity-50">&quot;</div>
               
               <p className="text-slate-300 italic mb-6 font-sans text-lg">
                 {t.quote}

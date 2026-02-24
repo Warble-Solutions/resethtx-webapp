@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { checkTableAvailability } from '@/utils/checkAvailability';

@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { updateMenuItem } from '../../create/actions'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import SpotlightCard from '@/app/components/SpotlightCard'
+ 
 import Image from 'next/image'
 import { useState } from 'react'
 

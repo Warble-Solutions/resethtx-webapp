@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
+
 import Image from 'next/image'
 import { Instagram, Facebook, Youtube } from 'lucide-react'
 

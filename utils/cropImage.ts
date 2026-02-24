@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export const createImage = (url: string): Promise<HTMLImageElement> =>
     new Promise((resolve, reject) => {
         const image = new Image()
@@ -81,6 +82,7 @@ export default async function getCroppedImg(
     ctx.putImageData(data, 0, 0)
 
     // As Blob
+     
     return new Promise((resolve, reject) => {
         canvas.toBlob((file) => {
             resolve(file)

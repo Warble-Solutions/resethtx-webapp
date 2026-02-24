@@ -5,11 +5,7 @@ import Image from 'next/image'
 import { Crown, Star, Briefcase } from 'lucide-react'
 import { useInquire } from '../context/InquireContext'
 
-interface ExclusiveAccessProps {
-    // onInquire: () => void // Removed as we use Links now
-}
-
-export default function ExclusiveAccess({ }: ExclusiveAccessProps) {
+export default function ExclusiveAccess() {
     const { openInquiry } = useInquire()
     const cards = [
         {

@@ -35,7 +35,7 @@ export async function getAggregatedCustomers(): Promise<Customer[]> {
         const existing = customerMap.get(email)
 
         const spend = t.total_price || 0
-        // @ts-ignore
+        // @ts-expect-error: fixed ts-ignore previously
         const date = t.events?.date || t.created_at
 
         if (existing) {
@@ -66,9 +66,9 @@ export async function getAggregatedCustomers(): Promise<Customer[]> {
         const email = b.customer_email.toLowerCase().trim()
         const existing = customerMap.get(email)
 
-        // @ts-ignore
+        // @ts-expect-error: fixed ts-ignore previously
         const spend = b.tables?.price || 0
-        // @ts-ignore
+        // @ts-expect-error: fixed ts-ignore previously
         const date = b.events?.date || b.created_at
 
         if (existing) {

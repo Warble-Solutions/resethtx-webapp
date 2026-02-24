@@ -1,0 +1,380 @@
+
+/home/sin/HDD/Work/code/reset-htx/app/about/page.tsx
+    2:8    warning  'Link' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+    3:25   warning  'Users' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+    3:32   warning  'Ticket' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   23:106  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+   44:118  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+   44:284  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+   47:62   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  139:39   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  165:21   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/actions/cancel.ts
+   39:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  100:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/actions/checkout.ts
+    4:10  warning  'revalidatePath' is defined but never used  @typescript-eslint/no-unused-vars
+    8:78  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   12:21  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   26:22  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  310:21  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/actions/contact.ts
+  39:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  62:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/actions/event-booking.ts
+   39:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   52:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  138:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  165:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  189:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  212:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  255:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  270:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/actions/guests.ts
+  68:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/actions/tables.ts
+  28:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  68:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/components/EventSalesCard.tsx
+  22:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/components/GuestListModal.tsx
+  28:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/components/GuestListModal.tsx:28:13
+  26 |     useEffect(() => {
+  27 |         if (isOpen && eventId) {
+> 28 |             setLoading(true)
+     |             ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  29 |             getEventGuestList(eventId)
+  30 |                 .then(data => setGuests(data))
+  31 |                 .catch(err => console.error(err))  react-hooks/set-state-in-effect
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/customers/actions.ts
+  38:9  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  69:9  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  71:9  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/dashboard/DashboardClient.tsx
+    4:28  warning  'useEffect' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   56:12  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   57:13  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   58:16  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  175:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  175:37  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/events/[id]/actions.ts
+  53:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/events/[id]/edit-form.tsx
+    8:8   warning  'Image' is defined but never used                                @typescript-eslint/no-unused-vars
+   60:7   error    'rawHour' is never reassigned. Use 'const' instead               prefer-const
+   85:9   warning  'safeTickets' is assigned a value but never used                 @typescript-eslint/no-unused-vars
+  172:73  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  172:87  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/events/archive/page.tsx
+  66:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/events/create/page.tsx
+    4:10   warning  'compressImage' is defined but never used                        @typescript-eslint/no-unused-vars
+   34:11   warning  'imageInput' is assigned a value but never used                  @typescript-eslint/no-unused-vars
+  368:122  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  368:139  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/events/page.tsx
+   78:133  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+   78:216  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  106:21   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/gallery/page.tsx
+  5:10  warning  'uploadImage' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/guests/page.tsx
+    9:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  129:71  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/login/page.tsx
+  24:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/menu/[id]/edit/edit-form.tsx
+   7:8   warning  'Image' is defined but never used         @typescript-eslint/no-unused-vars
+  32:56  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/menu/create/actions.ts
+    4:10  warning  'redirect' is defined but never used      @typescript-eslint/no-unused-vars
+  103:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/menu/page.tsx
+  27:36  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  84:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/promos/promo-form.tsx
+  4:10  warning  'createPromo' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/reservations/ReservationsClient.tsx
+   31:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   32:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   61:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   62:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  144:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/reservations/ReservationsTable.tsx
+   20:26   warning  'setReservations' is assigned a value but never used             @typescript-eslint/no-unused-vars
+  108:107  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  108:130  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/reservations/page.tsx
+  29:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:73  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:73  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/reviews/page.tsx
+    5:10  warning  'createClient' is defined but never used                         @typescript-eslint/no-unused-vars
+   49:11  warning  'pendingReviews' is assigned a value but never used              @typescript-eslint/no-unused-vars
+  113:75  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  113:90  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/sales/SalesClient.tsx
+  8:79  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  8:94  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/sales/actions.ts
+   53:9   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+   63:9   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+   66:9   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+   68:9   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+   71:9   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  117:9   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  157:13  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/settings/form.tsx
+  123:164  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  123:168  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/settings/page.tsx
+  2:10  warning  'updatePassword' is defined but never used      @typescript-eslint/no-unused-vars
+  2:26  warning  'updateSiteSettings' is defined but never used  @typescript-eslint/no-unused-vars
+  3:8   warning  'SpotlightCard' is defined but never used       @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/tables/TableManagerClient.tsx
+   65:18  warning  'error' is defined but never used             @typescript-eslint/no-unused-vars
+  205:43  warning  'bgColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/tables/create/actions.ts
+  4:10  warning  'revalidatePath' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/admin/testimonials/page.tsx
+  32:96  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/sin/HDD/Work/code/reset-htx/app/api/create-payment-intent/route.ts
+  45:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/api/webhooks/stripe/route.ts
+  22:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/cancel/page.tsx
+   3:30  warning  'useEffect' is defined but never used     @typescript-eslint/no-unused-vars
+  40:18  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  40:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/checkout/page.tsx
+  28:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/sin/HDD/Work/code/reset-htx/app/checkout/page.tsx:28:13
+  26 |     useEffect(() => {
+  27 |         if (!eventId) {
+> 28 |             setError('No event specified.');
+     |             ^^^^^^^^ Avoid calling setState() directly within an effect
+  29 |             setLoading(false);
+  30 |             return;
+  31 |         }  react-hooks/set-state-in-effect
+  53:21  warning  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/checkout/result/page.tsx
+  19:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/sin/HDD/Work/code/reset-htx/app/checkout/result/page.tsx:19:13
+  17 |     useEffect(() => {
+  18 |         if (!paymentIntentClientSecret) {
+> 19 |             setStatus('error');
+     |             ^^^^^^^^^ Avoid calling setState() directly within an effect
+  20 |             setMessage('No payment info found.');
+  21 |             return;
+  22 |         }  react-hooks/set-state-in-effect
+
+/home/sin/HDD/Work/code/reset-htx/app/components/BookingCheckoutModal.tsx
+  114:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/components/EventBookingSystem.tsx
+    4:8   warning  'anime' is defined but never used                     @typescript-eslint/no-unused-vars
+    5:26  warning  'bookTable' is defined but never used                 @typescript-eslint/no-unused-vars
+   43:12  warning  'discountApplied' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  104:15  warning  'newDate' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  119:33  warning  'error' is assigned a value but never used            @typescript-eslint/no-unused-vars
+  408:35  error    Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/components/EventModal.tsx
+    5:8   warning  'EventBookingSystem' is defined but never used                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+   38:11  warning  'activeEvent' is assigned a value but never used                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  247:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/components/EventsCalendar.tsx
+    4:8   warning  'Link' is defined but never used                                 @typescript-eslint/no-unused-vars
+   68:13  error    'startFilter' is never reassigned. Use 'const' instead           prefer-const
+  103:30  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  205:80  warning  'idx' is defined but never used                                  @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/components/ExclusiveAccess.tsx
+  8:11  error  An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+/home/sin/HDD/Work/code/reset-htx/app/components/Footer.tsx
+    3:8   warning  'Image' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   22:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  187:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/components/HeroCarousel.tsx
+   67:48  warning  'onEventClick' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   67:62  warning  'onInquire' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  100:10  warning  'isLoaded' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+  117:19  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/sin/HDD/Work/code/reset-htx/app/components/HeroCarousel.tsx:117:19
+  115 |   }, [nextSlide, allSlides.length, currentIndex])
+  116 |
+> 117 |   useEffect(() => setIsLoaded(true), [])
+      |                   ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  118 |
+  119 |   const currentSlide = allSlides[currentIndex]
+  120 |  react-hooks/set-state-in-effect
+  136:9   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/components/HomeClient.tsx
+  25:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:16  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/components/Navbar.tsx
+  22:11  warning  'openReservation' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  35:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/sin/HDD/Work/code/reset-htx/app/components/Navbar.tsx:35:5
+  33 |   // Close menu on route change
+  34 |   useEffect(() => {
+> 35 |     setIsOpen(false)
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  36 |   }, [pathname])
+  37 |
+  38 |   // Lock body scroll when menu is open  react-hooks/set-state-in-effect
+
+/home/sin/HDD/Work/code/reset-htx/app/components/ReservationModal.tsx
+  75:8  warning  React Hook useEffect has a missing dependency: 'eventId'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/sin/HDD/Work/code/reset-htx/app/components/ReviewModal.tsx
+  5:10  warning  'submitReview' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/components/UpcomingEventsSection.tsx
+  21:18  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  24:7   warning  'getMonth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  29:7   warning  'getDay' is assigned a value but never used    @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/app/components/admin/ImageUploadWithCrop.tsx
+  27:64  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  30:12  warning  'fileName' is assigned a value but never used                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  47:54  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  47:78  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  95:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/sin/HDD/Work/code/reset-htx/app/components/admin/WordCountTextarea.tsx
+  19:12  warning  'text' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  29:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/sin/HDD/Work/code/reset-htx/app/components/admin/WordCountTextarea.tsx:29:9
+  27 |     // Initialize count
+  28 |     useEffect(() => {
+> 29 |         setWordCount(countWords(String(initialVal)))
+     |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  30 |     }, [initialVal])
+  31 |
+  32 |     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {  react-hooks/set-state-in-effect
+
+/home/sin/HDD/Work/code/reset-htx/app/events/events-content.tsx
+  66:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/app/private-events/page.tsx
+  65:39  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/sin/HDD/Work/code/reset-htx/lib/generatePdf.ts
+   4:70  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/lib/mail.ts
+   11:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   65:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   97:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/utils/checkAvailability.ts
+  30:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/sin/HDD/Work/code/reset-htx/utils/cropImage.ts
+  84:34  warning  'reject' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/sin/HDD/Work/code/reset-htx/utils/supabase/middleware.ts
+  18:48  warning  'options' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 163 problems (102 errors, 61 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+

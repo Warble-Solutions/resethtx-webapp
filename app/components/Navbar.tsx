@@ -19,6 +19,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { openReservation } = useReservation()
   const { openInquiry } = useInquire()
   const pathname = usePathname()
@@ -32,7 +33,8 @@ export default function Navbar() {
 
   // Close menu on route change
   useEffect(() => {
-    setIsOpen(false)
+    const t = setTimeout(() => setIsOpen(false), 0);
+    return () => clearTimeout(t);
   }, [pathname])
 
   // Lock body scroll when menu is open

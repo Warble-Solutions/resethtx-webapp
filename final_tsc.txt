@@ -1,0 +1,169 @@
+app/actions/checkout.ts(12,63): error TS2322: Type 'unknown' is not assignable to type 'Emptyable<MetadataParam> | undefined'.
+app/actions/checkout.ts(16,41): error TS18046: 'error' is of type 'unknown'.
+app/actions/checkout.ts(161,63): error TS2339: Property 'tableId' does not exist on type '{}'.
+app/actions/checkout.ts(166,42): error TS2339: Property 'tableId' does not exist on type '{}'.
+app/actions/checkout.ts(314,41): error TS18046: 'error' is of type 'unknown'.
+app/actions/event-booking.ts(40,17): error TS18046: 'table' is of type 'unknown'.
+app/actions/event-booking.ts(41,19): error TS18046: 'table' is of type 'unknown'.
+app/actions/event-booking.ts(41,42): error TS18046: 'table' is of type 'unknown'.
+app/actions/event-booking.ts(42,23): error TS18046: 'table' is of type 'unknown'.
+app/actions/event-booking.ts(44,23): error TS18046: 'table' is of type 'unknown'.
+app/actions/event-booking.ts(45,42): error TS18046: 'table' is of type 'unknown'.
+app/actions/event-booking.ts(46,16): error TS18046: 'table' is of type 'unknown'.
+app/actions/event-booking.ts(47,16): error TS18046: 'table' is of type 'unknown'.
+app/actions/event-booking.ts(54,53): error TS18046: 'error' is of type 'unknown'.
+app/actions/event-booking.ts(140,41): error TS18046: 'error' is of type 'unknown'.
+app/actions/event-booking.ts(167,41): error TS18046: 'error' is of type 'unknown'.
+app/actions/event-booking.ts(191,41): error TS18046: 'error' is of type 'unknown'.
+app/actions/event-booking.ts(214,41): error TS18046: 'error' is of type 'unknown'.
+app/actions/event-booking.ts(256,29): error TS18046: 'row' is of type 'unknown'.
+app/actions/event-booking.ts(272,41): error TS18046: 'error' is of type 'unknown'.
+app/actions/tables.ts(30,41): error TS18046: 'error' is of type 'unknown'.
+app/actions/tables.ts(50,41): error TS18046: 'error' is of type 'unknown'.
+app/actions/tables.ts(70,41): error TS18046: 'error' is of type 'unknown'.
+app/admin/dashboard/DashboardClient.tsx(65,41): error TS18046: 't' is of type 'unknown'.
+app/admin/dashboard/DashboardClient.tsx(66,41): error TS18046: 't' is of type 'unknown'.
+app/admin/dashboard/DashboardClient.tsx(67,42): error TS18046: 't' is of type 'unknown'.
+app/admin/dashboard/DashboardClient.tsx(68,55): error TS18046: 't' is of type 'unknown'.
+app/admin/dashboard/DashboardClient.tsx(105,34): error TS18046: 'stats' is of type 'unknown'.
+app/admin/dashboard/DashboardClient.tsx(125,34): error TS18046: 'stats' is of type 'unknown'.
+app/admin/dashboard/DashboardClient.tsx(145,34): error TS18046: 'stats' is of type 'unknown'.
+app/admin/dashboard/DashboardClient.tsx(173,40): error TS2339: Property 'image_url' does not exist on type '{}'.
+app/admin/dashboard/DashboardClient.tsx(178,57): error TS2339: Property 'image_url' does not exist on type '{}'.
+app/admin/dashboard/DashboardClient.tsx(185,95): error TS2339: Property 'title' does not exist on type '{}'.
+app/admin/dashboard/DashboardClient.tsx(187,48): error TS2339: Property 'description' does not exist on type '{}'.
+app/admin/dashboard/DashboardClient.tsx(190,61): error TS2339: Property 'date' does not exist on type '{}'.
+app/admin/dashboard/DashboardClient.tsx(234,93): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/admin/events/[id]/actions.ts(86,5): error TS18046: 'updates' is of type 'unknown'.
+app/admin/events/[id]/actions.ts(104,5): error TS18046: 'updates' is of type 'unknown'.
+app/admin/events/[id]/actions.ts(109,5): error TS18046: 'updates' is of type 'unknown'.
+app/admin/events/[id]/actions.ts(113,5): error TS18046: 'updates' is of type 'unknown'.
+app/admin/events/[id]/actions.ts(144,20): error TS18046: 'updates' is of type 'unknown'.
+app/admin/events/[id]/actions.ts(145,29): error TS18046: 'updates' is of type 'unknown'.
+app/admin/guests/page.tsx(111,124): error TS18046: 'eventData' is of type 'unknown'.
+app/admin/guests/page.tsx(113,38): error TS18046: 'eventData' is of type 'unknown'.
+app/admin/guests/page.tsx(129,42): error TS18046: 'eventData' is of type 'unknown'.
+app/admin/guests/page.tsx(132,54): error TS18046: 'guest' is of type 'unknown'.
+app/admin/guests/page.tsx(135,54): error TS18046: 'guest' is of type 'unknown'.
+app/admin/guests/page.tsx(138,54): error TS18046: 'guest' is of type 'unknown'.
+app/admin/guests/page.tsx(141,103): error TS18046: 'guest' is of type 'unknown'.
+app/admin/guests/page.tsx(145,54): error TS18046: 'guest' is of type 'unknown'.
+app/admin/guests/page.tsx(148,54): error TS18046: 'guest' is of type 'unknown'.
+app/admin/menu/[id]/edit/edit-form.tsx(36,62): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/[id]/edit/edit-form.tsx(45,117): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/[id]/edit/edit-form.tsx(101,59): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/[id]/edit/edit-form.tsx(126,51): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/[id]/edit/edit-form.tsx(143,47): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/[id]/edit/edit-form.tsx(152,47): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/[id]/edit/edit-form.tsx(164,43): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/[id]/edit/edit-form.tsx(177,47): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/[id]/edit/edit-form.tsx(193,45): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/create/actions.ts(130,7): error TS18046: 'updateData' is of type 'unknown'.
+app/admin/menu/page.tsx(79,43): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/page.tsx(84,34): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/page.tsx(85,47): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/page.tsx(85,68): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/page.tsx(89,35): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/page.tsx(96,106): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/page.tsx(102,125): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/page.tsx(103,97): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/page.tsx(110,54): error TS18046: 'item' is of type 'unknown'.
+app/admin/menu/page.tsx(118,71): error TS18046: 'item' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(35,72): error TS2345: Argument of type 'unknown[]' is not assignable to parameter of type 'EventBooking[] | (() => EventBooking[])'.
+  Type 'unknown[]' is not assignable to type 'EventBooking[]'.
+    Type 'unknown' is not assignable to type 'EventBooking'.
+app/admin/reservations/ReservationsClient.tsx(61,69): error TS18046: 'r' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(62,71): error TS18046: 'r' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(121,40): error TS2322: Type 'unknown[]' is not assignable to type 'Reservation[]'.
+  Type 'unknown' is not assignable to type 'Reservation'.
+app/admin/reservations/ReservationsClient.tsx(145,50): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(149,54): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(152,54): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(152,86): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(160,54): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(161,68): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(166,54): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(172,97): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(173,68): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(174,54): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(180,105): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(181,95): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(186,166): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(187,54): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(194,68): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/ReservationsClient.tsx(198,101): error TS18046: 'booking' is of type 'unknown'.
+app/admin/reservations/page.tsx(43,91): error TS18046: 'acc' is of type 'unknown'.
+app/admin/reservations/page.tsx(43,95): error TS18046: 'e' is of type 'unknown'.
+app/admin/reservations/page.tsx(44,91): error TS18046: 'acc' is of type 'unknown'.
+app/admin/reservations/page.tsx(44,95): error TS18046: 't' is of type 'unknown'.
+app/admin/reservations/page.tsx(49,21): error TS18046: 'eventMap' is of type 'unknown'.
+app/admin/reservations/page.tsx(50,21): error TS18046: 'tableMap' is of type 'unknown'.
+app/admin/sales/SalesClient.tsx(51,39): error TS2322: Type 'unknown[]' is not assignable to type 'Transaction[]'.
+  Type 'unknown' is not assignable to type 'Transaction'.
+app/admin/sales/SalesClient.tsx(56,38): error TS18046: 'event' is of type 'unknown'.
+app/admin/sales/SalesClient.tsx(57,33): error TS2322: Type 'unknown' is not assignable to type 'EventStats'.
+app/admin/sales/SalesClient.tsx(59,60): error TS18046: 'event' is of type 'unknown'.
+app/admin/sales/SalesClient.tsx(59,77): error TS18046: 'event' is of type 'unknown'.
+app/api/create-payment-intent/route.ts(48,48): error TS18046: 'error' is of type 'unknown'.
+app/api/webhooks/stripe/route.ts(23,65): error TS18046: 'error' is of type 'unknown'.
+app/api/webhooks/stripe/route.ts(24,61): error TS18046: 'error' is of type 'unknown'.
+app/components/EventBookingSystem.tsx(415,41): error TS18046: 'err' is of type 'unknown'.
+app/components/HomeClient.tsx(56,17): error TS2322: Type 'unknown[]' is not assignable to type 'Event[]'.
+  Type 'unknown' is not assignable to type 'Event'.
+app/components/HomeClient.tsx(57,17): error TS2322: Type '(eventOrEvents: Event | Event[]) => void' is not assignable to type '(event: Event) => void'.
+  Types of parameters 'eventOrEvents' and 'event' are incompatible.
+    Type 'Event' is not assignable to type 'Event | Event[]'.
+      Type 'Event' is not assignable to type 'Event'. Two different types with this name exist, but they are unrelated.
+        Index signature for type 'string' is missing in type 'Event'.
+app/components/HomeClient.tsx(62,17): error TS2322: Type 'unknown[]' is not assignable to type 'Event[]'.
+  Type 'unknown' is not assignable to type 'Event'.
+app/components/HomeClient.tsx(63,17): error TS2322: Type '(eventOrEvents: Event | Event[]) => void' is not assignable to type '(events: Event[]) => void'.
+  Types of parameters 'eventOrEvents' and 'events' are incompatible.
+    Type 'Event[]' is not assignable to type 'Event | Event[]'.
+      Type 'Event[]' is not assignable to type 'Event[]'. Two different types with this name exist, but they are unrelated.
+        Type 'Event' is not assignable to type 'Event'. Two different types with this name exist, but they are unrelated.
+          Index signature for type 'string' is missing in type 'Event'.
+app/components/HomeClient.tsx(67,36): error TS2322: Type 'unknown[]' is not assignable to type 'Event[]'.
+  Type 'unknown' is not assignable to type 'Event'.
+app/components/HomeClient.tsx(74,34): error TS2322: Type 'unknown[]' is not assignable to type 'Testimonial[]'.
+  Type 'unknown' is not assignable to type 'Testimonial'.
+app/components/UpcomingEventsSection.tsx(116,21): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/components/UpcomingEventsSection.tsx(124,25): error TS2322: Type '{}' is not assignable to type 'ReactNode'.
+app/components/admin/ImageUploadWithCrop.tsx(60,63): error TS2345: Argument of type '{}' is not assignable to parameter of type '{ x: number; y: number; width: number; height: number; }'.
+  Type '{}' is missing the following properties from type '{ x: number; y: number; width: number; height: number; }': x, y, width, height
+app/events/events-content.tsx(66,56): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'SetStateAction<"list" | "grid" | "calendar">'.
+lib/generatePdf.ts(16,28): error TS18046: 'event' is of type 'unknown'.
+lib/generatePdf.ts(19,27): error TS18046: 'event' is of type 'unknown'.
+lib/generatePdf.ts(20,13): error TS18046: 'g' is of type 'unknown'.
+lib/generatePdf.ts(21,13): error TS18046: 'g' is of type 'unknown'.
+lib/generatePdf.ts(22,13): error TS18046: 'g' is of type 'unknown'.
+lib/generatePdf.ts(23,13): error TS18046: 'g' is of type 'unknown'.
+lib/generatePdf.ts(24,13): error TS18046: 'g' is of type 'unknown'.
+lib/generatePdf.ts(37,18): error TS2571: Object is of type 'unknown'.
+lib/mail.ts(16,11): error TS2339: Property 'eventName' does not exist on type 'unknown'.
+lib/mail.ts(16,22): error TS2339: Property 'date' does not exist on type 'unknown'.
+lib/mail.ts(16,28): error TS2339: Property 'ticketType' does not exist on type 'unknown'.
+lib/mail.ts(16,40): error TS2339: Property 'quantity' does not exist on type 'unknown'.
+lib/mail.ts(16,50): error TS2339: Property 'totalAmount' does not exist on type 'unknown'.
+lib/mail.ts(16,63): error TS2339: Property 'name' does not exist on type 'unknown'.
+lib/mail.ts(16,69): error TS2339: Property 'tableSelection' does not exist on type 'unknown'.
+lib/mail.ts(16,85): error TS2339: Property 'bookingRef' does not exist on type 'unknown'.
+lib/mail.ts(69,11): error TS2339: Property 'eventName' does not exist on type 'unknown'.
+lib/mail.ts(69,22): error TS2339: Property 'date' does not exist on type 'unknown'.
+lib/mail.ts(69,28): error TS2339: Property 'ticketType' does not exist on type 'unknown'.
+lib/mail.ts(69,40): error TS2339: Property 'quantity' does not exist on type 'unknown'.
+lib/mail.ts(69,50): error TS2339: Property 'totalAmount' does not exist on type 'unknown'.
+lib/mail.ts(69,63): error TS2339: Property 'name' does not exist on type 'unknown'.
+lib/mail.ts(69,69): error TS2339: Property 'email' does not exist on type 'unknown'.
+lib/mail.ts(69,76): error TS2339: Property 'tableSelection' does not exist on type 'unknown'.
+lib/mail.ts(69,92): error TS2339: Property 'bookingRef' does not exist on type 'unknown'.
+lib/mail.ts(111,17): error TS18046: 'details' is of type 'unknown'.
+lib/mail.ts(112,39): error TS18046: 'details' is of type 'unknown'.
+lib/mail.ts(126,38): error TS18046: 'details' is of type 'unknown'.
+lib/mail.ts(142,34): error TS18046: 'details' is of type 'unknown'.
+lib/mail.ts(143,39): error TS18046: 'details' is of type 'unknown'.
+lib/mail.ts(144,40): error TS18046: 'details' is of type 'unknown'.
+lib/mail.ts(145,37): error TS18046: 'details' is of type 'unknown'.
+lib/mail.ts(152,41): error TS18046: 'details' is of type 'unknown'.
+lib/mail.ts(152,64): error TS18046: 'details' is of type 'unknown'.
+utils/checkAvailability.ts(32,67): error TS18046: 'err' is of type 'unknown'.

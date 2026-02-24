@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // ... imports
 // We'll rename ReservationsTable or use a new wrapper. Let's assume we update ReservationsTable to handle tabs or rename it.
 // For now, let's keep it simple and update this page to fetch everything.

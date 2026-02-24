@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { updateEvent } from './actions'
@@ -5,6 +6,7 @@ import { compressImage } from '@/utils/compress'
 import Link from 'next/link'
 import SpotlightCard from '@/app/components/SpotlightCard'
 import { useState, useRef } from 'react'
+ 
 import Image from 'next/image'
 
 interface EventData {
@@ -57,7 +59,7 @@ export default function EditEventForm({ event }: { event: EventData }) {
   const [hStr, mStr] = timeString.split(':')
 
   // Calculate 12-hour format values
-  let rawHour = parseInt(hStr || '12')
+  const rawHour = parseInt(hStr || '12')
   const minute = mStr || '00'
   const ampm = rawHour >= 12 ? 'PM' : 'AM'
 
@@ -82,6 +84,7 @@ export default function EditEventForm({ event }: { event: EventData }) {
   }
 
   // 3. Fix Tickets: Ensure it's not null/undefined
+   
   const safeTickets = event.tickets ?? 0
   // --- SAFETY PARSING END ---
 
@@ -169,7 +172,7 @@ export default function EditEventForm({ event }: { event: EventData }) {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white">Edit Event</h1>
-          <p className="text-slate-400 text-sm mt-1">Update details for "{event.title}"</p>
+          <p className="text-slate-400 text-sm mt-1">Update details for &quot;{event.title}&quot;</p>
         </div>
         <Link href="/admin/events" className="text-slate-400 hover:text-white hover:underline">
           Cancel

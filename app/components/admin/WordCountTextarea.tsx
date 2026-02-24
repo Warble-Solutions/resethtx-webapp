@@ -16,6 +16,7 @@ export default function WordCountTextarea({
 }: WordCountTextareaProps) {
     // Determine initial value safely
     const initialVal = (value !== undefined ? value : defaultValue) || ''
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [text, setText] = useState<string>(String(initialVal))
     const [wordCount, setWordCount] = useState(0)
 
@@ -26,7 +27,8 @@ export default function WordCountTextarea({
 
     // Initialize count
     useEffect(() => {
-        setWordCount(countWords(String(initialVal)))
+        const t = setTimeout(() => setWordCount(countWords(String(initialVal))), 0);
+        return () => clearTimeout(t);
     }, [initialVal])
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

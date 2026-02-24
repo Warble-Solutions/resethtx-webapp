@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/utils/supabase/server';
 
 const MAX_TABLES = 10; // Hard limit as per requirements

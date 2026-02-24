@@ -24,13 +24,18 @@ export default function GuestListModal({ eventId, eventName, isOpen, onClose }: 
     const [search, setSearch] = useState('')
 
     useEffect(() => {
+        let isMnt = true;
         if (isOpen && eventId) {
-            setLoading(true)
+            const t = setTimeout(() => { if (isMnt) setLoading(true) }, 0);
             getEventGuestList(eventId)
-                .then(data => setGuests(data))
+                .then(data => { if (isMnt) setGuests(data) })
                 .catch(err => console.error(err))
-                .finally(() => setLoading(false))
+                .finally(() => {
+                    clearTimeout(t);
+                    if (isMnt) setLoading(false);
+                })
         }
+        return () => { isMnt = false };
     }, [isOpen, eventId])
 
     if (!isOpen) return null
@@ -92,8 +97,8 @@ export default function GuestListModal({ eventId, eventName, isOpen, onClose }: 
                                             <td className="px-6 py-4 font-bold text-white text-lg">{g.name}</td>
                                             <td className="px-6 py-4">
                                                 <span className={`px-2 py-1 rounded text-xs font-bold border ${g.type.includes('VIP') || g.type.includes('Table')
-                                                        ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-                                                        : 'bg-slate-700/30 text-slate-300 border-slate-700/50'
+                                                    ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+                                                    : 'bg-slate-700/30 text-slate-300 border-slate-700/50'
                                                     }`}>
                                                     {g.type}
                                                 </span>

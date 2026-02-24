@@ -24,11 +24,7 @@ export default function CheckoutPage() {
     const [isFree, setIsFree] = useState(false);
 
     useEffect(() => {
-        if (!eventId) {
-            setError('No event specified.');
-            setLoading(false);
-            return;
-        }
+        if (!eventId) return;
 
         // Create PaymentIntent as soon as the page loads
         fetch('/api/create-payment-intent', {
@@ -50,9 +46,21 @@ export default function CheckoutPage() {
                     setClientSecret(data.clientSecret);
                 }
             })
-            .catch((err) => setError('Network Error'))
+            .catch(() => setError('Network Error'))
             .finally(() => setLoading(false));
     }, [eventId, amountParam, quantity]);
+
+    if (!eventId) {
+        return (
+            <div className="min-h-screen bg-black text-white py-20 px-4">
+                <h1 className="text-3xl font-bold text-center mb-10 text-[#D4AF37]">Complete Your Purchase</h1>
+                <div className="text-center text-red-500 bg-red-500/10 p-4 rounded max-w-md mx-auto border border-red-500/20">
+                    <p className="font-bold">Error</p>
+                    <p className="text-sm mt-1 opacity-80">No event specified.</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-black text-white py-20 px-4">

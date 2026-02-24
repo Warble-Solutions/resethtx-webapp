@@ -65,7 +65,7 @@ export async function getDailyGuestList(date: string) {
 
         return { success: true, data: activeEvents };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Guest List fetch error:', error);
         return { success: false, error: 'An unexpected error occurred.' };
     }

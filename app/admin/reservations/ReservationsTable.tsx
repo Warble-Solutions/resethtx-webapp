@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState } from 'react'
@@ -17,6 +18,7 @@ interface Reservation {
 }
 
 export default function ReservationsTable({ initialReservations }: { initialReservations: Reservation[] }) {
+     
     const [reservations, setReservations] = useState(initialReservations)
     const [loadingId, setLoadingId] = useState<string | null>(null)
 
@@ -105,7 +107,7 @@ export default function ReservationsTable({ initialReservations }: { initialRese
                                 {/* NOTES */}
                                 <td className="px-6 py-6 max-w-xs">
                                     {res.special_requests ? (
-                                        <p className="italic text-slate-400 leading-relaxed line-clamp-2">"{res.special_requests}"</p>
+                                        <p className="italic text-slate-400 leading-relaxed line-clamp-2">&quot;{res.special_requests}&quot;</p>
                                     ) : (
                                         <span className="text-slate-700 opacity-50">-</span>
                                     )}

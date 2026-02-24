@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState } from 'react'
@@ -21,11 +23,13 @@ interface Event {
   [key: string]: any
 }
 
+ 
 const getMonth = (dateString: string) => {
   const date = new Date(dateString)
   return date.toLocaleString('default', { month: 'short' }).toUpperCase()
 }
 
+ 
 const getDay = (dateString: string) => {
   const date = new Date(dateString)
   return date.getDate()

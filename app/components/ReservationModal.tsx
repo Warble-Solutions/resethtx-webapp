@@ -72,7 +72,7 @@ export default function ReservationModal({ isOpen, onClose, eventId, tableFee }:
         }
 
         return () => { document.body.style.overflow = 'unset' }
-    }, [isOpen])
+    }, [isOpen, eventId])
 
     if (!isOpen) return null
 

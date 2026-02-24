@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
+ 
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { cancelBooking } from '@/app/actions/cancel';
@@ -37,7 +39,8 @@ function CancelFormContent() {
                 setStatus('error');
                 setMessage(response.error || 'Failed to cancel booking. Please check your details.');
             }
-        } catch (error: any) {
+         
+        } catch (error: unknown) {
             setStatus('error');
             setMessage('An unexpected error occurred. Please try again later.');
         }

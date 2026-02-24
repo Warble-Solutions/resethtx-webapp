@@ -1,5 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 import Image from 'next/image'
+
 import Link from 'next/link'
+
+
 import { IdCard, Shirt, Users, Ticket, Car } from 'lucide-react'
 import PrivateEventsAboutSection from '@/app/components/PrivateEventsAboutSection'
 import BookTableButton from '@/app/components/BookTableButton'
@@ -20,7 +25,7 @@ export default function AboutPage() {
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C59D24] to-[#F0DEAA]">Of Luxury</span>
                     </h1>
                     <p className="font-sans text-slate-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-                        A rooftop sanctuary where sound, taste, and atmosphere converge to create Houston's most exclusive vibe.
+                        A rooftop sanctuary where sound, taste, and atmosphere converge to create Houston&apos;s most exclusive vibe.
                     </p>
                 </div>
 
@@ -41,10 +46,10 @@ export default function AboutPage() {
                     </h3>
                     <div className="prose prose-invert prose-lg mx-auto font-sans text-slate-400 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-500 space-y-6">
                         <p>
-                            RESET, officially known as Reset Rooftop Lounge, emerged as a vibrant addition to Houston's Midtown nightlife scene in the summer of 2022. The venue was built in a newly constructed building at 606 Dennis Street. The project aimed to fill a gap in Houston's rooftop lounge offerings with a focus on high-quality sound systems, crystal-clear acoustics, and a rooftop patio boasting panoramic skyline views.
+                            RESET, officially known as Reset Rooftop Lounge, emerged as a vibrant addition to Houston&apos;s Midtown nightlife scene in the summer of 2022. The venue was built in a newly constructed building at 606 Dennis Street. The project aimed to fill a gap in Houston&apos;s rooftop lounge offerings with a focus on high-quality sound systems, crystal-clear acoustics, and a rooftop patio boasting panoramic skyline views.
                         </p>
                         <p>
-                            Drawing inspiration from the city's growing demand for sophisticated yet energetic spaces, Reset Rooftop Lounge was designed as an intimate spot emphasizing local and regional talent alongside occasional international acts and celebrities.
+                            Drawing inspiration from the city&apos;s growing demand for sophisticated yet energetic spaces, Reset Rooftop Lounge was designed as an intimate spot emphasizing local and regional talent alongside occasional international acts and celebrities.
                         </p>
                         <p>
                             Since opening, Reset has established itself as a premier destination for cocktails, hookah, live DJs, and weekly events. By the mid-2020s, the lounge has continued to thrive under ongoing management tied to Houston nightlife operators, hosting diverse music genres from Afro-Beats, House, R&B, and Techno to Hip-Hop, solidifying its reputation as a Midtown hotspot with stunning views of the city and unforgettable vibes.
@@ -136,7 +141,7 @@ export default function AboutPage() {
                         <div className="bg-[#111] p-10 rounded-xl border border-white/5 hover:border-[#C59D24]/50 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-[#C59D24]/10 group">
                             <h3 className="text-[#C59D24] font-heading text-2xl mb-4 group-hover:text-white transition-colors">Sonic Identity</h3>
                             <p className="font-sans text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
-                                We don't play background music. We curate soundscapes. From deep house grooves to soulful R&B, our residents are chosen for their ability to read a room, not just a playlist.
+                                We don&apos;t play background music. We curate soundscapes. From deep house grooves to soulful R&B, our residents are chosen for their ability to read a room, not just a playlist.
                             </p>
                         </div>
                         {/* Pillar 2 */}

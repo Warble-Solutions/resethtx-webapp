@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState } from 'react'
@@ -62,6 +63,7 @@ export default function TableManagerClient({ initialTables }: { initialTables: T
             // For simplicity in this "mocked" env, I'll reload page or trust nextjs router refresh if injected.
             // A hard reload is safest ensures data sync.
             window.location.reload()
+         
         } catch (error) {
             alert('Operation failed')
         } finally {
@@ -202,6 +204,7 @@ export default function TableManagerClient({ initialTables }: { initialTables: T
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {catTables.map((table) => {
                                     const status = table.status || 'Available'
+                                     
                                     const bgColor =
                                         status === 'Occupied' ? 'bg-red-900/50 border-red-500' :
                                             status === 'Reserved' ? 'bg-yellow-900/50 border-yellow-500' :

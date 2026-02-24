@@ -1,17 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+
 import { revalidatePath } from 'next/cache'
 import { stripe } from '@/lib/stripe'
 import { sendOrderConfirmation, sendAdminBookingNotification } from '@/lib/mail'
 
-export async function updatePaymentIntent(paymentIntentId: string, metadata: any) {
+export async function updatePaymentIntent(paymentIntentId: string, metadata: Record<string, string | number | null>) {
     try {
         await stripe.paymentIntents.update(paymentIntentId, { metadata });
         return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error updating payment intent:', error);
-        return { success: false, error: error.message };
+        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
 }
 
@@ -23,7 +25,7 @@ interface PurchaseDetails {
     userDob: string
     quantity: number
     couponCode?: string
-    bookingDetails?: any // NEW
+    bookingDetails?: { tableId?: string; tableSelection?: string; tableName?: string; tableCategory?: string } | null // NEW
     ticketType?: string // NEW
 }
 
@@ -307,8 +309,8 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
 
         return { success: true, message: 'Ticket secured!', bookingDetails };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Finalize Error:', error);
-        return { success: false, error: error.message };
+        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
 }

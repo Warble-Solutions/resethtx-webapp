@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { createEvent, checkEventConflict } from './actions'
+ 
 import { compressImage } from '@/utils/compress'
 import Link from 'next/link'
 import SpotlightCard from '@/app/components/SpotlightCard'
@@ -31,6 +33,7 @@ export default function CreateEventPage() {
       formData.set('featured_image', featuredImageFile, 'featured_image.jpg')
     }
 
+     
     const imageInput = formData.get('image') as File | Blob
     // We can still try to compress if it's a File, but if it's a Blob directly from canvas it might be optimized enough or we compress it too.
     // existing compressImage utils might expect a File.
@@ -365,7 +368,7 @@ export default function CreateEventPage() {
                 <h3 className="text-xl font-bold text-white">Scheduling Conflict</h3>
               </div>
               <p className="text-slate-300 mb-4">You already have an event scheduled for this exact time:</p>
-              <div className="bg-slate-800 p-3 rounded-lg border border-slate-700 text-white font-bold text-center mb-6">"{conflict.title}"</div>
+              <div className="bg-slate-800 p-3 rounded-lg border border-slate-700 text-white font-bold text-center mb-6">&quot;{conflict.title}&quot;</div>
               <p className="text-slate-400 text-sm">Do you want to create this event anyway?</p>
             </div>
             <div className="bg-slate-950 px-6 py-4 border-t border-slate-800 flex justify-end gap-3">

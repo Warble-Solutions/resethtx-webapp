@@ -11,15 +11,12 @@ export default function CheckoutResultPage() {
     const paymentIntentClientSecret = searchParams.get('payment_intent_client_secret');
 
     // Status state
-    const [status, setStatus] = useState<'loading' | 'success' | 'processing' | 'error'>('loading');
-    const [message, setMessage] = useState('');
+    // Status state
+    const [status, setStatus] = useState<'loading' | 'success' | 'processing' | 'error'>(paymentIntentClientSecret ? 'loading' : 'error');
+    const [message, setMessage] = useState(paymentIntentClientSecret ? '' : 'No payment info found.');
 
     useEffect(() => {
-        if (!paymentIntentClientSecret) {
-            setStatus('error');
-            setMessage('No payment info found.');
-            return;
-        }
+        if (!paymentIntentClientSecret) return;
 
         getStripe().then((stripe) => {
             if (!stripe) return;

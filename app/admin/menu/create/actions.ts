@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+ 
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 

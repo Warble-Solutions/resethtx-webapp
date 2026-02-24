@@ -36,7 +36,7 @@ export async function cancelBooking({ bookingRef, email }: CancelRequest) {
                 await stripe.refunds.create({
                     payment_intent: ticket.payment_intent_id
                 });
-            } catch (stripeError: any) {
+            } catch (stripeError: unknown) {
                 console.error('Stripe Refund Error:', stripeError);
                 return { success: false, error: 'Failed to process refund with our payment provider.' };
             }
@@ -97,7 +97,7 @@ export async function cancelBooking({ bookingRef, email }: CancelRequest) {
             message: 'Your booking was cancelled and your refund has been initiated. You will receive an email confirmation shortly.'
         };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Cancellation Action Error:', error);
         return { success: false, error: 'An unexpected error occurred while processing your cancellation.' };
     }

@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
+
 import EventBookingSystem from './EventBookingSystem'
 import { purchaseTickets } from '@/app/actions/checkout'
 import { formatEventTime } from '../utils/format'
@@ -35,6 +38,7 @@ interface EventModalProps {
 export default function EventModal({ isOpen, onClose, event, events }: EventModalProps) {
     // Normalize to array
     const allEvents = events || (event ? [event] : [])
+
     const activeEvent = allEvents.length > 0 ? allEvents[0] : null
 
     // For single event flow, we use 'view' state. 

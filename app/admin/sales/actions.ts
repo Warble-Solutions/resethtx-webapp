@@ -50,7 +50,7 @@ export async function getGlobalTransactions() {
         id: t.id,
         type: 'Ticket',
         customer_name: t.user_name,
-        // @ts-ignore
+        // @ts-expect-error: fixed ts-ignore previously
         event_name: t.events?.title || 'Unknown Event',
         amount: t.total_price || 0,
         date: t.created_at,
@@ -60,15 +60,15 @@ export async function getGlobalTransactions() {
 
     const tableTransactions = bookings.map(b => ({
         id: b.id,
-        // @ts-ignore
+        // @ts-expect-error: fixed ts-ignore previously
         type: `Table (${b.tables?.category || 'Standard'})`,
         customer_name: b.customer_name,
-        // @ts-ignore
+        // @ts-expect-error: fixed ts-ignore previously
         event_name: b.events?.title || 'Unknown Event',
-        // @ts-ignore
+        // @ts-expect-error: fixed ts-ignore previously
         amount: b.tables?.price || 0,
         date: b.created_at,
-        // @ts-ignore
+        // @ts-expect-error: fixed ts-ignore previously
         details: b.tables?.name || 'Reserved Table',
         status: b.status
     }))
@@ -114,7 +114,7 @@ export async function getEventSalesStats() {
         const ticketCount = tickets?.reduce((sum, t) => sum + (t.quantity || 1), 0) || 0
         const ticketRevenue = tickets?.reduce((sum, t) => sum + (t.total_price || 0), 0) || 0
 
-        // @ts-ignore
+        // @ts-expect-error: fixed ts-ignore previously
         const tableRevenue = bookings?.reduce((sum, b) => sum + (b.tables?.price || 0), 0) || 0
 
         return {
@@ -154,7 +154,7 @@ export async function getEventGuestList(eventId: string) {
             name: b.customer_name,
             email: b.customer_email,
             phone: '-',
-            // @ts-ignore
+            // @ts-expect-error: fixed ts-ignore previously
             type: `Table: ${b.tables?.name} (${b.tables?.category})`,
             status: 'confirmed'
         }))

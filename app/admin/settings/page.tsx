@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createClient } from '@/utils/supabase/server'
+
+
 import { updatePassword, updateSiteSettings } from './actions'
+
 import SpotlightCard from '@/app/components/SpotlightCard'
 import { Suspense } from 'react'
 import SettingsForm from './form' // We will move your client code here

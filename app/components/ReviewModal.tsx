@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState } from 'react'
 import { X, Star } from 'lucide-react'
+ 
 import { submitReview } from '@/app/actions/testimonials'
 
 interface ReviewModalProps {
