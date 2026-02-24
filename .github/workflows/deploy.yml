@@ -1,0 +1,38 @@
+name: Deploy Next.js to cPanel
+
+on:
+  push:
+    branches:
+      - production # This ensures it ONLY fires when you push to the production branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Next.js App
+        run: npm run build
+
+      - name: Create Restart Trigger
+        run: mkdir -p tmp && touch tmp/restart.txt
+
+      - name: Prepare for FTP
+        run: rm -rf node_modules 
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./
