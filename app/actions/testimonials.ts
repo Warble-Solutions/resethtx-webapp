@@ -44,11 +44,15 @@ export async function getApprovedTestimonials() {
         .order('created_at', { ascending: false })
 
     if (error) {
-        console.error('Fetch Public Reviews Error:', error)
-        return []
+        // Deep log the error since it appears as {} in the console
+        console.error('Fetch Public Reviews Error:', JSON.stringify(error, Object.getOwnPropertyNames(error || {})))
+        // In Next.js sometimes error is an empty object {} but data is successfully populated
+        if (!data) {
+            return []
+        }
     }
 
-    return data
+    return data || []
 }
 
 // Task 1: Admin Get All Reviews
