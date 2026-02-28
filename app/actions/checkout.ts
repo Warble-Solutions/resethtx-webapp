@@ -46,7 +46,7 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
     // 1. Fetch Event Details (Partial fetch OK for simple validation)
     const { data: event, error: eventError } = await supabase
         .from('events')
-        .select('ticket_price, ticket_capacity, title, table_price, date, is_sold_out') // Added table_price and date and is_sold_out
+        .select('ticket_price, ticket_capacity, title, table_price, date, time, is_sold_out') // Added table_price, time, date and is_sold_out
         .eq('id', eventId)
         .single()
 
@@ -57,6 +57,35 @@ export async function purchaseTickets({ eventId, userName, userEmail, userPhone,
     // 1.5 Validate Sold Out Status
     if (event.is_sold_out) {
         return { success: false, error: 'Sorry, this event is completely sold out.' }
+    }
+
+    // 1.6 Validate Time Cutoff (1 hour before event time, using Houston timezone)
+    if (event.date) {
+        const datePart = event.date.includes('T') ? event.date.split('T')[0] : event.date;
+        const timePart = event.time || '00:00:00';
+
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hours, minutes, seconds] = timePart.split(':').map(Number);
+        // Abstract time into fake UTC ms 
+        const eventTimeMs = Date.UTC(year, month - 1, day, hours, minutes, seconds || 0);
+
+        // Get current Houston Time components
+        const nowHoustonStr = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
+        const nowHouston = new Date(nowHoustonStr);
+        const nowHoustonMs = Date.UTC(
+            nowHouston.getFullYear(),
+            nowHouston.getMonth(),
+            nowHouston.getDate(),
+            nowHouston.getHours(),
+            nowHouston.getMinutes(),
+            nowHouston.getSeconds()
+        );
+
+        const cutoffMs = eventTimeMs - (60 * 60 * 1000); // 1 hour before
+
+        if (nowHoustonMs > cutoffMs) {
+            return { success: false, error: 'Bookings are closed. This event starts in less than an hour, or has already ended.' };
+        }
     }
 
     // Calculate Price

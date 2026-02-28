@@ -33,26 +33,26 @@ export async function submitReview(data: { name: string; rating: number; message
     return { success: true }
 }
 
-// Task 1: Get Approved Testimonials (Public)
 export async function getApprovedTestimonials() {
-    const supabase = await createClient()
+    try {
+        const supabase = await createClient()
 
-    const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('status', 'approved')
-        .order('created_at', { ascending: false })
+        const { data, error } = await supabase
+            .from('testimonials')
+            .select('*')
+            .eq('status', 'approved')
+            .order('created_at', { ascending: false })
 
-    if (error) {
-        // Deep log the error since it appears as {} in the console
-        console.error('Fetch Public Reviews Error:', JSON.stringify(error, Object.getOwnPropertyNames(error || {})))
-        // In Next.js sometimes error is an empty object {} but data is successfully populated
-        if (!data) {
-            return []
+        if (error) {
+            console.error('Fetch Public Reviews Error:', JSON.stringify(error, Object.getOwnPropertyNames(error || {})))
+            if (!data) return []
         }
-    }
 
-    return data || []
+        return data || []
+    } catch (err: any) {
+        console.error('Fetch Public Reviews Exception:', err.message || err);
+        return [];
+    }
 }
 
 // Task 1: Admin Get All Reviews

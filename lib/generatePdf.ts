@@ -12,8 +12,9 @@ export const generateDailyGuestListPDF = (date: string, groupedData: any[]) => {
 
     groupedData.forEach((event) => {
         // Add Event Header
+        const displayDate = event.eventDate ? new Date(event.eventDate).toLocaleDateString() : '';
         doc.setFontSize(14);
-        doc.text(`Event: ${event.eventName}`, 14, startY);
+        doc.text(`Event: ${event.eventName} ${displayDate ? `(${displayDate})` : ''}`, 14, startY);
 
         // Generate Table for this event
         const tableData = event.guests.map((g: any) => [

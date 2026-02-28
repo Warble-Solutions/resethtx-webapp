@@ -108,7 +108,10 @@ export default function GuestListPage() {
                     {guestsData.map((eventData, idx) => (
                         <div key={idx} className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
                             <div className="bg-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-                                <h2 className="text-xl font-bold text-white group-hover:text-[#D4AF37] transition-colors">{eventData.eventName}</h2>
+                                <div>
+                                    <h2 className="text-xl font-bold text-white group-hover:text-[#D4AF37] transition-colors">{eventData.eventName}</h2>
+                                    <p className="text-xs text-[#D4AF37] mt-1 font-mono">{eventData.eventDate ? new Date(eventData.eventDate).toLocaleDateString() : 'No Date'}</p>
+                                </div>
                                 <span className="text-sm text-slate-400 font-medium px-3 py-1 bg-slate-800 rounded-full">
                                     {eventData.guests.length} Guests
                                 </span>

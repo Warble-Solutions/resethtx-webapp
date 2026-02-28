@@ -8,44 +8,64 @@ export const revalidate = 3600
 export default async function Home() {
   const supabase = await createClient()
 
-  // Parallelize data fetching
-  const [featuredResult, upcomingEventsResult, allEventsResult, testimonials] = await Promise.all([
-    // 1. Fetch Featured Events (Carousel)
-    supabase
-      .from('events')
-      .select('*, category')
-      .eq('is_featured', true)
-      .gte('date', new Date().toISOString())
-      .order('date', { ascending: true })
-      .limit(5),
+  // Wrapper helpers to safely catch network exceptions
+  const fetchFeatured = async () => {
+    try {
+      const { data } = await supabase
+        .from('events')
+        .select('*, category')
+        .eq('is_featured', true)
+        .gte('date', new Date().toISOString())
+        .order('date', { ascending: true })
+        .limit(5)
+      return data || []
+    } catch (err) {
+      console.error('Featured Events Fetch Error:', err)
+      return []
+    }
+  }
 
-    // 2. NEW: Fetch Upcoming Events (List Section - Next 4)
-    supabase
-      .from('events')
-      .select('*')
-      .gte('date', new Date().toISOString()) // Only future
-      .order('date', { ascending: true })    // Closest first
-      .limit(4),
+  const fetchUpcoming = async () => {
+    try {
+      const { data } = await supabase
+        .from('events')
+        .select('*')
+        .gte('date', new Date().toISOString())
+        .order('date', { ascending: true })
+        .limit(4)
+      return data || []
+    } catch (err) {
+      console.error('Upcoming Events Fetch Error:', err)
+      return []
+    }
+  }
 
-    // 3. Fetch All Events (Calendar)
-    supabase
-      .from('events')
-      .select('*')
-      .order('date', { ascending: true }),
+  const fetchAll = async () => {
+    try {
+      const { data } = await supabase
+        .from('events')
+        .select('*')
+        .order('date', { ascending: true })
+      return data || []
+    } catch (err) {
+      console.error('All Events Fetch Error:', err)
+      return []
+    }
+  }
 
-    // 4. Fetch Testimonials
+  // Parallelize data fetching safely
+  const [featuredEvents, upcomingEvents, allEvents, testimonials] = await Promise.all([
+    fetchFeatured(),
+    fetchUpcoming(),
+    fetchAll(),
     getApprovedTestimonials()
   ])
 
-  const featuredEvents = featuredResult.data
-  const upcomingEvents = upcomingEventsResult.data
-  const allEvents = allEventsResult.data
-
   return (
     <HomeClient
-      featuredEvents={featuredEvents || []}
-      upcomingEvents={upcomingEvents || []}
-      allEvents={allEvents || []}
+      featuredEvents={featuredEvents}
+      upcomingEvents={upcomingEvents}
+      allEvents={allEvents}
       testimonials={testimonials || []}
     />
   )

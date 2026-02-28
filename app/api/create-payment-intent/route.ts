@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { checkTableAvailability } from '@/utils/checkAvailability';
+import { createClient } from '@/utils/supabase/server';
 
 export async function POST(request: Request) {
     try {
@@ -12,6 +13,40 @@ export async function POST(request: Request) {
 
         if (amount === 0) {
             return NextResponse.json({ clientSecret: null, isFree: true });
+        }
+
+        const supabase = await createClient();
+
+        // EVENT TIME CUTOFF CHECK
+        if (eventId) {
+            const { data: eventData } = await supabase.from('events').select('date, time, is_sold_out').eq('id', eventId).single();
+            if (eventData) {
+                if (eventData.is_sold_out) {
+                    return NextResponse.json({ error: 'Event is sold out' }, { status: 400 });
+                }
+
+                if (eventData.date) {
+                    const datePart = eventData.date.includes('T') ? eventData.date.split('T')[0] : eventData.date;
+                    const timePart = eventData.time || '00:00:00';
+                    const [year, month, day] = datePart.split('-').map(Number);
+                    const [hours, minutes, seconds] = timePart.split(':').map(Number);
+
+                    const eventTimeMs = Date.UTC(year, month - 1, day, hours, minutes, seconds || 0);
+
+                    const nowHoustonStr = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
+                    const nowHouston = new Date(nowHoustonStr);
+                    const nowHoustonMs = Date.UTC(
+                        nowHouston.getFullYear(), nowHouston.getMonth(), nowHouston.getDate(),
+                        nowHouston.getHours(), nowHouston.getMinutes(), nowHouston.getSeconds()
+                    );
+
+                    const cutoffMs = eventTimeMs - (60 * 60 * 1000);
+
+                    if (nowHoustonMs > cutoffMs) {
+                        return NextResponse.json({ error: 'Bookings are closed. Event starts in less than an hour or has ended.' }, { status: 400 });
+                    }
+                }
+            }
         }
 
         // INVENTORY CHECK

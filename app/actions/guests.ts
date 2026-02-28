@@ -50,6 +50,7 @@ export async function getDailyGuestList(date: string) {
 
             return {
                 eventName: event.title,
+                eventDate: event.date,
                 guests: eventTickets.map(t => ({
                     guest_name: t.user_name,
                     booking_ref: t.booking_ref || 'N/A',

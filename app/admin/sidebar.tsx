@@ -18,7 +18,6 @@ export default function Sidebar() {
         { href: '/admin/guests', label: 'Guest Lists' }, // New
         { href: '/admin/customers', label: 'Customers' },
         { href: '/admin/events', label: 'Events' },
-        { href: '/admin/reservations', label: 'Reservations' },
         { href: '/admin/menu', label: 'Menu' },
         { href: '/admin/tables', label: 'Tables' },
         { href: '/admin/staff', label: 'Staff' },

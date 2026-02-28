@@ -143,6 +143,18 @@ export default function EventModal({ isOpen, onClose, event, events }: EventModa
         return age >= 21
     }
 
+    const isEventEnded = (dateStr: string, timeStr: string | null) => {
+        if (!dateStr) return false
+        const datePart = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr
+        const timePart = timeStr || '00:00:00'
+        // Construct local datetime string: "YYYY-MM-DDTHH:mm:ss"
+        const eventDateTime = new Date(`${datePart}T${timePart}`)
+
+        // Cutoff is 1 hour before event time
+        const cutoffTime = eventDateTime.getTime() - (60 * 60 * 1000)
+        return new Date().getTime() > cutoffTime
+    }
+
     const handleBack = () => {
         if (bookingEvent) {
             setBookingEvent(null)
@@ -204,7 +216,7 @@ export default function EventModal({ isOpen, onClose, event, events }: EventModa
 
                 {/* Grid of buttons */}
                 <div className="flex flex-col gap-4">
-                    {new Date(ev.date) < new Date() ? (
+                    {isEventEnded(ev.date, ev.time) ? (
                         <button disabled className="w-full md:w-auto bg-slate-800 text-slate-500 font-bold py-4 px-8 rounded-full uppercase tracking-widest text-sm cursor-not-allowed border border-white/5">EVENT ENDED</button>
                     ) : ev.is_sold_out ? (
                         <button disabled className="w-full md:w-auto bg-red-950/50 text-red-500 font-bold py-4 px-8 rounded-full uppercase tracking-widest text-sm cursor-not-allowed border border-red-900/50 shadow-inner">SOLD OUT</button>
