@@ -295,7 +295,7 @@ export default function ResetBookingClient() {
                         </div>
                     </div>
 
-                    {/* ─── CARD 2: GENERAL DINING ─── */}
+                    {/* ─── CARD 2: GENERAL TABLE BOOKING ─── */}
                     <div
                         className={`relative rounded-2xl border transition-all duration-300 overflow-hidden
                             ${!eventInfo.hasEvent
@@ -325,13 +325,13 @@ export default function ResetBookingClient() {
                             </div>
 
                             <h2 className={`font-heading text-2xl font-bold uppercase tracking-wide mb-2 ${!eventInfo.hasEvent ? 'text-white' : 'text-slate-600'}`}>
-                                General Dining
+                                General Table Booking
                             </h2>
 
                             {eventInfo.hasEvent ? (
                                 <div>
                                     <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                                        General dining is not available on event nights. Please use Event Booking instead.
+                                        General table booking is not available on event nights. Please use Event Booking instead.
                                     </p>
                                     <div className="w-full bg-white/5 text-slate-600 font-bold py-4 rounded-xl uppercase tracking-widest text-sm text-center cursor-not-allowed border border-white/5">
                                         Event Night — Unavailable

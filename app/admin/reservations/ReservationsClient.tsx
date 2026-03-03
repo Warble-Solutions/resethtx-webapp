@@ -102,7 +102,7 @@ export default function ReservationsClient({
                         : 'border-transparent text-slate-500 hover:text-slate-300'
                         }`}
                 >
-                    General Dining
+                    General Table Booking
                 </button>
                 <button
                     onClick={() => setActiveTab('events')}

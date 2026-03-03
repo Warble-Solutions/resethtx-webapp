@@ -312,7 +312,7 @@ async function sendAdminNotificationEmail({
 <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
   <div style="background:#000;padding:18px 24px;">
     <p style="margin:0;color:#D4AF37;font-size:10px;text-transform:uppercase;letter-spacing:2px;font-weight:700;">Reset HTX · Admin</p>
-    <h2 style="margin:4px 0 0;color:#fff;font-size:17px;">🍽️ New General Dining Reservation</h2>
+    <h2 style="margin:4px 0 0;color:#fff;font-size:17px;">🍽️ New General Table Booking</h2>
   </div>
   <div style="padding:24px;">
     <table width="100%" style="border-collapse:collapse;font-size:14px;">
