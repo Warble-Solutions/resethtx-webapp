@@ -7,6 +7,6 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 export const stripe = new Stripe(stripeKey, {
-    apiVersion: '2025-12-15.clover', // Matched to installed package types
+    apiVersion: '2026-02-25.clover', // Matched to installed package types
     typescript: true,
 });

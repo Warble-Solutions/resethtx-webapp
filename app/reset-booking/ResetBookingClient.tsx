@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { submitGeneralReservation, getEventByDate } from '@/app/actions/reservations'
+import { loadStripe } from '@stripe/stripe-js'
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import { createGeneralReservationIntent, getEventByDate } from '@/app/actions/reservations'
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 const TIME_SLOTS = ['5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM', '11:00 PM']
 
@@ -12,6 +16,106 @@ interface EventInfo {
     eventId?: string
 }
 
+// ─── Inner Stripe Payment Form ───────────────────────────────────────────────
+function PaymentForm({
+    formattedDate,
+    time,
+    guests,
+    onBack,
+}: {
+    formattedDate: string
+    time: string
+    guests: number
+    onBack: () => void
+}) {
+    const stripe = useStripe()
+    const elements = useElements()
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [paying, setPaying] = useState(false)
+
+    const handlePay = async (e: React.FormEvent) => {
+        e.preventDefault()
+        if (!stripe || !elements) return
+
+        setPaying(true)
+        setErrorMessage(null)
+
+        const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                return_url: `${window.location.origin}/reset-booking/result`,
+            },
+        })
+
+        if (error) {
+            setErrorMessage(error.message ?? 'Payment failed. Please try again.')
+            setPaying(false)
+        }
+        // On success, Stripe redirects to /reset-booking/result automatically
+    }
+
+    return (
+        <form onSubmit={handlePay} className="space-y-4 animate-in slide-in-from-bottom-2 fade-in duration-300">
+            {/* Order Summary */}
+            <div className="bg-black border border-white/10 rounded-xl p-4 mb-2">
+                <div className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-3">Order Summary</div>
+                <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm text-slate-300">📅 {formattedDate}</span>
+                </div>
+                <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm text-slate-300">⏰ {time}</span>
+                </div>
+                <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm text-slate-300">👥 {guests} {guests === 1 ? 'guest' : 'guests'}</span>
+                </div>
+                <div className="border-t border-white/10 pt-3 flex justify-between items-center">
+                    <span className="text-sm text-slate-400 uppercase font-bold tracking-wide">Reservation Fee</span>
+                    <span className="text-[#D4AF37] font-bold text-lg">$50.00</span>
+                </div>
+            </div>
+
+            {/* Stripe Payment Element */}
+            <div className="rounded-xl overflow-hidden">
+                <PaymentElement options={{ layout: 'tabs' }} />
+            </div>
+
+            {errorMessage && (
+                <p className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3">{errorMessage}</p>
+            )}
+
+            <div className="flex gap-3 pt-1">
+                <button
+                    type="button"
+                    onClick={onBack}
+                    disabled={paying}
+                    className="px-4 py-3 border border-white/10 text-slate-400 hover:text-white rounded-xl text-sm font-bold uppercase tracking-wider transition-colors hover:border-white/30 disabled:opacity-50"
+                >
+                    Back
+                </button>
+                <button
+                    type="submit"
+                    disabled={!stripe || paying}
+                    className="flex-1 bg-[#D4AF37] hover:bg-white text-black font-bold py-3 rounded-xl uppercase tracking-widest text-sm transition-all hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                    {paying ? (
+                        <><div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> Processing...</>
+                    ) : (
+                        <>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
+                            Pay $50 — Confirm Reservation
+                        </>
+                    )}
+                </button>
+            </div>
+
+            <p className="text-center text-slate-600 text-[10px] pt-1">
+                Secured by Stripe. Your card information is never stored on our servers.
+            </p>
+        </form>
+    )
+}
+
+// ─── Main Page Component ─────────────────────────────────────────────────────
 export default function ResetBookingClient() {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
@@ -22,8 +126,10 @@ export default function ResetBookingClient() {
     const [eventInfo, setEventInfo] = useState<EventInfo>({ hasEvent: false })
     const [checkingEvent, setCheckingEvent] = useState(false)
 
-    // Active card
+    // Flow state
     const [activeCard, setActiveCard] = useState<'event' | 'general' | null>(null)
+    const [step, setStep] = useState<'form' | 'payment'>('form')
+    const [clientSecret, setClientSecret] = useState<string | null>(null)
 
     // General booking form
     const [form, setForm] = useState({
@@ -35,13 +141,14 @@ export default function ResetBookingClient() {
         special_requests: '',
     })
     const [formError, setFormError] = useState<string | null>(null)
-    const [success, setSuccess] = useState<{ bookingRef: string } | null>(null)
 
     // Check for event whenever date changes
     useEffect(() => {
         const check = async () => {
             setCheckingEvent(true)
             setActiveCard(null)
+            setStep('form')
+            setClientSecret(null)
             const result = await getEventByDate(selectedDate)
             setEventInfo(result)
             setCheckingEvent(false)
@@ -53,7 +160,7 @@ export default function ResetBookingClient() {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setFormError(null)
 
@@ -61,25 +168,25 @@ export default function ResetBookingClient() {
             setFormError('Please select a preferred time.')
             return
         }
-
         if (!form.full_name || !form.email || !form.phone) {
             setFormError('Please fill in all required fields.')
             return
         }
 
         startTransition(async () => {
-            const result = await submitGeneralReservation({
+            const result = await createGeneralReservationIntent({
                 full_name: form.full_name,
                 email: form.email,
                 phone: form.phone,
-                guests: form.guests,
+                guests: Number(form.guests),
                 date: selectedDate,
                 time: form.time,
                 special_requests: form.special_requests,
             })
 
-            if (result.success && result.bookingRef) {
-                setSuccess({ bookingRef: result.bookingRef })
+            if (result.success && result.clientSecret) {
+                setClientSecret(result.clientSecret)
+                setStep('payment')
             } else {
                 setFormError(result.error || 'Something went wrong. Please try again.')
             }
@@ -89,39 +196,6 @@ export default function ResetBookingClient() {
     const formattedDate = new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', {
         weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
     })
-
-    // --- Success Screen ---
-    if (success) {
-        return (
-            <div className="min-h-screen bg-black flex items-center justify-center px-4">
-                <div className="max-w-md w-full text-center animate-in fade-in zoom-in-95 duration-500">
-                    <div className="w-20 h-20 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg className="w-10 h-10 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                    <h2 className="font-heading text-3xl text-white uppercase tracking-widest mb-3">Request Received!</h2>
-                    <p className="text-slate-400 mb-6">We've received your reservation request and will confirm with you shortly via email.</p>
-                    <div className="bg-[#111] border border-white/10 rounded-xl p-6 mb-8 text-left">
-                        <div className="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">Booking Reference</div>
-                        <div className="text-2xl font-heading font-bold text-[#D4AF37]">{success.bookingRef}</div>
-                        <div className="mt-4 pt-4 border-t border-white/10 text-sm text-slate-400">
-                            <p>📅 {formattedDate}</p>
-                            <p>⏰ {form.time}</p>
-                            <p>👥 {form.guests} {form.guests === 1 ? 'guest' : 'guests'}</p>
-                        </div>
-                    </div>
-                    <p className="text-xs text-slate-600">A confirmation email has been sent to <span className="text-slate-400">{form.email}</span></p>
-                    <button
-                        onClick={() => router.push('/')}
-                        className="mt-6 px-8 py-3 bg-[#D4AF37] hover:bg-white text-black font-bold uppercase tracking-widest rounded-full transition-all hover:scale-105"
-                    >
-                        Back to Home
-                    </button>
-                </div>
-            </div>
-        )
-    }
 
     return (
         <main className="min-h-screen bg-black text-white pt-28 pb-20 px-4">
@@ -174,7 +248,6 @@ export default function ResetBookingClient() {
                             }`}
                         onClick={() => eventInfo.hasEvent && router.push('/events')}
                     >
-                        {/* Glow top bar */}
                         <div className={`h-1 w-full ${eventInfo.hasEvent ? 'bg-gradient-to-r from-[#D4AF37] to-[#F0DEAA]' : 'bg-white/10'}`} />
 
                         <div className="p-8">
@@ -205,7 +278,7 @@ export default function ResetBookingClient() {
                                         onClick={e => { e.stopPropagation(); router.push('/events') }}
                                         className="w-full bg-[#D4AF37] hover:bg-white text-black font-bold py-4 rounded-xl uppercase tracking-widest text-sm transition-all hover:scale-[1.02] flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(212,175,55,0.2)]"
                                     >
-                                        View Event & Book
+                                        View Event &amp; Book
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
                                     </button>
                                 </>
@@ -239,7 +312,12 @@ export default function ResetBookingClient() {
                                         <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" /><path d="M7 2v20" /><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
                                     </svg>
                                 </div>
-                                {eventInfo.hasEvent && (
+                                {!eventInfo.hasEvent ? (
+                                    // $50 fee badge
+                                    <span className="px-3 py-1 bg-[#D4AF37]/10 text-[#D4AF37] text-[10px] font-extrabold uppercase tracking-widest rounded-full border border-[#D4AF37]/30">
+                                        $50 Reservation Fee
+                                    </span>
+                                ) : (
                                     <span className="px-3 py-1 bg-white/5 text-slate-500 text-[10px] font-extrabold uppercase tracking-widest rounded-full border border-white/10">
                                         Unavailable Tonight
                                     </span>
@@ -261,21 +339,22 @@ export default function ResetBookingClient() {
                                 </div>
                             ) : (
                                 <>
-                                    <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-                                        Reserve a table for a regular night. We&apos;ll confirm your booking via email.
-                                    </p>
-
-                                    {/* General Booking Form */}
                                     {activeCard !== 'general' ? (
-                                        <button
-                                            onClick={() => setActiveCard('general')}
-                                            className="w-full bg-white hover:bg-[#D4AF37] text-black font-bold py-4 rounded-xl uppercase tracking-widest text-sm transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
-                                        >
-                                            Reserve a Table
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-                                        </button>
-                                    ) : (
-                                        <form onSubmit={handleSubmit} className="space-y-4 animate-in slide-in-from-bottom-2 fade-in duration-300">
+                                        <>
+                                            <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                                                Reserve a table for a regular night. A <strong className="text-white">$50 reservation fee</strong> is charged to secure your booking — refundable if cancelled 24hrs in advance.
+                                            </p>
+                                            <button
+                                                onClick={() => { setActiveCard('general'); setStep('form') }}
+                                                className="w-full bg-white hover:bg-[#D4AF37] text-black font-bold py-4 rounded-xl uppercase tracking-widest text-sm transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
+                                            >
+                                                Reserve a Table
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                                            </button>
+                                        </>
+                                    ) : step === 'form' ? (
+                                        // ── STEP 1: Reservation Form ──
+                                        <form onSubmit={handleFormSubmit} className="space-y-4 animate-in slide-in-from-bottom-2 fade-in duration-300">
 
                                             {/* Time + Party Size Row */}
                                             <div className="grid grid-cols-2 gap-3">
@@ -336,7 +415,7 @@ export default function ResetBookingClient() {
                                                 <label className="text-[10px] text-slate-500 uppercase font-bold block mb-1.5">Special Requests</label>
                                                 <textarea name="special_requests" value={form.special_requests} onChange={handleFormChange}
                                                     placeholder="Allergies, celebrations, accessibility needs..."
-                                                    rows={3}
+                                                    rows={2}
                                                     className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none text-sm resize-none transition-colors" />
                                             </div>
 
@@ -352,12 +431,35 @@ export default function ResetBookingClient() {
                                                 <button type="submit" disabled={isPending}
                                                     className="flex-1 bg-white hover:bg-[#D4AF37] text-black font-bold py-3 rounded-xl uppercase tracking-widest text-sm transition-all hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                                                     {isPending ? (
-                                                        <><div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> Processing...</>
-                                                    ) : 'Request Reservation'}
+                                                        <><div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> Loading...</>
+                                                    ) : 'Continue to Payment →'}
                                                 </button>
                                             </div>
                                         </form>
-                                    )}
+                                    ) : step === 'payment' && clientSecret ? (
+                                        // ── STEP 2: Stripe Payment ──
+                                        <Elements
+                                            stripe={stripePromise}
+                                            options={{
+                                                clientSecret,
+                                                appearance: {
+                                                    theme: 'night',
+                                                    variables: {
+                                                        colorPrimary: '#D4AF37',
+                                                        colorBackground: '#050505',
+                                                        colorText: '#ffffff',
+                                                    },
+                                                },
+                                            }}
+                                        >
+                                            <PaymentForm
+                                                formattedDate={formattedDate}
+                                                time={form.time}
+                                                guests={Number(form.guests)}
+                                                onBack={() => { setStep('form'); setClientSecret(null) }}
+                                            />
+                                        </Elements>
+                                    ) : null}
                                 </>
                             )}
                         </div>
@@ -367,7 +469,7 @@ export default function ResetBookingClient() {
 
                 {/* Footer note */}
                 <p className="text-center text-slate-600 text-xs mt-10">
-                    21+ to enter. Reservations are subject to availability and management approval. · Reset HTX
+                    21+ to enter. $50 reservation fee secures your table. · Reset HTX
                 </p>
 
             </div>

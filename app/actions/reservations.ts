@@ -2,6 +2,9 @@
 
 import { createClient } from '@/utils/supabase/server'
 import nodemailer from 'nodemailer'
+import { stripe } from '@/lib/stripe'
+
+const GENERAL_RESERVATION_FEE = 50 // $50 USD
 
 interface GeneralReservationInput {
     full_name: string
@@ -25,7 +28,8 @@ const transporter = nodemailer.createTransport({
     },
 })
 
-export async function submitGeneralReservation({
+// ─── STEP 1: Create Stripe PaymentIntent ($50) ───────────────────────────────
+export async function createGeneralReservationIntent({
     full_name,
     email,
     phone,
@@ -33,15 +37,11 @@ export async function submitGeneralReservation({
     date,
     time,
     special_requests,
-}: GeneralReservationInput) {
-    const supabase = await createClient()
-
-    // Validate required fields
+}: GeneralReservationInput): Promise<{ success: boolean; clientSecret?: string; error?: string }> {
     if (!full_name || !email || !phone || !guests || !date || !time) {
         return { success: false, error: 'All required fields must be filled.' }
     }
 
-    // Validate date is not in the past
     const selectedDate = new Date(date + 'T12:00:00')
     const today = new Date()
     today.setHours(0, 0, 0, 0)
@@ -49,103 +49,305 @@ export async function submitGeneralReservation({
         return { success: false, error: 'Please select a future date.' }
     }
 
-    const bookingRef = generateBookingRef()
-
-    // Insert into reservations table
-    const { error: insertError } = await supabase.from('reservations').insert({
-        full_name,
-        email,
-        phone,
-        guests: guests.toString(),
-        date,
-        status: 'pending',
-        special_requests: [
-            time ? `Preferred time: ${time}` : '',
-            special_requests || '',
-        ]
-            .filter(Boolean)
-            .join(' | ') || null,
-    })
-
-    if (insertError) {
-        console.error('Reservation insert error:', insertError)
-        return { success: false, error: 'Failed to submit reservation. Please try again.' }
+    if (!process.env.STRIPE_SECRET_KEY) {
+        return { success: false, error: 'Payment system is not configured. Please contact us directly.' }
     }
 
-    // Format date for emails
-    const formattedDate = new Date(date + 'T12:00:00').toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    })
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: GENERAL_RESERVATION_FEE * 100,
+            currency: 'usd',
+            metadata: {
+                type: 'general_reservation',
+                full_name,
+                email,
+                phone,
+                guests: guests.toString(),
+                date,
+                time,
+                special_requests: special_requests || '',
+            },
+            automatic_payment_methods: { enabled: true },
+        })
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com'
-
-    // Send confirmation email to guest
-    if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
-        try {
-            await transporter.sendMail({
-                from: `"Reset HTX" <${process.env.GMAIL_USER}>`,
-                to: email,
-                subject: `Reservation Request Received — ${formattedDate}`,
-                html: `
-                    <div style="font-family: sans-serif; background: #000; color: #fff; padding: 20px; text-align: center;">
-                        <div style="margin-bottom: 20px;">
-                            <img src="${baseUrl}/logos/logo-main.png" alt="Reset HTX" style="max-width: 250px; height: auto;" />
-                        </div>
-                        <p style="font-size: 18px; color: #ccc;">Your Reservation Request is Received</p>
-                        <div style="background: #111; border: 1px solid #333; padding: 20px; margin: 20px auto; border-radius: 8px; max-width: 500px; text-align: left;">
-                            <h2 style="margin: 0 0 10px; color: #D4AF37; text-align: center;">General Dining</h2>
-                            <p style="color: #888; margin: 0 0 20px; text-align: center;">${formattedDate}</p>
-                            <p style="text-align: center; color: #D4AF37; font-size: 16px; font-weight: bold; margin-bottom: 20px;">Booking Ref: ${bookingRef}</p>
-                            <hr style="border-color: #333; margin: 20px 0;" />
-                            <p><strong>Guest:</strong> ${full_name}</p>
-                            <p><strong>Party Size:</strong> ${guests} ${guests === 1 ? 'guest' : 'guests'}</p>
-                            <p><strong>Preferred Time:</strong> ${time}</p>
-                            ${special_requests ? `<p><strong>Special Requests:</strong> ${special_requests}</p>` : ''}
-                        </div>
-                        <p style="color: #888; font-size: 14px; margin-top: 20px;">
-                            Your reservation is <strong style="color:#D4AF37;">pending confirmation</strong>. We'll reach out to confirm your booking shortly.
-                        </p>
-                        <div style="margin-top: 30px;">
-                            <img src="${baseUrl}/logos/r_logo.png" alt="R Icon" style="max-width: 40px; height: auto; opacity: 0.8;" />
-                        </div>
-                        <p style="font-size: 12px; color: #666; margin-top: 10px;">21+ to enter. Please present this email upon arrival.</p>
-                    </div>
-                `,
-            })
-        } catch (emailErr) {
-            console.error('Guest confirmation email error:', emailErr)
-        }
-
-        // Send admin notification
-        try {
-            await transporter.sendMail({
-                from: `"Reset HTX System" <${process.env.GMAIL_USER}>`,
-                to: process.env.GMAIL_USER,
-                subject: `🍽️ New Reservation Request — ${full_name} (${formattedDate})`,
-                html: `
-                    <h2>New General Dining Reservation</h2>
-                    <p><strong>Booking Ref:</strong> ${bookingRef}</p>
-                    <p><strong>Guest Name:</strong> ${full_name}</p>
-                    <p><strong>Email:</strong> ${email}</p>
-                    <p><strong>Phone:</strong> ${phone}</p>
-                    <p><strong>Date:</strong> ${formattedDate}</p>
-                    <p><strong>Preferred Time:</strong> ${time}</p>
-                    <p><strong>Party Size:</strong> ${guests}</p>
-                    ${special_requests ? `<p><strong>Special Requests:</strong> ${special_requests}</p>` : ''}
-                    <p style="margin-top: 20px;"><a href="${baseUrl}/admin/reservations" style="background: #D4AF37; color: #000; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">View in Admin Dashboard</a></p>
-                `,
-            })
-        } catch (adminEmailErr) {
-            console.error('Admin notification email error:', adminEmailErr)
-        }
+        return { success: true, clientSecret: paymentIntent.client_secret! }
+    } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Unknown error'
+        console.error('Stripe PaymentIntent error:', err)
+        return { success: false, error: 'Could not initialize payment: ' + message }
     }
-
-    return { success: true, bookingRef }
 }
 
+// ─── STEP 2: Verify payment, insert reservation, send emails ─────────────────
+export async function finalizeGeneralReservation(paymentIntentId: string): Promise<{
+    success: boolean
+    bookingRef?: string
+    details?: { full_name: string; email: string; date: string; time: string; guests: number }
+    error?: string
+}> {
+    if (!process.env.STRIPE_SECRET_KEY) {
+        return { success: false, error: 'Payment system is not configured.' }
+    }
+
+    try {
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId)
+
+        if (paymentIntent.status !== 'succeeded') {
+            return { success: false, error: 'Payment was not successful. Please try again.' }
+        }
+
+        const meta = paymentIntent.metadata
+        const full_name = meta.full_name
+        const email = meta.email
+        const phone = meta.phone
+        const guests = parseInt(meta.guests || '1')
+        const date = meta.date
+        const time = meta.time
+        const special_requests = meta.special_requests || ''
+
+        if (!full_name || !email || !date || !time) {
+            return { success: false, error: 'Reservation details are incomplete.' }
+        }
+
+        // Idempotency: check if already recorded
+        const supabase = await createClient()
+        const { data: existing } = await supabase
+            .from('reservations')
+            .select('id, special_requests')
+            .ilike('special_requests', `%${paymentIntentId}%`)
+            .maybeSingle()
+
+        let bookingRef: string
+
+        if (existing) {
+            const refMatch = existing.special_requests?.match(/Booking Ref: (RST-\w+)/)
+            bookingRef = refMatch?.[1] || generateBookingRef()
+        } else {
+            bookingRef = generateBookingRef()
+
+            const { error: insertError } = await supabase.from('reservations').insert({
+                full_name,
+                email,
+                phone,
+                guests: guests.toString(),
+                date,
+                status: 'confirmed',
+                special_requests: [
+                    `Booking Ref: ${bookingRef}`,
+                    `Preferred time: ${time}`,
+                    `$${GENERAL_RESERVATION_FEE} paid via Stripe (${paymentIntentId})`,
+                    special_requests,
+                ]
+                    .filter(Boolean)
+                    .join(' | '),
+            })
+
+            if (insertError) {
+                console.error('Reservation insert error:', insertError)
+                return { success: false, error: 'Failed to save reservation. Please contact us.' }
+            }
+
+            await sendGuestConfirmationEmail({ to: email, full_name, guests, date, time, bookingRef, special_requests })
+            await sendAdminNotificationEmail({ full_name, email, phone, guests, date, time, bookingRef, special_requests, paymentIntentId })
+        }
+
+        return { success: true, bookingRef, details: { full_name, email, date, time, guests } }
+    } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Unknown error'
+        console.error('finalizeGeneralReservation error:', err)
+        return { success: false, error: message }
+    }
+}
+
+// ─── Email: Guest Confirmation ────────────────────────────────────────────────
+async function sendGuestConfirmationEmail({
+    to,
+    full_name,
+    guests,
+    date,
+    time,
+    bookingRef,
+    special_requests,
+}: {
+    to: string
+    full_name: string
+    guests: number
+    date: string
+    time: string
+    bookingRef: string
+    special_requests?: string
+}) {
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) return
+
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com'
+    const formattedDate = new Date(date + 'T12:00:00').toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    })
+
+    const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Reservation Confirmed — Reset HTX</title></head>
+<body style="margin:0;padding:0;background:#000;font-family:'Helvetica Neue',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#000;padding:40px 20px;">
+<tr><td align="center">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+
+  <!-- Logo -->
+  <tr><td align="center" style="padding-bottom:28px;">
+    <img src="${baseUrl}/logos/logo-main.png" alt="Reset HTX" style="max-width:200px;height:auto;" />
+  </td></tr>
+
+  <!-- Gold Header -->
+  <tr><td style="background:linear-gradient(135deg,#D4AF37 0%,#F0DEAA 100%);border-radius:12px 12px 0 0;padding:32px;text-align:center;">
+    <div style="width:52px;height:52px;background:rgba(0,0,0,0.18);border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:26px;line-height:52px;">✓</div>
+    <h1 style="margin:0;color:#000;font-size:20px;font-weight:800;letter-spacing:3px;text-transform:uppercase;">Reservation Confirmed</h1>
+    <p style="margin:8px 0 0;color:rgba(0,0,0,0.6);font-size:13px;letter-spacing:1px;">Your table is secured at Reset HTX</p>
+  </td></tr>
+
+  <!-- Body -->
+  <tr><td style="background:#111;border:1px solid #222;border-top:none;border-radius:0 0 12px 12px;padding:32px;">
+
+    <!-- Booking Ref Badge -->
+    <div style="background:#000;border:1px solid #D4AF37;border-radius:8px;padding:18px;text-align:center;margin-bottom:28px;">
+      <p style="margin:0 0 4px;color:#666;font-size:10px;text-transform:uppercase;letter-spacing:2px;">Booking Reference</p>
+      <p style="margin:0;color:#D4AF37;font-size:28px;font-weight:800;letter-spacing:4px;">${bookingRef}</p>
+    </div>
+
+    <!-- Details Table -->
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td style="padding:11px 0;border-bottom:1px solid #222;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:1px;width:38%;">Guest</td>
+        <td style="padding:11px 0;border-bottom:1px solid #222;color:#fff;font-size:14px;font-weight:600;">${full_name}</td>
+      </tr>
+      <tr>
+        <td style="padding:11px 0;border-bottom:1px solid #222;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Date</td>
+        <td style="padding:11px 0;border-bottom:1px solid #222;color:#fff;font-size:14px;font-weight:600;">${formattedDate}</td>
+      </tr>
+      <tr>
+        <td style="padding:11px 0;border-bottom:1px solid #222;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Time</td>
+        <td style="padding:11px 0;border-bottom:1px solid #222;color:#fff;font-size:14px;font-weight:600;">${time}</td>
+      </tr>
+      <tr>
+        <td style="padding:11px 0;border-bottom:1px solid #222;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Party Size</td>
+        <td style="padding:11px 0;border-bottom:1px solid #222;color:#fff;font-size:14px;font-weight:600;">${guests} ${guests === 1 ? 'guest' : 'guests'}</td>
+      </tr>
+      <tr>
+        <td style="padding:11px 0;${special_requests ? 'border-bottom:1px solid #222;' : ''}color:#666;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Reservation Fee</td>
+        <td style="padding:11px 0;${special_requests ? 'border-bottom:1px solid #222;' : ''}color:#4CAF50;font-size:14px;font-weight:700;">$50.00 — Paid ✓</td>
+      </tr>
+      ${special_requests ? `
+      <tr>
+        <td style="padding:11px 0;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:1px;vertical-align:top;">Requests</td>
+        <td style="padding:11px 0;color:#bbb;font-size:14px;">${special_requests}</td>
+      </tr>` : ''}
+    </table>
+
+    <!-- Notice -->
+    <div style="background:#1a1a1a;border-left:3px solid #D4AF37;border-radius:4px;padding:16px;margin-top:24px;">
+      <p style="margin:0;color:#bbb;font-size:13px;line-height:1.7;">
+        Please <strong style="color:#fff;">present this email upon arrival</strong>. Your $50 reservation fee confirms your table — see you soon! 🥂
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align:center;margin-top:28px;padding-top:24px;border-top:1px solid #1e1e1e;">
+      <img src="${baseUrl}/logos/r_logo.png" alt="R" style="max-width:32px;height:auto;opacity:0.6;margin-bottom:10px;" />
+      <p style="margin:0;color:#444;font-size:12px;">21+ to enter &nbsp;·&nbsp; Reset HTX &nbsp;·&nbsp; Houston, TX</p>
+      <p style="margin:5px 0 0;color:#333;font-size:11px;">Questions? Reply to this email or visit resethtx.com</p>
+    </div>
+
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>`
+
+    try {
+        await transporter.sendMail({
+            from: `"Reset HTX" <${process.env.GMAIL_USER}>`,
+            to,
+            subject: `Reservation Confirmed — ${formattedDate} · Reset HTX`,
+            html,
+        })
+    } catch (err) {
+        console.error('Guest confirmation email error:', err)
+    }
+}
+
+// ─── Email: Admin Notification ────────────────────────────────────────────────
+async function sendAdminNotificationEmail({
+    full_name,
+    email,
+    phone,
+    guests,
+    date,
+    time,
+    bookingRef,
+    special_requests,
+    paymentIntentId,
+}: {
+    full_name: string
+    email: string
+    phone: string
+    guests: number
+    date: string
+    time: string
+    bookingRef: string
+    special_requests?: string
+    paymentIntentId: string
+}) {
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) return
+
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com'
+    const formattedDate = new Date(date + 'T12:00:00').toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    })
+
+    const html = `
+<!DOCTYPE html>
+<html lang="en">
+<body style="margin:0;padding:20px;background:#f4f4f4;font-family:Arial,sans-serif;">
+<div style="max-width:520px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+  <div style="background:#000;padding:18px 24px;">
+    <p style="margin:0;color:#D4AF37;font-size:10px;text-transform:uppercase;letter-spacing:2px;font-weight:700;">Reset HTX · Admin</p>
+    <h2 style="margin:4px 0 0;color:#fff;font-size:17px;">🍽️ New General Dining Reservation</h2>
+  </div>
+  <div style="padding:24px;">
+    <table width="100%" style="border-collapse:collapse;font-size:14px;">
+      <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;width:38%;">Booking Ref</td><td style="padding:9px 0;border-bottom:1px solid #eee;font-weight:700;color:#B8860B;">${bookingRef}</td></tr>
+      <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Guest Name</td><td style="padding:9px 0;border-bottom:1px solid #eee;font-weight:600;">${full_name}</td></tr>
+      <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Email</td><td style="padding:9px 0;border-bottom:1px solid #eee;"><a href="mailto:${email}" style="color:#1a73e8;text-decoration:none;">${email}</a></td></tr>
+      <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Phone</td><td style="padding:9px 0;border-bottom:1px solid #eee;">${phone}</td></tr>
+      <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Date</td><td style="padding:9px 0;border-bottom:1px solid #eee;font-weight:600;">${formattedDate}</td></tr>
+      <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Time</td><td style="padding:9px 0;border-bottom:1px solid #eee;">${time}</td></tr>
+      <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Party Size</td><td style="padding:9px 0;border-bottom:1px solid #eee;">${guests} ${guests === 1 ? 'guest' : 'guests'}</td></tr>
+      <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Amount Paid</td><td style="padding:9px 0;border-bottom:1px solid #eee;color:green;font-weight:700;">$50.00 ✓ Stripe</td></tr>
+      ${special_requests ? `<tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;vertical-align:top;">Requests</td><td style="padding:9px 0;border-bottom:1px solid #eee;color:#555;">${special_requests}</td></tr>` : ''}
+      <tr><td style="padding:9px 0;color:#888;font-size:12px;">Stripe PI</td><td style="padding:9px 0;font-size:11px;font-family:monospace;color:#666;">${paymentIntentId}</td></tr>
+    </table>
+    <div style="margin-top:20px;text-align:center;">
+      <a href="${baseUrl}/admin/reservations" style="background:#000;color:#D4AF37;padding:12px 26px;text-decoration:none;border-radius:6px;font-weight:700;font-size:13px;display:inline-block;">View in Admin Dashboard →</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>`
+
+    try {
+        await transporter.sendMail({
+            from: `"Reset HTX System" <${process.env.GMAIL_USER}>`,
+            to: process.env.GMAIL_USER,
+            subject: `🍽️ New Reservation — ${full_name} · ${formattedDate} @ ${time}`,
+            html,
+        })
+    } catch (err) {
+        console.error('Admin notification email error:', err)
+    }
+}
+
+// ─── Utility: Check if a date has an event ───────────────────────────────────
 export async function getEventByDate(date: string): Promise<{ hasEvent: boolean; eventTitle?: string; eventId?: string }> {
     const supabase = await createClient()
 
