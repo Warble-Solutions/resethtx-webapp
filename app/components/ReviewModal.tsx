@@ -24,28 +24,32 @@ export default function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
             alert('Please select a rating')
             return
         }
+        if (!name.trim() || !review.trim()) {
+            alert('Please fill in your name and review')
+            return
+        }
 
         setIsSubmitting(true)
 
-        // Assuming a server action exists, otherwise we'd just log it for now as per instructions
-        // "Function: On submit, just log the data for now (or call a server action if we have one) and close the modal."
-        // I'll try to use the likely existing action, or mock it if fails.
-        // Looking at imports, I'll use a placeholder action or just log for now if I don't see one.
-        // Actually, previous logs showed `app/actions/testimonials.ts` might verify existence.
-        // For now, I will implement the logic to call an action if imported, else log.
-        // I will stick to logging first to ensure UI works, then we can wire up the backend.
+        try {
+            const result = await submitReview({ name: name.trim(), rating, message: review.trim() })
 
-        console.log({ name, rating, review })
+            if (!result.success) {
+                alert(result.error || 'Failed to submit review. Please try again.')
+                return
+            }
 
-        // Simulate net delay
-        await new Promise(resolve => setTimeout(resolve, 1000))
-
-        setIsSubmitting(false)
-        onClose()
-        setRating(0)
-        setName('')
-        setReview('')
-        alert('Thank you for your feedback!')
+            onClose()
+            setRating(0)
+            setName('')
+            setReview('')
+            alert('Thank you for your review! It will be visible after our team approves it.')
+        } catch (err) {
+            console.error('Review submit error:', err)
+            alert('Something went wrong. Please try again.')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
