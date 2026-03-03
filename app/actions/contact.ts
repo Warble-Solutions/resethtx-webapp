@@ -40,14 +40,13 @@ export async function submitContactForm(formData: FormData) {
   }
 
   try {
-    // 1. Save to Supabase
+    // 1. Save to Supabase (best-effort — don't block emails if this fails due to RLS)
     const { error: dbError } = await supabase.from('contact_messages').insert(data)
     if (dbError) {
-      console.error('DB insert error:', dbError)
-      throw new Error(dbError.message)
+      console.error('DB insert error (non-fatal):', dbError.message)
+    } else {
+      revalidatePath('/admin/inbox')
     }
-
-    revalidatePath('/admin/inbox')
 
     // 2. Send admin notification email
     const adminHtml = `
