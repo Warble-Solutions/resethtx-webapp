@@ -17,6 +17,7 @@ export default function Sidebar() {
         { href: '/admin/sales', label: 'Sales Overview' }, // Updated label for clarity
         { href: '/admin/guests', label: 'Guest Lists' }, // New
         { href: '/admin/customers', label: 'Customers' },
+        { href: '/admin/reservations', label: 'Reservations' },
         { href: '/admin/events', label: 'Events' },
         { href: '/admin/menu', label: 'Menu' },
         { href: '/admin/tables', label: 'Tables' },
