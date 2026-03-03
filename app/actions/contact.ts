@@ -1,48 +1,56 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { createClient as createServerClient } from '@/utils/supabase/server' // used in updateMessageRemark
+import { createClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 import nodemailer from 'nodemailer'
 
+// Use service role key to bypass RLS on contact_messages table
+function getSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  return createClient(url, serviceKey)
+}
+
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-    },
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
 })
 
 const ADMIN_EMAIL = 'resethtx@gmail.com'
 
 export async function submitContactForm(formData: FormData) {
-    const supabase = await createClient()
+  const supabase = getSupabaseAdmin()
 
-    const data = {
-        first_name: formData.get('firstName') as string,
-        last_name: formData.get('lastName') as string,
-        email: formData.get('email') as string,
-        phone: formData.get('phone') as string,
-        dob: formData.get('dob') as string,
-        inquiry_type: formData.get('inquiryType') as string,
-        message: formData.get('message') as string,
+  const data = {
+    first_name: formData.get('firstName') as string,
+    last_name: formData.get('lastName') as string,
+    email: formData.get('email') as string,
+    phone: formData.get('phone') as string,
+    dob: formData.get('dob') as string,
+    inquiry_type: formData.get('inquiryType') as string,
+    message: formData.get('message') as string,
+  }
+
+  if (!data.first_name || !data.email || !data.message || !data.phone || !data.dob) {
+    return { success: false, error: 'Please fill in all required fields.' }
+  }
+
+  try {
+    // 1. Save to Supabase
+    const { error: dbError } = await supabase.from('contact_messages').insert(data)
+    if (dbError) {
+      console.error('DB insert error:', dbError)
+      throw new Error(dbError.message)
     }
 
-    if (!data.first_name || !data.email || !data.message || !data.phone || !data.dob) {
-        return { success: false, error: 'Please fill in all required fields.' }
-    }
+    revalidatePath('/admin/inbox')
 
-    try {
-        // 1. Save to Supabase
-        const { error: dbError } = await supabase.from('contact_messages').insert(data)
-        if (dbError) {
-            console.error('DB insert error:', dbError)
-            throw new Error(dbError.message)
-        }
-
-        revalidatePath('/admin/inbox')
-
-        // 2. Send admin notification email
-        const adminHtml = `
+    // 2. Send admin notification email
+    const adminHtml = `
 <!DOCTYPE html>
 <html>
 <body style="margin:0;padding:20px;background:#f4f4f4;font-family:Arial,sans-serif;">
@@ -68,8 +76,8 @@ export async function submitContactForm(formData: FormData) {
 </body>
 </html>`
 
-        // 3. Send auto-reply to customer
-        const customerHtml = `
+    // 3. Send auto-reply to customer
+    const customerHtml = `
 <!DOCTYPE html>
 <html>
 <body style="margin:0;padding:0;background:#000;font-family:'Helvetica Neue',Arial,sans-serif;">
@@ -104,53 +112,53 @@ export async function submitContactForm(formData: FormData) {
 </body>
 </html>`
 
-        const emailPromises = []
+    const emailPromises = []
 
-        if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
-            emailPromises.push(
-                transporter.sendMail({
-                    from: `"Reset HTX" <${process.env.GMAIL_USER}>`,
-                    to: ADMIN_EMAIL,
-                    subject: `📬 New Inquiry from ${data.first_name} ${data.last_name} — Reset HTX`,
-                    html: adminHtml,
-                }).catch(e => console.error('Admin email error:', e))
-            )
+    if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+      emailPromises.push(
+        transporter.sendMail({
+          from: `"Reset HTX" <${process.env.GMAIL_USER}>`,
+          to: ADMIN_EMAIL,
+          subject: `📬 New Inquiry from ${data.first_name} ${data.last_name} — Reset HTX`,
+          html: adminHtml,
+        }).catch(e => console.error('Admin email error:', e))
+      )
 
-            emailPromises.push(
-                transporter.sendMail({
-                    from: `"Reset HTX" <${process.env.GMAIL_USER}>`,
-                    to: data.email,
-                    subject: `We received your message — Reset HTX`,
-                    html: customerHtml,
-                }).catch(e => console.error('Customer email error:', e))
-            )
-        }
-
-        await Promise.all(emailPromises)
-
-        return { success: true }
-
-    } catch (error: any) {
-        console.error('Contact Form Error:', error)
-        return { success: false, error: 'Failed to send message. Please try again.' }
+      emailPromises.push(
+        transporter.sendMail({
+          from: `"Reset HTX" <${process.env.GMAIL_USER}>`,
+          to: data.email,
+          subject: `We received your message — Reset HTX`,
+          html: customerHtml,
+        }).catch(e => console.error('Customer email error:', e))
+      )
     }
+
+    await Promise.all(emailPromises)
+
+    return { success: true }
+
+  } catch (error: any) {
+    console.error('Contact Form Error:', error)
+    return { success: false, error: 'Failed to send message. Please try again.' }
+  }
 }
 
 export async function updateMessageRemark(id: string, remark: string) {
-    const supabase = await createClient()
+  const supabase = await createServerClient()
 
-    try {
-        const { error } = await supabase
-            .from('contact_messages')
-            .update({ remarks: remark })
-            .eq('id', id)
+  try {
+    const { error } = await supabase
+      .from('contact_messages')
+      .update({ remarks: remark })
+      .eq('id', id)
 
-        if (error) throw error
+    if (error) throw error
 
-        revalidatePath('/admin/inbox')
-        return { success: true }
-    } catch (error: any) {
-        console.error('Update Remark Error:', error)
-        return { success: false, error: 'Failed to update remark.' }
-    }
+    revalidatePath('/admin/inbox')
+    return { success: true }
+  } catch (error: any) {
+    console.error('Update Remark Error:', error)
+    return { success: false, error: 'Failed to update remark.' }
+  }
 }
