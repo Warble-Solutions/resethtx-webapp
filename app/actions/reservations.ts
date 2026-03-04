@@ -143,10 +143,11 @@ export async function finalizeGeneralReservation(paymentIntentId: string): Promi
             })
 
             if (insertError) {
-                console.error('Reservation insert error:', insertError)
-                return { success: false, error: 'Failed to save reservation. Please contact us.' }
+                // Log but don't block — payment already succeeded, customer should see confirmation
+                console.error('Reservation insert error (non-fatal):', insertError.message)
             }
 
+            // Always send emails regardless of DB insert result
             await sendGuestConfirmationEmail({ to: email, full_name, guests, date, time, bookingRef, special_requests })
             await sendAdminNotificationEmail({ full_name, email, phone, guests, date, time, bookingRef, special_requests, paymentIntentId })
         }
