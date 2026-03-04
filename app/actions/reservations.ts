@@ -131,10 +131,11 @@ export async function finalizeGeneralReservation(paymentIntentId: string): Promi
                 phone,
                 guests: guests.toString(),
                 date,
+                time,
+                table_id: null,
                 status: 'confirmed',
                 special_requests: [
                     `Booking Ref: ${bookingRef}`,
-                    `Preferred time: ${time}`,
                     `$${GENERAL_RESERVATION_FEE} paid via Stripe (${paymentIntentId})`,
                     special_requests,
                 ]
