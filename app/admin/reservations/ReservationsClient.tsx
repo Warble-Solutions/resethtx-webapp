@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import ReservationsTable from './ReservationsTable'
-import { cancelEventBooking } from '@/app/actions/event-booking'
+import { cancelEventBooking, } from '@/app/actions/event-booking'
+import { createReservation } from './actions'
 
 interface EventBooking {
     id: string
@@ -34,6 +35,12 @@ export default function ReservationsClient({
     const [activeTab, setActiveTab] = useState<'general' | 'events'>('general')
     const [eventBookings, setEventBookings] = useState<EventBooking[]>(initialEventBookings)
     const [loadingId, setLoadingId] = useState<string | null>(null)
+    const [showCreateModal, setShowCreateModal] = useState(false)
+    const [creating, setCreating] = useState(false)
+    const [createForm, setCreateForm] = useState({
+        full_name: '', email: '', phone: '', guests: '2',
+        date: '', time: '7:00 PM', special_requests: '', status: 'confirmed'
+    })
 
     const handleCancelEventBooking = async (id: string) => {
         if (!confirm('Are you sure you want to cancel this event booking?')) return
@@ -71,8 +78,14 @@ export default function ReservationsClient({
                     <p className="text-slate-400">Manage table bookings and guest requests.</p>
                 </div>
 
-                {/* Stats */}
-                <div className="flex gap-4">
+                {/* Stats + New Button */}
+                <div className="flex gap-4 items-center">
+                    <button
+                        onClick={() => setShowCreateModal(true)}
+                        className="bg-[#D4AF37] hover:bg-[#F0DEAA] text-black font-bold px-5 py-2.5 rounded-lg text-sm uppercase tracking-wider transition-all"
+                    >
+                        + New Reservation
+                    </button>
                     {activeTab === 'general' ? (
                         <>
                             <div className="bg-[#111] border border-white/10 px-6 py-3 rounded-lg text-center">
@@ -212,6 +225,82 @@ export default function ReservationsClient({
                     </div>
                 )}
             </div>
+
+            {/* ── Create Reservation Modal ── */}
+            {showCreateModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                    <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl">
+                        <div className="flex justify-between items-center px-6 py-4 border-b border-white/10">
+                            <h2 className="text-white font-bold text-lg">New Reservation</h2>
+                            <button onClick={() => setShowCreateModal(false)} className="text-slate-500 hover:text-white text-xl">✕</button>
+                        </div>
+                        <form
+                            className="p-6 space-y-4"
+                            onSubmit={async (e) => {
+                                e.preventDefault()
+                                setCreating(true)
+                                const result = await createReservation(createForm)
+                                setCreating(false)
+                                if (result.success) {
+                                    setShowCreateModal(false)
+                                    setCreateForm({ full_name: '', email: '', phone: '', guests: '2', date: '', time: '7:00 PM', special_requests: '', status: 'confirmed' })
+                                    alert('Reservation created! Refresh the page to see it.')
+                                } else {
+                                    alert('Error: ' + result.message)
+                                }
+                            }}
+                        >
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Full Name *</label>
+                                    <input value={createForm.full_name} onChange={e => setCreateForm(p => ({ ...p, full_name: e.target.value }))} required className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Phone</label>
+                                    <input value={createForm.phone} onChange={e => setCreateForm(p => ({ ...p, phone: e.target.value }))} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Email *</label>
+                                <input type="email" value={createForm.email} onChange={e => setCreateForm(p => ({ ...p, email: e.target.value }))} required className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]" />
+                            </div>
+                            <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Date *</label>
+                                    <input type="date" value={createForm.date} onChange={e => setCreateForm(p => ({ ...p, date: e.target.value }))} required className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Time *</label>
+                                    <select value={createForm.time} onChange={e => setCreateForm(p => ({ ...p, time: e.target.value }))} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]">
+                                        {['5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM', '11:00 PM'].map(t => <option key={t}>{t}</option>)}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Guests</label>
+                                    <input type="number" min="1" max="20" value={createForm.guests} onChange={e => setCreateForm(p => ({ ...p, guests: e.target.value }))} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Status</label>
+                                <select value={createForm.status} onChange={e => setCreateForm(p => ({ ...p, status: e.target.value }))} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]">
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Notes</label>
+                                <textarea value={createForm.special_requests} onChange={e => setCreateForm(p => ({ ...p, special_requests: e.target.value }))} rows={2} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none resize-none focus:border-[#D4AF37]" />
+                            </div>
+                            <div className="flex gap-3 pt-2">
+                                <button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-bold py-2.5 rounded-lg text-sm transition-all">Cancel</button>
+                                <button type="submit" disabled={creating} className="flex-1 bg-[#D4AF37] hover:bg-[#F0DEAA] text-black font-bold py-2.5 rounded-lg text-sm transition-all disabled:opacity-50">
+                                    {creating ? 'Saving...' : 'Create Reservation'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
