@@ -111,7 +111,7 @@ export default function AdminReviewsPage() {
                                     </span>
                                 </div>
                                 <p className="text-slate-300 italic mb-4">"{review.quote}"</p>
-                                <p className="text-xs text-slate-500 font-mono">{new Date(review.created_at).toLocaleString()}</p>
+                                <p className="text-xs text-slate-500 font-mono">{new Date(review.created_at).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</p>
                             </div>
 
                             <div className="flex items-center gap-3 md:border-l md:border-slate-700 md:pl-6">

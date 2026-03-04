@@ -145,7 +145,7 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                                 </p>
                                 <div className="mt-8 flex items-center gap-2 text-xs text-slate-500 font-mono border-t border-slate-800 pt-6">
                                     <span>RECEIVED:</span>
-                                    <span className="text-slate-400">{new Date(selectedMessage.created_at).toLocaleString()}</span>
+                                    <span className="text-slate-400">{new Date(selectedMessage.created_at).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })} {new Date(selectedMessage.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
 
                                 {/* ADMIN REMARKS SECTION */}
