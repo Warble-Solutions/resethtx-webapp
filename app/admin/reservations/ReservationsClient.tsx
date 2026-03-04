@@ -39,7 +39,7 @@ export default function ReservationsClient({
     const [creating, setCreating] = useState(false)
     const [createForm, setCreateForm] = useState({
         full_name: '', email: '', phone: '', guests: '2',
-        date: '', time: '7:00 PM', special_requests: '', status: 'confirmed'
+        date: '', time: '7:00 PM', special_requests: '', status: 'confirmed', payment_status: 'paid'
     })
 
     const handleCancelEventBooking = async (id: string) => {
@@ -239,11 +239,14 @@ export default function ReservationsClient({
                             onSubmit={async (e) => {
                                 e.preventDefault()
                                 setCreating(true)
-                                const result = await createReservation(createForm)
+                                const result = await createReservation({
+                                    ...createForm,
+                                    special_requests: [createForm.special_requests, `Payment: ${createForm.payment_status}`].filter(Boolean).join(' | ')
+                                })
                                 setCreating(false)
                                 if (result.success) {
                                     setShowCreateModal(false)
-                                    setCreateForm({ full_name: '', email: '', phone: '', guests: '2', date: '', time: '7:00 PM', special_requests: '', status: 'confirmed' })
+                                    setCreateForm({ full_name: '', email: '', phone: '', guests: '2', date: '', time: '7:00 PM', special_requests: '', status: 'confirmed', payment_status: 'paid' })
                                     alert('Reservation created! Refresh the page to see it.')
                                 } else {
                                     alert('Error: ' + result.message)
@@ -280,12 +283,22 @@ export default function ReservationsClient({
                                     <input type="number" min="1" max="20" value={createForm.guests} onChange={e => setCreateForm(p => ({ ...p, guests: e.target.value }))} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]" />
                                 </div>
                             </div>
-                            <div>
-                                <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Status</label>
-                                <select value={createForm.status} onChange={e => setCreateForm(p => ({ ...p, status: e.target.value }))} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]">
-                                    <option value="confirmed">Confirmed</option>
-                                    <option value="pending">Pending</option>
-                                </select>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Status</label>
+                                    <select value={createForm.status} onChange={e => setCreateForm(p => ({ ...p, status: e.target.value }))} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]">
+                                        <option value="confirmed">Confirmed</option>
+                                        <option value="pending">Pending</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Payment Status</label>
+                                    <select value={createForm.payment_status} onChange={e => setCreateForm(p => ({ ...p, payment_status: e.target.value }))} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF37]">
+                                        <option value="paid">Paid</option>
+                                        <option value="unpaid">Unpaid</option>
+                                        <option value="pending">Pending</option>
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Notes</label>
