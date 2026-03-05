@@ -11,6 +11,8 @@ interface Submission {
     first_name: string
     last_name: string
     email: string
+    phone?: string | null
+    dob?: string | null
     message: string
     is_read: boolean
     inquiry_type?: string
@@ -59,8 +61,10 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                                 </span>
                             </div>
 
-                            <p className="text-sm text-slate-400 mb-3 flex items-center gap-2">
+                            <p className="text-sm text-slate-400 mb-3 flex items-center gap-2 flex-wrap">
                                 <span className="text-slate-500">{msg.email}</span>
+                                {msg.phone && <span className="text-slate-500">· {msg.phone}</span>}
+                                {msg.dob && <span className="text-slate-500">· DOB: {msg.dob}</span>}
                                 {msg.inquiry_type && <span className="bg-slate-800 text-[10px] px-2 py-0.5 rounded text-slate-400 border border-slate-700">{msg.inquiry_type}</span>}
                             </p>
 
@@ -128,6 +132,12 @@ export default function MessageList({ messages }: { messages: Submission[] }) {
                                 <div>
                                     <h3 className="font-bold text-2xl text-white mb-1">{selectedMessage.first_name} {selectedMessage.last_name}</h3>
                                     <p className="text-sm text-[#D4AF37] font-mono">{selectedMessage.email}</p>
+                                    {(selectedMessage.phone || selectedMessage.dob) && (
+                                        <p className="text-sm text-slate-400 mt-1 flex gap-4">
+                                            {selectedMessage.phone && <span>📞 {selectedMessage.phone}</span>}
+                                            {selectedMessage.dob && <span>🎂 DOB: {selectedMessage.dob}</span>}
+                                        </p>
+                                    )}
                                     {selectedMessage.inquiry_type && <span className="inline-block mt-2 bg-slate-800 text-[10px] px-2 py-0.5 rounded text-slate-400 border border-slate-700">{selectedMessage.inquiry_type}</span>}
                                 </div>
                                 <button
