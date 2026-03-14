@@ -12,13 +12,18 @@ function getSupabaseAdmin() {
   return createClient(url, serviceKey)
 }
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-})
+function getTransporter() {
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    return null
+  }
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  })
+}
 
 const ADMIN_EMAIL = 'resethtx@gmail.com'
 
@@ -111,16 +116,17 @@ export async function submitContactForm(formData: FormData) {
 </body>
 </html>`
 
-    const emailPromises = []
+    const transporter = getTransporter()
+    const emailPromises: Promise<void>[] = []
 
-    if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+    if (transporter) {
       emailPromises.push(
         transporter.sendMail({
           from: `"Reset HTX" <${process.env.GMAIL_USER}>`,
           to: ADMIN_EMAIL,
           subject: `📬 New Inquiry from ${data.first_name} ${data.last_name} — Reset HTX`,
           html: adminHtml,
-        }).catch(e => console.error('Admin email error:', e))
+        }).then(() => { }).catch((e: unknown) => console.error('Admin email error (non-fatal):', e))
       )
 
       emailPromises.push(
@@ -129,7 +135,7 @@ export async function submitContactForm(formData: FormData) {
           to: data.email,
           subject: `We received your message — Reset HTX`,
           html: customerHtml,
-        }).catch(e => console.error('Customer email error:', e))
+        }).then(() => { }).catch((e: unknown) => console.error('Customer email error (non-fatal):', e))
       )
     }
 

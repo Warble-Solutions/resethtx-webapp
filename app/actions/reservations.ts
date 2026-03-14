@@ -20,13 +20,18 @@ function generateBookingRef() {
     return 'RST-' + Math.random().toString(36).substr(2, 6).toUpperCase()
 }
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-    },
-})
+function getTransporter() {
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+        return null
+    }
+    return nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_APP_PASSWORD,
+        },
+    })
+}
 
 // ─── STEP 1: Create Stripe PaymentIntent ($50) ───────────────────────────────
 export async function createGeneralReservationIntent({
@@ -149,8 +154,17 @@ export async function finalizeGeneralReservation(paymentIntentId: string): Promi
             }
 
             // Always send emails regardless of DB insert result
-            await sendGuestConfirmationEmail({ to: email, full_name, guests, date, time, bookingRef, special_requests })
-            await sendAdminNotificationEmail({ full_name, email, phone, guests, date, time, bookingRef, special_requests, paymentIntentId })
+            // Wrapped in try/catch so email failures never crash the reservation flow
+            try {
+                await sendGuestConfirmationEmail({ to: email, full_name, guests, date, time, bookingRef, special_requests })
+            } catch (emailErr) {
+                console.error('Guest confirmation email failed (non-fatal):', emailErr)
+            }
+            try {
+                await sendAdminNotificationEmail({ full_name, email, phone, guests, date, time, bookingRef, special_requests, paymentIntentId })
+            } catch (emailErr) {
+                console.error('Admin notification email failed (non-fatal):', emailErr)
+            }
         }
 
         return { success: true, bookingRef, details: { full_name, email, date, time, guests } }
@@ -179,7 +193,8 @@ async function sendGuestConfirmationEmail({
     bookingRef: string
     special_requests?: string
 }) {
-    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) return
+    const transporter = getTransporter()
+    if (!transporter) return
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com'
     const formattedDate = new Date(date + 'T12:00:00').toLocaleDateString('en-US', {
@@ -274,7 +289,7 @@ async function sendGuestConfirmationEmail({
             html,
         })
     } catch (err) {
-        console.error('Guest confirmation email error:', err)
+        console.error('Guest confirmation email error (non-fatal):', err)
     }
 }
 
@@ -300,7 +315,8 @@ async function sendAdminNotificationEmail({
     special_requests?: string
     paymentIntentId: string
 }) {
-    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) return
+    const transporter = getTransporter()
+    if (!transporter) return
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com'
     const formattedDate = new Date(date + 'T12:00:00').toLocaleDateString('en-US', {
@@ -345,7 +361,7 @@ async function sendAdminNotificationEmail({
             html,
         })
     } catch (err) {
-        console.error('Admin notification email error:', err)
+        console.error('Admin notification email error (non-fatal):', err)
     }
 }
 

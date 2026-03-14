@@ -1,15 +1,21 @@
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
+function getTransporter() {
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    return null;
+  }
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
+}
 
 export const sendOrderConfirmation = async (to: string, details: any, orderId?: string) => {
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+  const transporter = getTransporter();
+  if (!transporter) {
     console.warn('⚠️ Email not sent: Credentials missing in .env');
     return;
   }
@@ -63,9 +69,8 @@ export const sendOrderConfirmation = async (to: string, details: any, orderId?: 
 };
 
 export const sendAdminBookingNotification = async (details: any) => {
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-    return;
-  }
+  const transporter = getTransporter();
+  if (!transporter) return;
   const { eventName, date, ticketType, quantity, totalAmount, name, email, tableSelection, bookingRef } = details;
   const typeDisplay = ticketType === 'table_reservation' ? `Table Reservation: ${tableSelection || 'General'}` : ticketType;
 
@@ -95,9 +100,8 @@ export const sendAdminBookingNotification = async (details: any) => {
 };
 
 export const sendCustomerCancellation = async (to: string, details: any) => {
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-    return;
-  }
+  const transporter = getTransporter();
+  if (!transporter) return;
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com';
 
@@ -132,9 +136,8 @@ export const sendCustomerCancellation = async (to: string, details: any) => {
 };
 
 export const sendAdminCancellation = async (details: any) => {
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-    return;
-  }
+  const transporter = getTransporter();
+  if (!transporter) return;
 
   const htmlContent = `
     <h2>Booking Cancelled</h2>
