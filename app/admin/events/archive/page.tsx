@@ -12,13 +12,13 @@ export default async function ArchivePage({
   const supabase = await createClient()
   const params = await searchParams
   const query = params?.search || ''
-  const now = new Date().toISOString()
+  const now = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }) // "YYYY-MM-DD"
 
-  // 1. Filter: Only show events in the PAST
+  // 1. Filter: Only show events in the PAST (Houston time)
   let dbQuery = supabase
     .from('events')
     .select('*')
-    .lt('date', now) // <--- Less Than Now
+    .lt('date', now)
     .order('date', { ascending: false }) // Newest past events first
 
   if (query) {

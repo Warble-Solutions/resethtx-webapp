@@ -15,14 +15,14 @@ export default async function EventsPage({
   const createdCount = params?.created
   const createdTitle = params?.title
 
-  // 1. Get current time in ISO format
-  const now = new Date().toISOString()
+  // 1. Get today's date in Houston (Central) time
+  const now = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }) // "YYYY-MM-DD"
 
-  // 2. Filter: Only show events happening NOW or in the FUTURE
+  // 2. Filter: Only show events happening TODAY or in the FUTURE (Houston time)
   let dbQuery = supabase
     .from('events')
     .select('*')
-    .gte('date', now) // <--- THIS IS THE MAGIC FILTER
+    .gte('date', now)
     .order('date', { ascending: true })
 
   if (query) {
