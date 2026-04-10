@@ -2,6 +2,7 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@/utils/supabase/server';
+import { sendOrderConfirmation, sendAdminBookingNotification } from '@/lib/mail';
 import Stripe from 'stripe';
 
 export async function POST(req: Request) {
@@ -67,7 +68,45 @@ export async function POST(req: Request) {
 
         console.log(`Ticket saved for ${guestName}`);
 
-        // 2. If Table Reservation, Insert into reservations
+        // 2. Generate booking ref for emails
+        const bookingRef = 'RST-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+
+        // 3. Fetch event details for emails
+        const { data: eventData } = await supabase
+            .from('events')
+            .select('title, date')
+            .eq('id', eventId)
+            .single();
+
+        // 4. Send confirmation emails
+        const tableSelection = metadata.tableSelection || null;
+        const emailDetails = {
+            eventName: eventData?.title || 'Event',
+            date: eventData?.date || new Date().toISOString(),
+            ticketType: ticketType,
+            quantity: quantity,
+            totalAmount: paymentIntent.amount / 100,
+            name: guestName,
+            email: guestEmail,
+            tableSelection: tableSelection,
+            bookingRef: bookingRef,
+        };
+
+        try {
+            await sendOrderConfirmation(guestEmail, emailDetails, paymentIntent.id);
+            console.log(`✅ Webhook: Confirmation email sent to ${guestEmail}`);
+        } catch (emailErr) {
+            console.error('❌ Webhook: Customer email failed (non-fatal):', emailErr);
+        }
+
+        try {
+            await sendAdminBookingNotification(emailDetails);
+            console.log(`✅ Webhook: Admin notification sent`);
+        } catch (emailErr) {
+            console.error('❌ Webhook: Admin email failed (non-fatal):', emailErr);
+        }
+
+        // 5. If Table Reservation, Insert into reservations
         if (ticketType === 'table_reservation' || ticketType === 'table') {
             const { error: reservationError } = await supabase
                 .from('reservations')
@@ -75,21 +114,14 @@ export async function POST(req: Request) {
                     full_name: guestName,
                     email: guestEmail,
                     phone: userPhone,
-                    guests: quantity.toString(), // Storing as string based on your schema check if needed
-                    date: new Date().toISOString().split('T')[0], // Use booking date or event date? 
-                    // Ideally, we should fetch the event date. 
-                    // For now, let's try to get it from metadata if passed, or default to today?
-                    // Better: Fetch event to be accurate, but to save query, maybe metadata has it?
-                    // metadata doesn't seem to have eventDate explicitly in the plan.
-                    // Let's assume the admin wants to see it.
-                    // We can skip date validation for now or use 'pending' status.
+                    guests: quantity.toString(),
+                    date: new Date().toISOString().split('T')[0],
                     status: 'confirmed',
                     special_requests: `Paid via Stripe (${paymentIntent.id})`
                 });
 
             if (reservationError) {
                 console.error('Error saving reservation:', reservationError);
-                // Don't fail the webhook for this, ticket is safe
             } else {
                 console.log(`Reservation synced for ${guestName}`);
             }

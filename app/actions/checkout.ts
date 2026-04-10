@@ -219,18 +219,6 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
             return { success: false, error: 'Payment not successful' };
         }
 
-        // 2. Check if already recorded to avoid duplicates
-        const { data: existing } = await supabase
-            .from('ticket_purchases')
-            .select('id')
-            .eq('payment_intent_id', paymentIntentId)
-            .single();
-
-        if (existing) {
-            return { success: true, message: 'Ticket already recorded' };
-        }
-
-        // 3. Extract metadata
         // 3. Extract metadata
         const { eventId, userName, userEmail, userPhone, quantity, ticketType, guestName, guestEmail, dob, tableSelection, tableId } = paymentIntent.metadata || {};
 
@@ -239,6 +227,39 @@ export async function finalizeTicketPurchase(paymentIntentId: string) {
 
         if (!eventId || !finalName || !finalEmail) {
             return { success: false, error: 'Missing metadata in payment intent' };
+        }
+
+        // 2. Check if already recorded to avoid duplicates
+        const { data: existing } = await supabase
+            .from('ticket_purchases')
+            .select('id')
+            .eq('payment_intent_id', paymentIntentId)
+            .single();
+
+        if (existing) {
+            // Ticket already recorded (likely by webhook), but still return booking details
+            // so the client-side can send a backup confirmation email if webhook email failed
+            const { data: eventData } = await supabase
+                .from('events')
+                .select('title, date')
+                .eq('id', eventId)
+                .single();
+
+            return {
+                success: true,
+                message: 'Ticket already recorded',
+                bookingDetails: {
+                    eventName: eventData?.title || 'Event',
+                    date: eventData?.date || new Date().toISOString(),
+                    ticketType: ticketType || 'standard_ticket',
+                    quantity: parseInt(quantity || '1'),
+                    totalAmount: paymentIntent.amount / 100,
+                    name: finalName,
+                    email: finalEmail,
+                    tableSelection: tableSelection,
+                    bookingRef: 'Already confirmed'
+                }
+            };
         }
 
         // 4. Insert Ticket
