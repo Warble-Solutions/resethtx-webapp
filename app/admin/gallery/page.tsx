@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import SpotlightCard from '@/app/components/SpotlightCard'
 import { uploadImage, deleteImage, getGalleryImages } from '@/app/actions/gallery'
 import { createClient } from '@/utils/supabase/client'
+import { compressImageFile } from '@/utils/compressImage'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
@@ -43,14 +44,15 @@ export default function AdminGalleryPage() {
         setIsUploading(true)
 
         try {
-            // 1. Upload Images to Storage & Get URLs
+            // 1. Upload Images to Storage & Get URLs (with compression)
             const uploadPromises = selectedFiles.map(async (file) => {
-                const fileExt = file.name.split('.').pop()
-                const fileName = `gallery-${Date.now()}-${Math.random()}.${fileExt}`
+                // Compress image before upload
+                const compressedFile = await compressImageFile(file)
+                const fileName = `gallery-${Date.now()}-${Math.random()}.jpg`
 
                 const { error: uploadError } = await supabase.storage
                     .from('gallery')
-                    .upload(fileName, file)
+                    .upload(fileName, compressedFile)
 
                 if (uploadError) throw uploadError
 

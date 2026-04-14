@@ -73,17 +73,37 @@ export default async function getCroppedImg(
         pixelCrop.height
     )
 
-    // set canvas width to final desired crop size - this will clear existing context
-    canvas.width = pixelCrop.width
-    canvas.height = pixelCrop.height
+    // Cap dimensions to max 1920x1080 while maintaining aspect ratio
+    const MAX_WIDTH = 1920
+    const MAX_HEIGHT = 1080
+    let finalWidth = pixelCrop.width
+    let finalHeight = pixelCrop.height
 
-    // paste generated rotate image at the top left corner
-    ctx.putImageData(data, 0, 0)
+    if (finalWidth > MAX_WIDTH || finalHeight > MAX_HEIGHT) {
+        const ratio = Math.min(MAX_WIDTH / finalWidth, MAX_HEIGHT / finalHeight)
+        finalWidth = Math.round(finalWidth * ratio)
+        finalHeight = Math.round(finalHeight * ratio)
+    }
 
-    // As Blob
+    // Create a temp canvas with original crop dimensions to hold the pixel data
+    const tempCanvas = document.createElement('canvas')
+    tempCanvas.width = pixelCrop.width
+    tempCanvas.height = pixelCrop.height
+    const tempCtx = tempCanvas.getContext('2d')
+    if (!tempCtx) return null
+    tempCtx.putImageData(data, 0, 0)
+
+    // set canvas width to final (potentially resized) dimensions
+    canvas.width = finalWidth
+    canvas.height = finalHeight
+
+    // Draw the temp canvas onto the final canvas (this handles the resize)
+    ctx.drawImage(tempCanvas, 0, 0, finalWidth, finalHeight)
+
+    // As compressed JPEG Blob (0.75 quality = good balance of quality vs size)
     return new Promise((resolve, reject) => {
         canvas.toBlob((file) => {
             resolve(file)
-        }, 'image/jpeg')
+        }, 'image/jpeg', 0.75)
     })
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { createEvent, checkEventConflict } from './actions'
-import { compressImage } from '@/utils/compress'
+import { compressImage } from '@/utils/compressImage'
 import Link from 'next/link'
 import SpotlightCard from '@/app/components/SpotlightCard'
 import { useState, useRef } from 'react'
@@ -22,21 +22,16 @@ export default function CreateEventPage() {
 
   // Helper to handle compression and creation
   const executeCreate = async (formData: FormData) => {
-    // 1. Compression Magic / Blob Handling
-    // If we have a cropped blob, use it.
+    // Compress cropped blobs before sending to server
     if (imageFile) {
-      formData.set('image', imageFile, 'image.jpg')
+      const compressed = await compressImage(imageFile)
+      formData.set('image', compressed, 'image.jpg')
     }
     if (featuredImageFile) {
-      formData.set('featured_image', featuredImageFile, 'featured_image.jpg')
+      const compressed = await compressImage(featuredImageFile)
+      formData.set('featured_image', compressed, 'featured_image.jpg')
     }
 
-    const imageInput = formData.get('image') as File | Blob
-    // We can still try to compress if it's a File, but if it's a Blob directly from canvas it might be optimized enough or we compress it too.
-    // existing compressImage utils might expect a File.
-    // For now let's assume the crop output is fine or rely on existing logic if it operates on Blobs.
-
-    // 2. Send to server
     await createEvent(formData)
   }
 

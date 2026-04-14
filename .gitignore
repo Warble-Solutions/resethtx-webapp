@@ -42,3 +42,10 @@ next-env.d.ts
 
 #databse pass
 .cas.txt
+
+# Image backup from compression script
+_image_backup/
+reset-htx-cpanel*.tar.gz
+
+# Environment secrets
+.env.local

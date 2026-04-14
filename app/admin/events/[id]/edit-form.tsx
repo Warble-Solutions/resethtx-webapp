@@ -1,7 +1,7 @@
 'use client'
 
 import { updateEvent } from './actions'
-import { compressImage } from '@/utils/compress'
+import { compressImage } from '@/utils/compressImage'
 import Link from 'next/link'
 import SpotlightCard from '@/app/components/SpotlightCard'
 import { useState, useRef } from 'react'
@@ -86,30 +86,15 @@ export default function EditEventForm({ event }: { event: EventData }) {
   // --- SAFETY PARSING END ---
 
   const executeUpdate = async (formData: FormData) => {
-    // If we have a cropped blob, use it directly.
+    // Compress and set cropped blobs
     if (imageFile) {
-      formData.set('image', imageFile, 'image.jpg')
-    } else {
-      // If no new cropped image, check if a regular file was uploaded (fallback) or ignore.
-      // But with our new component, file selection creates a blob in state.
-      // We do strictly need to handle the case where user didn't change image.
-      // If imageFile is null, we assume no change to image unless the hidden input has something (which it won't if controlled by component).
-      // However, the component might set internal state.
-      const fileInput = formData.get('image') as File
-      if (fileInput && fileInput.size > 0 && !imageFile) {
-        // This path shouldn't be hit if ImageUploadWithCrop is used correctly, 
-        // but if they somehow bypassed it:
-        try {
-          const compressed = await compressImage(fileInput)
-          formData.set('image', compressed)
-        } catch (err) {
-          console.error("Compression failed", err)
-        }
-      }
+      const compressed = await compressImage(imageFile)
+      formData.set('image', compressed, 'image.jpg')
     }
 
     if (featuredImageFile) {
-      formData.set('featured_image', featuredImageFile, 'featured_image.jpg')
+      const compressed = await compressImage(featuredImageFile)
+      formData.set('featured_image', compressed, 'featured_image.jpg')
     }
 
     if (shouldRemoveImage && !imageFile) {
