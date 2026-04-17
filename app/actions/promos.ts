@@ -21,6 +21,10 @@ export async function validatePromo(code: string) {
             return { valid: false, message: 'This promo code has expired.' }
         }
 
+        if (data.max_uses && data.times_used >= data.max_uses) {
+            return { valid: false, message: 'This promo code has reached its usage limit.' }
+        }
+
         return {
             valid: true,
             discount: data.discount,

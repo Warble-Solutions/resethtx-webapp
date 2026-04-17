@@ -25,7 +25,7 @@ function getTransporter() {
   })
 }
 
-const ADMIN_EMAIL = 'resethtx@gmail.com'
+const ADMIN_EMAIL = process.env.GMAIL_USER || 'resethtx@gmail.com'
 
 export async function submitContactForm(formData: FormData) {
   const supabase = getSupabaseAdmin()
@@ -54,6 +54,7 @@ export async function submitContactForm(formData: FormData) {
     }
 
     // 2. Send admin notification email
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com'
     const adminHtml = `
 <!DOCTYPE html>
 <html>
@@ -73,7 +74,7 @@ export async function submitContactForm(formData: FormData) {
       <tr><td style="padding:9px 0;color:#888;vertical-align:top;">Message</td><td style="padding:9px 0;color:#333;">${data.message}</td></tr>
     </table>
     <div style="margin-top:20px;text-align:center;">
-      <a href="https://resethtx.netlify.app/admin/inbox" style="background:#000;color:#D4AF37;padding:12px 26px;text-decoration:none;border-radius:6px;font-weight:700;font-size:13px;display:inline-block;">View in Admin Inbox →</a>
+      <a href="${baseUrl}/admin/inbox" style="background:#000;color:#D4AF37;padding:12px 26px;text-decoration:none;border-radius:6px;font-weight:700;font-size:13px;display:inline-block;">View in Admin Inbox →</a>
     </div>
   </div>
 </div>
