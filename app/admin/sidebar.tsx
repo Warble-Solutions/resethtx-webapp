@@ -14,6 +14,7 @@ export default function Sidebar() {
 
     const menuItems = [
         { href: '/admin/dashboard', label: 'Dashboard' },
+        { href: '/admin/analytics', label: 'Analytics' },
         { href: '/admin/sales', label: 'Sales Overview' }, // Updated label for clarity
         { href: '/admin/guests', label: 'Guest Lists' }, // New
         { href: '/admin/customers', label: 'Customers' },
