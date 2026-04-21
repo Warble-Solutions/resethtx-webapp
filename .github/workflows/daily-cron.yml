@@ -14,4 +14,4 @@ jobs:
         run: |
           curl -f -i -X GET \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "https://resethtx.com/api/cron/daily-inbox"
+            "https://resethtx.netlify.app/api/cron/daily-inbox"
