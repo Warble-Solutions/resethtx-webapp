@@ -1,0 +1,17 @@
+name: Daily Inbox Forwarding Cron
+
+on:
+  schedule:
+    # Runs at 14:00 UTC every day (9:00 AM CST / 10:00 AM CDT)
+    - cron: '0 14 * * *'
+  workflow_dispatch: # Allows manual triggering from GitHub Action tab
+
+jobs:
+  run-cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Admin Fetch Endpoint
+        run: |
+          curl -f -i -X GET \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://resethtx.com/api/cron/daily-inbox"
