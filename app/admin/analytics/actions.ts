@@ -28,10 +28,10 @@ function getClient() {
 const cache = new Map<string, { data: any; timestamp: number }>()
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
-function getCached<T>(key: string): T | null {
+function getCached(key: string): any | null {
     const entry = cache.get(key)
     if (entry && Date.now() - entry.timestamp < CACHE_TTL) {
-        return entry.data as T
+        return entry.data
     }
     return null
 }
@@ -353,8 +353,8 @@ export async function getDeviceBreakdown(range: DateRangeKey = '30days', custom?
 
 export async function getRealtimeUsers() {
     const cacheKey = 'realtime'
-    const cached = getCached<number>(cacheKey)
-    if (cached !== null) return cached
+    const cached = getCached(cacheKey)
+    if (cached !== null) return cached as number
 
     try {
         const client = getClient()

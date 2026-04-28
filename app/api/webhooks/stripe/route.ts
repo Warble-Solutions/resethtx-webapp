@@ -45,7 +45,22 @@ export async function POST(req: Request) {
             return NextResponse.json({ received: true }); // Acknowledge to stop retries even if bad data
         }
 
-        // 1. Insert into ticket_purchases
+        // 0. Idempotency Check: Don't insert duplicate tickets
+        const { data: existingTicket } = await supabase
+            .from('ticket_purchases')
+            .select('id')
+            .eq('payment_intent_id', paymentIntent.id)
+            .single();
+
+        if (existingTicket) {
+            console.log(`Webhook: Ticket for ${paymentIntent.id} already exists. Skipping.`);
+            return NextResponse.json({ received: true });
+        }
+
+        // 1. Generate booking ref for emails & DB
+        const bookingRef = 'RST-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+
+        // 2. Insert into ticket_purchases
         const { error: ticketError } = await supabase
             .from('ticket_purchases')
             .insert({
@@ -58,7 +73,8 @@ export async function POST(req: Request) {
                 total_price: paymentIntent.amount / 100,
                 status: 'paid',
                 payment_intent_id: paymentIntent.id,
-                ticket_type: ticketType
+                ticket_type: ticketType,
+                booking_ref: bookingRef
             });
 
         if (ticketError) {
@@ -67,9 +83,6 @@ export async function POST(req: Request) {
         }
 
         console.log(`Ticket saved for ${guestName}`);
-
-        // 2. Generate booking ref for emails
-        const bookingRef = 'RST-' + Math.random().toString(36).substr(2, 6).toUpperCase();
 
         // 3. Fetch event details for emails
         const { data: eventData } = await supabase
