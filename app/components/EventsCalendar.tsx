@@ -22,8 +22,29 @@ interface Event {
 
 // 1. Update component signature to pass array
 export default function EventsCalendar({ events, onEventClick }: { events: Event[], onEventClick?: (events: Event[]) => void }) {
-    const [currentDate, setCurrentDate] = useState(new Date())
-    const [selectedDate, setSelectedDate] = useState(new Date())
+    const [currentDate, setCurrentDate] = useState(() => {
+        const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' })
+        const upcoming = [...events]
+            .filter(e => e.date >= todayStr)
+            .sort((a, b) => a.date.localeCompare(b.date))
+        if (upcoming.length > 0) {
+            const [year, month, day] = upcoming[0].date.split('-').map(Number)
+            return new Date(year, month - 1, 1) // Start of that month
+        }
+        return new Date()
+    })
+    
+    const [selectedDate, setSelectedDate] = useState(() => {
+        const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' })
+        const upcoming = [...events]
+            .filter(e => e.date >= todayStr)
+            .sort((a, b) => a.date.localeCompare(b.date))
+        if (upcoming.length > 0) {
+            const [year, month, day] = upcoming[0].date.split('-').map(Number)
+            return new Date(year, month - 1, day)
+        }
+        return new Date()
+    })
 
     const getDaysInMonth = (date: Date) => {
         return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
@@ -60,7 +81,8 @@ export default function EventsCalendar({ events, onEventClick }: { events: Event
     // --- DYNAMIC SIDEBAR LOGIC ---
     const getVisibleCategories = () => {
         // 1. Determine which months to fetch categories from
-        const today = new Date()
+        const todayStr = new Date().toLocaleDateString('en-US', { timeZone: 'America/Chicago' });
+        const today = new Date(todayStr);
         const isCurrentMonthView = currentDate.getFullYear() === today.getFullYear() &&
             currentDate.getMonth() === today.getMonth()
 

@@ -268,7 +268,7 @@ export default function EventBookingSystem({ eventId: initialEventId, eventDate:
                         <div>
                             <p className="text-white font-bold uppercase tracking-wider text-sm mb-1">Reservation Fee Required</p>
                             <p className="text-slate-400 text-sm leading-relaxed">
-                                Table bookings require a <span className="text-white font-bold">${tableFee} reservation fee</span>. This fee secures your spot and does not go towards your tab.
+                                Table bookings require a <span className="text-white font-bold">${tableFee} reservation fee</span>. This fee secures your spot and does not go towards your tab. Additionally, all table reservations require a <span className="text-white font-bold">minimum purchase of 1 bottle</span>.
                             </p>
                         </div>
                     </div>

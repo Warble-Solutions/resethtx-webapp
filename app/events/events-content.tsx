@@ -26,7 +26,17 @@ interface Event {
 export default function EventsContent({ events }: { events: Event[] }) {
     // 1. CHANGE: Default view is now 'calendar'
     const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'grid'>('calendar')
-    const [currentMonth, setCurrentMonth] = useState(new Date())
+    const [currentMonth, setCurrentMonth] = useState(() => {
+        const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' })
+        const upcoming = [...events]
+            .filter(e => e.date >= todayStr)
+            .sort((a, b) => a.date.localeCompare(b.date))
+        if (upcoming.length > 0) {
+            const [year, month, day] = upcoming[0].date.split('-').map(Number)
+            return new Date(year, month - 1, 1) // Start of that month
+        }
+        return new Date()
+    })
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
 
     // --- CALENDAR LOGIC ---
@@ -42,10 +52,8 @@ export default function EventsContent({ events }: { events: Event[] }) {
 
     // Filter for List/Grid views (Future + Today only)
     const upcomingEvents = events.filter(event => {
-        const eventDate = new Date(event.date)
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
-        return eventDate >= today
+        const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' })
+        return event.date >= todayStr
     })
 
 
