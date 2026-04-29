@@ -53,7 +53,6 @@ export async function POST(req: Request) {
             .single();
 
         if (existingTicket) {
-<<<<<<< Updated upstream
             console.log(`Webhook: Ticket for ${paymentIntent.id} already exists. Skipping.`);
             return NextResponse.json({ received: true });
         }
@@ -62,15 +61,6 @@ export async function POST(req: Request) {
         const bookingRef = 'RST-' + Math.random().toString(36).substr(2, 6).toUpperCase();
 
         // 2. Insert into ticket_purchases
-=======
-            console.log(`[Stripe Webhook] Duplicate payment_intent ignored: ${paymentIntent.id}`);
-            return NextResponse.json({ received: true });
-        }
-
-        const booking_ref = `RES-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-
-        // 1. Insert into ticket_purchases
->>>>>>> Stashed changes
         const { error: ticketError } = await supabase
             .from('ticket_purchases')
             .insert({
@@ -84,11 +74,7 @@ export async function POST(req: Request) {
                 status: 'paid',
                 payment_intent_id: paymentIntent.id,
                 ticket_type: ticketType,
-<<<<<<< Updated upstream
                 booking_ref: bookingRef
-=======
-                booking_ref: booking_ref
->>>>>>> Stashed changes
             });
 
         if (ticketError) {

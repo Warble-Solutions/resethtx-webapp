@@ -354,11 +354,7 @@ export async function getDeviceBreakdown(range: DateRangeKey = '30days', custom?
 export async function getRealtimeUsers() {
     const cacheKey = 'realtime'
     const cached = getCached(cacheKey)
-<<<<<<< Updated upstream
     if (cached !== null) return cached as number
-=======
-    if (cached !== null) return cached
->>>>>>> Stashed changes
 
     try {
         const client = getClient()
