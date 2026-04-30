@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { createGeneralReservationIntent, getEventByDate } from '@/app/actions/reservations'
+import TableSelectionModal from '@/app/components/TableSelectionModal'
 
 const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 const stripePromise = stripeKey ? loadStripe(stripeKey) : null
@@ -142,6 +143,10 @@ export default function ResetBookingClient() {
         special_requests: '',
     })
     const [formError, setFormError] = useState<string | null>(null)
+    
+    // Table Selection State
+    const [isTableModalOpen, setIsTableModalOpen] = useState(false)
+    const [selectedTable, setSelectedTable] = useState<{ id: string, name: string, category: string } | null>(null)
 
     // Check for event whenever date changes
     useEffect(() => {
@@ -150,6 +155,7 @@ export default function ResetBookingClient() {
             setActiveCard(null)
             setStep('form')
             setClientSecret(null)
+            setSelectedTable(null)
             const result = await getEventByDate(selectedDate)
             setEventInfo(result)
             setCheckingEvent(false)
@@ -183,6 +189,8 @@ export default function ResetBookingClient() {
                 date: selectedDate,
                 time: form.time,
                 special_requests: form.special_requests,
+                tableId: selectedTable?.id,
+                tableName: selectedTable?.name,
             })
 
             if (result.success && result.clientSecret) {
@@ -387,6 +395,35 @@ export default function ResetBookingClient() {
                                                 </div>
                                             </div>
 
+                                            {/* Assigned Table */}
+                                            <div className="mt-4 p-4 border border-[#D4AF37]/30 rounded-lg bg-[#050505]">
+                                                <label className="text-[10px] text-slate-500 uppercase font-bold block mb-1.5">Assigned Table (Optional)</label>
+                                                {selectedTable ? (
+                                                    <div className="flex justify-between items-center bg-[#111] border border-[#D4AF37] p-4 rounded-lg">
+                                                        <div>
+                                                            <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">{selectedTable.category}</div>
+                                                            <div className="text-white font-bold font-heading text-xl">{selectedTable.name}</div>
+                                                        </div>
+                                                        <button 
+                                                            type="button" 
+                                                            onClick={() => setIsTableModalOpen(true)}
+                                                            className="text-xs font-bold uppercase border border-white/20 px-3 py-1.5 rounded hover:bg-white hover:text-black transition-colors"
+                                                        >
+                                                            Change
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsTableModalOpen(true)}
+                                                        className="w-full bg-white/5 border border-white/10 text-white font-bold uppercase tracking-widest py-3 rounded-lg hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                                                        Select a Table
+                                                    </button>
+                                                )}
+                                            </div>
+
                                             {/* Name */}
                                             <div>
                                                 <label className="text-[10px] text-slate-500 uppercase font-bold block mb-1.5">Full Name *</label>
@@ -474,6 +511,14 @@ export default function ResetBookingClient() {
                 </p>
 
             </div>
+
+            <TableSelectionModal
+                isOpen={isTableModalOpen}
+                onClose={() => setIsTableModalOpen(false)}
+                date={selectedDate}
+                showFeeNote={true}
+                onSelectTable={(table) => setSelectedTable(table)}
+            />
         </main>
     )
 }

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { getEventTables, getTakenTables } from '@/app/actions/event-booking'
-import { getGeneralTablesAvailability } from '../actions-manual'
+import { getGeneralTablesAvailability } from '@/app/admin/reservations/actions-manual'
 
 interface Table {
     id: string
@@ -18,10 +18,11 @@ interface TableSelectionModalProps {
     onClose: () => void
     eventId?: string
     date?: string
+    showFeeNote?: boolean
     onSelectTable: (table: Table) => void
 }
 
-export default function TableSelectionModal({ isOpen, onClose, eventId, date, onSelectTable }: TableSelectionModalProps) {
+export default function TableSelectionModal({ isOpen, onClose, eventId, date, showFeeNote, onSelectTable }: TableSelectionModalProps) {
     const [tables, setTables] = useState<Table[]>([])
     const [takenTableIds, setTakenTableIds] = useState<Set<string>>(new Set())
     const [loading, setLoading] = useState(true)
@@ -104,6 +105,22 @@ export default function TableSelectionModal({ isOpen, onClose, eventId, date, on
                         </svg>
                     </button>
                 </div>
+
+                {showFeeNote && (
+                    <div className="bg-black/50 p-4 md:p-6 border-b border-white/5">
+                        <div className="flex gap-4">
+                            <div className="mt-0.5 text-[#D4AF37]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                            </div>
+                            <div>
+                                <h4 className="text-white font-bold uppercase tracking-wider text-sm mb-1">Reservation Fee Required</h4>
+                                <p className="text-slate-400 text-sm leading-relaxed">
+                                    Table bookings require a <strong className="text-white">$50 reservation fee</strong>. This fee secures your spot and does not go towards your tab. Additionally, all table reservations require a <strong className="text-white">minimum purchase of 1 bottle</strong>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-[#D4AF37] scrollbar-track-black">
                     {loading ? (

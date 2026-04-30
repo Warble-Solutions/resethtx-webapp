@@ -14,6 +14,8 @@ interface GeneralReservationInput {
     date: string
     time: string
     special_requests?: string
+    tableId?: string
+    tableName?: string
 }
 
 function generateBookingRef() {
@@ -42,6 +44,8 @@ export async function createGeneralReservationIntent({
     date,
     time,
     special_requests,
+    tableId,
+    tableName,
 }: GeneralReservationInput): Promise<{ success: boolean; clientSecret?: string; error?: string }> {
     if (!full_name || !email || !phone || !guests || !date || !time) {
         return { success: false, error: 'All required fields must be filled.' }
@@ -71,6 +75,8 @@ export async function createGeneralReservationIntent({
                 date,
                 time,
                 special_requests: special_requests || '',
+                tableId: tableId || '',
+                tableName: tableName || '',
             },
             automatic_payment_methods: { enabled: true },
         })
@@ -109,6 +115,8 @@ export async function finalizeGeneralReservation(paymentIntentId: string): Promi
         const date = meta.date
         const time = meta.time
         const special_requests = meta.special_requests || ''
+        const tableId = meta.tableId || null
+        const tableName = meta.tableName || null
 
         if (!full_name || !email || !date || !time) {
             return { success: false, error: 'Reservation details are incomplete.' }
@@ -137,10 +145,11 @@ export async function finalizeGeneralReservation(paymentIntentId: string): Promi
                 guests: guests.toString(),
                 date,
                 time,
-                table_id: null,
+                table_id: tableId,
                 status: 'confirmed',
                 special_requests: [
                     `Booking Ref: ${bookingRef}`,
+                    tableName ? `Table: ${tableName}` : null,
                     `$${GENERAL_RESERVATION_FEE} paid via Stripe (${paymentIntentId})`,
                     special_requests,
                 ]

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createManualAdminReservation } from '../actions-manual'
-import TableSelectionModal from './TableSelectionModal'
+import TableSelectionModal from '@/app/components/TableSelectionModal'
 
 interface Event {
     id: string
