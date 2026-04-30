@@ -73,7 +73,7 @@ export default function Sidebar() {
                 </div>
 
                 {/* Navigation Links */}
-                <nav className="flex-1 p-4 flex flex-col gap-1 overflow-y-auto">
+                <nav className="flex-1 p-4 flex flex-col gap-1 overflow-y-auto scrollbar-thin scrollbar-thumb-[#D4AF37]/50 hover:scrollbar-thumb-[#D4AF37] scrollbar-track-transparent">
                     {menuItems.map((item) => (
                         <Link
                             key={item.href}
