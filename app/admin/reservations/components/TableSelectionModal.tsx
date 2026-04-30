@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useEffect, useState } from 'react'
 import { getEventTables, getTakenTables } from '@/app/actions/event-booking'
 import { getGeneralTablesAvailability } from '../actions-manual'
 
