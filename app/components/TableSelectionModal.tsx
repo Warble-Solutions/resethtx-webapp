@@ -122,7 +122,7 @@ export default function TableSelectionModal({ isOpen, onClose, eventId, date, sh
                     </div>
                 )}
 
-                <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-[#D4AF37] scrollbar-track-black">
+                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                     {loading ? (
                         <div className="text-center text-[#D4AF37] py-20 animate-pulse font-bold uppercase tracking-widest">
                             Loading tables...
