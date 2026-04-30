@@ -230,6 +230,34 @@ export default function ManualReservationForm({ upcomingEvents }: { upcomingEven
                                             className="w-full bg-[#050505] border border-white/10 text-white rounded-lg p-3 focus:border-[#D4AF37] outline-none transition-colors [color-scheme:dark]"
                                         />
                                     </div>
+                                    
+                                    <div className="mt-4 p-4 border border-[#D4AF37]/30 rounded-lg bg-[#050505]">
+                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Assigned Table (Optional)</label>
+                                        {selectedTable ? (
+                                            <div className="flex justify-between items-center bg-[#111] border border-[#D4AF37] p-4 rounded-lg">
+                                                <div>
+                                                    <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">{selectedTable.category}</div>
+                                                    <div className="text-white font-bold font-heading text-xl">{selectedTable.name}</div>
+                                                </div>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => setIsTableModalOpen(true)}
+                                                    className="text-xs font-bold uppercase border border-white/20 px-3 py-1.5 rounded hover:bg-white hover:text-black transition-colors"
+                                                >
+                                                    Change
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsTableModalOpen(true)}
+                                                className="w-full bg-white/5 border border-white/10 text-white font-bold uppercase tracking-widest py-3 rounded-lg hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                                                Select a Table
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -237,7 +265,7 @@ export default function ManualReservationForm({ upcomingEvents }: { upcomingEven
                 </div>
 
                 {/* --- CUSTOMER INFO SECTION --- */}
-                {selectedDate && (isEventMode ? selectedTable : true) && (
+                {selectedDate && (isEventMode ? (selectedEventId && selectedTable) : true) && (
                     <div className="bg-[#0a0a0a] p-6 rounded-lg border border-white/5 space-y-4 animate-in fade-in">
                         <h3 className="text-[#D4AF37] font-bold uppercase tracking-widest text-sm mb-4">Guest Information</h3>
                         
@@ -319,7 +347,8 @@ export default function ManualReservationForm({ upcomingEvents }: { upcomingEven
             <TableSelectionModal
                 isOpen={isTableModalOpen}
                 onClose={() => setIsTableModalOpen(false)}
-                eventId={selectedEventId}
+                eventId={isEventMode ? selectedEventId : undefined}
+                date={!isEventMode ? selectedDate : undefined}
                 onSelectTable={(table) => setSelectedTable(table)}
             />
         </div>

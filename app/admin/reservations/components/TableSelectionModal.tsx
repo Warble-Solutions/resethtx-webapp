@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
 import { getEventTables, getTakenTables } from '@/app/actions/event-booking'
+import { getGeneralTablesAvailability } from '../actions-manual'
 
 interface Table {
     id: string
@@ -15,41 +15,59 @@ interface Table {
 interface TableSelectionModalProps {
     isOpen: boolean
     onClose: () => void
-    eventId: string
+    eventId?: string
+    date?: string
     onSelectTable: (table: Table) => void
 }
 
-export default function TableSelectionModal({ isOpen, onClose, eventId, onSelectTable }: TableSelectionModalProps) {
+export default function TableSelectionModal({ isOpen, onClose, eventId, date, onSelectTable }: TableSelectionModalProps) {
     const [tables, setTables] = useState<Table[]>([])
     const [takenTableIds, setTakenTableIds] = useState<Set<string>>(new Set())
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        if (!isOpen || !eventId) return
+        if (!isOpen) return
+        if (!eventId && !date) return
 
         const fetchTables = async () => {
             setLoading(true)
-            const [tablesRes, takenRes] = await Promise.all([
-                getEventTables(eventId),
-                getTakenTables(eventId)
-            ])
+            
+            if (eventId) {
+                // Event Table Fetching
+                const [tablesRes, takenRes] = await Promise.all([
+                    getEventTables(eventId),
+                    getTakenTables(eventId)
+                ])
 
-            if (tablesRes.success && tablesRes.tables) {
-                setTables(tablesRes.tables)
-            } else {
-                setTables([])
-            }
+                if (tablesRes.success && tablesRes.tables) {
+                    setTables(tablesRes.tables)
+                } else {
+                    setTables([])
+                }
 
-            if (takenRes.success && takenRes.takenTables) {
-                setTakenTableIds(new Set(takenRes.takenTables))
-            } else {
-                setTakenTableIds(new Set())
+                if (takenRes.success && takenRes.takenTables) {
+                    setTakenTableIds(new Set(takenRes.takenTables))
+                } else {
+                    setTakenTableIds(new Set())
+                }
+            } else if (date) {
+                // General Table Fetching
+                const generalRes = await getGeneralTablesAvailability(date)
+                if (generalRes.success && generalRes.tables) {
+                    setTables(generalRes.tables)
+                    // The isBooked property is already set inside the backend action
+                    setTakenTableIds(new Set()) 
+                } else {
+                    setTables([])
+                    setTakenTableIds(new Set())
+                }
             }
+            
             setLoading(false)
         }
 
         fetchTables()
-    }, [isOpen, eventId])
+    }, [isOpen, eventId, date])
 
     if (!isOpen) return null
 
@@ -93,7 +111,7 @@ export default function TableSelectionModal({ isOpen, onClose, eventId, onSelect
                         </div>
                     ) : tables.length === 0 ? (
                         <div className="text-center text-slate-400 py-20 uppercase font-bold tracking-wider">
-                            No tables available for this event.
+                            No tables available for this date.
                         </div>
                     ) : (
                         <div className="flex flex-col gap-10">

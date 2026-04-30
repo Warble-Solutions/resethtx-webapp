@@ -36,7 +36,8 @@ export async function createManualAdminReservation(data: {
                 date: data.date,
                 time: data.time || '18:00', // Default time if not provided
                 status: 'confirmed',
-                special_requests: specialNotes,
+                special_requests: data.tableName ? `${specialNotes} | Table: ${data.tableName}` : specialNotes,
+                table_id: data.tableId || null,
             })
 
             if (error) throw error
@@ -97,5 +98,47 @@ export async function createManualAdminReservation(data: {
     } catch (err: any) {
         console.error('Manual reservation error:', err)
         return { success: false, message: err.message || 'An unexpected error occurred.' }
+    }
+}
+
+export async function getGeneralTablesAvailability(date: string) {
+    const supabase = await createClient()
+
+    try {
+        const { data: tables, error: tablesError } = await supabase
+            .from('tables')
+            .select('id, name, capacity, category, x, y')
+            .order('name', { ascending: true })
+
+        if (tablesError) throw tablesError
+
+        // Query reservations for this date that have a table assigned
+        const { data: bookings, error: bookingsError } = await supabase
+            .from('reservations')
+            .select('table_id')
+            .eq('date', date)
+            .not('table_id', 'is', null)
+            .eq('status', 'confirmed')
+
+        if (bookingsError) throw bookingsError
+
+        const bookedTableIds = new Set(bookings.map(b => b.table_id))
+
+        const tablesWithStatus = tables.map((table: any) => ({
+            id: table.id,
+            name: table.name || `Table ${table.id.slice(0, 4)}`,
+            capacity: table.capacity || 2,
+            price: 100,
+            category: table.category || 'Standard',
+            isBooked: bookedTableIds.has(table.id),
+            x: table.x,
+            y: table.y
+        }))
+
+        return { success: true, tables: tablesWithStatus }
+
+    } catch (error: any) {
+        console.error('Error fetching general tables:', error)
+        return { success: false, tables: [], error: error.message || 'Unknown error' }
     }
 }
