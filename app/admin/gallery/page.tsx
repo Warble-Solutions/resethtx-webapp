@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+export const dynamic = 'force-dynamic'
+
+import { useState, useEffect, useMemo } from 'react'
 import SpotlightCard from '@/app/components/SpotlightCard'
 import { uploadImage, deleteImage, getGalleryImages } from '@/app/actions/gallery'
 import { createClient } from '@/utils/supabase/client'
@@ -20,7 +22,7 @@ export default function AdminGalleryPage() {
     const [isUploading, setIsUploading] = useState(false)
     const [isDeleting, setIsDeleting] = useState<string | null>(null)
     const router = useRouter()
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
 
     // Fetch images on mount
     useEffect(() => {

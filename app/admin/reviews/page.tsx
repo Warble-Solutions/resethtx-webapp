@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { adminGetReviews, updateReviewStatus } from '@/app/actions/testimonials'
-import { createClient } from '@/utils/supabase/client'
 
 interface Testimonial {
     id: string
