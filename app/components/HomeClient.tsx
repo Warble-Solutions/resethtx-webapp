@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import HeroCarousel from './HeroCarousel'
+import EventsCalendar from './EventsCalendar'
 import TheExperienceSection from './TheExperienceSection'
 import RooftopDiningSection from './RooftopDiningSection'
 import WeeklyProgrammingSection from './WeeklyProgrammingSection'
@@ -57,7 +58,13 @@ export default function HomeClient({
                 onEventClick={handleEventClick}
             />
 
-            {/* 2. BRAND NARRATIVE: AN ELEVATED ESCAPE ABOVE MIDTOWN */}
+            {/* 2. INTERACTIVE EVENT CALENDAR MATRIX */}
+            <EventsCalendar
+                events={allEvents}
+                onEventClick={handleEventClick}
+            />
+
+            {/* 3. BRAND NARRATIVE: AN ELEVATED ESCAPE ABOVE MIDTOWN */}
             <TheExperienceSection />
 
             {/* 3. ROOFTOP DINING & COCKTAIL MAGAZINE SPREAD */}
