@@ -2,124 +2,114 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Building2, Users, Music2, Wine, ArrowRight } from 'lucide-react'
+import { ArrowRight, Users, Music2, Wine, Building2 } from 'lucide-react'
 
 export default function VenueShowcaseSection() {
   return (
-    <section className="py-24 bg-black border-t border-white/5 relative overflow-hidden">
-      {/* Glow background */}
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-[#D4AF37]/5 blur-[130px] rounded-full pointer-events-none" />
+    <section className="relative overflow-hidden">
+      {/* Full-bleed background split: left dark, right image */}
+      <div className="absolute inset-0 hidden lg:block">
+        <div className="absolute inset-0 w-1/2" style={{ background: '#050505' }} />
+        <div className="absolute inset-0 left-1/2">
+          <Image
+            src="/images/12.png"
+            alt="Reset HTX Rooftop Venue"
+            fill
+            className="object-cover"
+            style={{ filter: 'brightness(0.5) saturate(1.2)' }}
+            sizes="50vw"
+          />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, #050505 0%, transparent 30%)' }} />
+        </div>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Column: Text & Features */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] text-xs font-bold uppercase tracking-widest">
-              <Building2 className="w-3.5 h-3.5" />
-              Private Events & Buyouts
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+          {/* Left: Content */}
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] tracking-[0.25em] uppercase font-bold"
+              style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)', color: '#D4AF37' }}>
+              CHAPTER // 05
             </div>
 
-            <h2 className="font-heading text-4xl md:text-6xl font-bold uppercase tracking-tight text-white leading-tight">
-              Your Next Event, <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F0DEAA]">
-                Elevated
-              </span>
+            <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white leading-tight">
+              Your Next Event,<br />
+              <span className="gold-gradient-text">Elevated</span>
             </h2>
 
-            <p className="text-slate-300 text-lg font-sans leading-relaxed">
-              Boardroom views, not boardrooms. Located in the heart of Midtown Houston, Reset HTX offers an unmatched rooftop setting for corporate receptions, client dinners, private celebrations, and full venue buyouts.
+            <p className="text-zinc-300 text-sm font-sans leading-relaxed font-light max-w-lg">
+              Boardroom views, not boardrooms. Reset HTX offers an unmatched rooftop setting for corporate receptions, client dinners, milestone galas, and complete venue buyouts.
             </p>
 
-            {/* Capacity & Highlights Grid */}
-            <div className="grid grid-cols-2 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800">
-                <div className="flex items-center gap-3 mb-1 text-[#D4AF37]">
-                  <Users className="w-5 h-5" />
-                  <span className="font-bold text-white text-base">Capacity</span>
+            {/* Metrics row */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { icon: <Users className="w-4 h-4" />, label: 'Capacity', value: '450 standing · 280 seated' },
+                { icon: <Music2 className="w-4 h-4" />, label: 'AV Ready', value: 'Club sound & DJ booth' },
+                { icon: <Wine className="w-4 h-4" />, label: 'Bar & Catering', value: 'Custom mixology & menus' },
+                { icon: <Building2 className="w-4 h-4" />, label: 'Skyline Views', value: 'Open terrace & salon' },
+              ].map((m, i) => (
+                <div key={i} className="p-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5"
+                  style={{ background: 'rgba(10,10,12,0.7)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div className="flex items-center gap-2 text-[#D4AF37] mb-1">
+                    {m.icon}
+                    <span className="font-heading font-bold text-white text-xs uppercase tracking-wider">{m.label}</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 font-sans font-light">{m.value}</p>
                 </div>
-                <p className="text-xs text-slate-400 font-sans">
-                  Up to 450 standing · 280 seated
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800">
-                <div className="flex items-center gap-3 mb-1 text-[#D4AF37]">
-                  <Music2 className="w-5 h-5" />
-                  <span className="font-bold text-white text-base">Full AV Ready</span>
-                </div>
-                <p className="text-xs text-slate-400 font-sans">
-                  DJ booth, premium sound & smart lighting
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800">
-                <div className="flex items-center gap-3 mb-1 text-[#D4AF37]">
-                  <Wine className="w-5 h-5" />
-                  <span className="font-bold text-white text-base">Bar & Catering</span>
-                </div>
-                <p className="text-xs text-slate-400 font-sans">
-                  Custom cocktail menus & plated dinner options
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800">
-                <div className="flex items-center gap-3 mb-1 text-[#D4AF37]">
-                  <Building2 className="w-5 h-5" />
-                  <span className="font-bold text-white text-base">Skyline Views</span>
-                </div>
-                <p className="text-xs text-slate-400 font-sans">
-                  Panoramic open-air patio & cozy interior
-                </p>
-              </div>
+              ))}
             </div>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Link
                 href="/private-events"
-                className="inline-flex items-center justify-center gap-2 bg-[#D4AF37] text-black font-bold uppercase tracking-widest text-xs py-4 px-8 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+                className="btn-gold-shimmer inline-flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.18em] py-3 px-7 rounded-full"
               >
-                Explore Venue Rental
-                <ArrowRight className="w-4 h-4" />
+                <span>Explore Venue Rental</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center gap-2 bg-transparent text-white border border-white/20 hover:border-[#D4AF37] hover:text-[#D4AF37] font-bold uppercase tracking-widest text-xs py-4 px-8 rounded-full transition-all"
+                className="inline-flex items-center justify-center font-bold uppercase tracking-[0.18em] text-[11px] py-3 px-7 rounded-full text-white hover:text-[#D4AF37] transition-colors"
+                style={{ background: 'rgba(10,10,12,0.7)', border: '1px solid rgba(255,255,255,0.12)' }}
               >
                 Inquire With Event Team
               </Link>
             </div>
           </div>
 
-          {/* Right Column: Visual Showcase Gallery */}
-          <div className="lg:col-span-6 grid grid-cols-2 gap-4">
-            <div className="relative h-64 sm:h-80 rounded-2xl overflow-hidden border border-zinc-800 group">
+          {/* Right: Stacked images (visible on mobile as well) */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group" style={{ border: '1px solid rgba(212,175,55,0.2)' }}>
               <Image
-                src="/private_page/5.jpeg"
-                alt="Reset HTX Rooftop Skyline View"
+                src="/images/16.png"
+                alt="Corporate Gathering"
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-700"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                style={{ filter: 'brightness(1.05) contrast(1.05) saturate(1.1)' }}
                 sizes="(max-width: 1024px) 50vw, 25vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4">
-                <p className="text-white font-bold text-sm">Downtown Skyline View</p>
-                <p className="text-slate-400 text-xs">Open-air rooftop patio</p>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 40%)' }} />
+              <div className="absolute bottom-3 left-3 right-3">
+                <p className="text-white font-heading font-bold text-xs">Corporate & Galas</p>
+                <p className="text-[#D4AF37] text-[9px] uppercase font-mono tracking-widest">Full Production</p>
               </div>
             </div>
-
-            <div className="relative h-64 sm:h-80 rounded-2xl overflow-hidden border border-zinc-800 group translate-y-6">
+            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group translate-y-6" style={{ border: '1px solid rgba(212,175,55,0.2)' }}>
               <Image
-                src="/private_page/2.jpeg"
-                alt="Corporate Gathering at Reset HTX"
+                src="/images/14.png"
+                alt="Friday Exchange Night"
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-700"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                style={{ filter: 'brightness(1.05) contrast(1.05) saturate(1.1)' }}
                 sizes="(max-width: 1024px) 50vw, 25vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4">
-                <p className="text-white font-bold text-sm">Corporate & Private Mixers</p>
-                <p className="text-slate-400 text-xs">Custom seating & cocktail service</p>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 40%)' }} />
+              <div className="absolute bottom-3 left-3 right-3">
+                <p className="text-white font-heading font-bold text-xs">Skyline Terrace</p>
+                <p className="text-[#D4AF37] text-[9px] uppercase font-mono tracking-widest">Open-Air Rooftop</p>
               </div>
             </div>
           </div>

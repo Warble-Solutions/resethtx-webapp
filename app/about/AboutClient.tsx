@@ -165,13 +165,13 @@ export default function AboutClient() {
             loop
             muted
             playsInline
-            className="w-full h-full object-cover opacity-35 scale-105"
+            className="w-full h-full object-cover scale-105"
+            style={{ opacity: 0.5, filter: 'brightness(1.1) contrast(1.05) saturate(1.2)' }}
           >
             <source src="/vids/vid.mp4" type="video/mp4" />
           </video>
           {/* Multi-layered gradient overlays */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#050505]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(5,5,5,0.85)_100%)]" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 40%, #050505 100%)' }} />
           
           {/* Subtle noise grain for filmic texture */}
           <div
@@ -184,21 +184,21 @@ export default function AboutClient() {
         <div className="relative z-10 max-w-5xl mx-auto pt-10 pb-16">
           
           {/* Haute Couture Badge */}
-          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-black/60 border border-[#D4AF37]/40 text-[#D4AF37] text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] mb-8 backdrop-blur-xl shadow-[0_0_30px_rgba(212,175,55,0.15)] animate-fade-in">
+          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] mb-6" style={{ background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(212,175,55,0.4)', color: '#D4AF37', backdropFilter: 'blur(12px)' }}>
             <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-ping" />
             <span>EST. MMXXII • 606 DENNIS ST • MIDTOWN HOUSTON</span>
           </div>
 
           {/* Main Dramatic Editorial Title */}
-          <h1 className="font-heading text-4xl xs:text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold uppercase tracking-tight text-white leading-[0.98] sm:leading-[0.9] drop-shadow-2xl mb-8">
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white leading-[1.05] mb-6" style={{ textShadow: '0 4px 30px rgba(0,0,0,0.95)' }}>
             The Art Of <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F6E8B1] to-[#D4AF37] drop-shadow-[0_0_35px_rgba(212,175,55,0.4)]">
+            <span className="gold-gradient-text">
               The Reset
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="font-sans text-zinc-300 text-sm sm:text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed font-light mb-12 text-balance">
+          <p className="font-sans text-zinc-200 text-xs sm:text-sm md:text-base max-w-xl mx-auto leading-relaxed font-light mb-8" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>
             Where high-fidelity acoustics, artisanal mixology, and skyline opulence converge above the energy of Midtown Houston.
           </p>
 
@@ -206,14 +206,15 @@ export default function AboutClient() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
             <Link
               href="/reservations"
-              className="w-full sm:w-auto px-10 py-4 bg-[#D4AF37] hover:bg-white text-black font-bold uppercase tracking-[0.25em] text-xs rounded-full transition-all transform hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.4)] text-center flex items-center justify-center gap-2"
+              className="w-full sm:w-auto btn-gold-shimmer px-9 py-3.5 font-bold uppercase tracking-[0.18em] text-[11px] rounded-full text-center flex items-center justify-center gap-2"
             >
               <span>Experience Reset</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/private-events"
-              className="w-full sm:w-auto px-10 py-4 border border-white/25 hover:border-[#D4AF37] hover:text-[#D4AF37] text-white font-bold uppercase tracking-[0.25em] text-xs rounded-full transition-all text-center backdrop-blur-md hover:bg-white/5"
+              className="w-full sm:w-auto px-9 py-3.5 font-bold uppercase tracking-[0.18em] text-[11px] rounded-full text-white/90 hover:text-[#D4AF37] text-center transition-colors"
+              style={{ background: 'rgba(10,10,12,0.7)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)' }}
             >
               Private Buyouts & Spaces
             </Link>
@@ -275,7 +276,7 @@ export default function AboutClient() {
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>The Origin Manifesto</span>
               </div>
-              <h2 className="font-heading text-3xl sm:text-5xl md:text-6xl font-bold uppercase text-white tracking-tight leading-[1.05]">
+              <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold uppercase text-white tracking-tight leading-[1.05]">
                 Born Above <br />
                 <span className="text-[#D4AF37]">The Houston Skyline</span>
               </h2>
@@ -380,7 +381,7 @@ export default function AboutClient() {
             <Compass className="w-3.5 h-3.5" />
             <span>Architectural Zoning</span>
           </div>
-          <h2 className="font-heading text-3xl sm:text-5xl md:text-6xl font-bold uppercase text-white tracking-tight">
+          <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold uppercase text-white tracking-tight">
             The Spaces
           </h2>
           <p className="text-zinc-400 text-xs sm:text-base font-sans mt-4 font-light">
@@ -425,7 +426,7 @@ export default function AboutClient() {
               <span className="text-zinc-400 text-xs font-mono">{currentSpace.tag}</span>
             </div>
 
-            <h3 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold uppercase text-white tracking-tight">
+            <h3 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold uppercase text-white tracking-tight">
               {currentSpace.name}
             </h3>
 
@@ -514,7 +515,7 @@ export default function AboutClient() {
               <Sparkles className="w-3.5 h-3.5" />
               <span>Sensory Curation</span>
             </div>
-            <h2 className="font-heading text-3xl sm:text-5xl md:text-6xl font-bold uppercase text-white tracking-tight">
+            <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold uppercase text-white tracking-tight">
               The Sensory Anatomy
             </h2>
             <p className="text-zinc-400 text-xs sm:text-base font-sans mt-4 font-light">

@@ -131,39 +131,43 @@ export default function EventsCalendar({
     const displayedCategories = getVisibleCategories()
 
     return (
-        <section className="bg-black py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 relative overflow-hidden">
-            {/* Ambient Gold Aura */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#D4AF37]/5 blur-[160px] rounded-full pointer-events-none" />
+        <section className="bg-[#050505] py-20 md:py-28 px-4 sm:px-6 lg:px-8 border-t border-[#D4AF37]/20 relative overflow-hidden">
+            {/* Ambient Gold Halo Aura */}
+            <div className="absolute top-1/3 left-1/4 -translate-x-1/2 w-[700px] h-[500px] bg-[#D4AF37]/8 blur-[180px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-10 right-10 w-[500px] h-[400px] bg-[#D4AF37]/5 blur-[160px] rounded-full pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-14 relative z-10">
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 relative z-10">
 
-                {/* --- LEFT COLUMN: LEGEND & TITLE --- */}
+                {/* --- LEFT COLUMN: HAUTE EDITORIAL INTRO --- */}
                 <div className="lg:w-1/3 flex flex-col justify-between pt-2">
                     <div>
-                        <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-bold mb-3">
+                        {/* Chapter Stamp */}
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-[#D4AF37]/35 text-[#D4AF37] text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] mb-4 backdrop-blur-md">
                             <CalendarIcon className="w-3.5 h-3.5" />
-                            <span>Rooftop Calendar</span>
+                            <span>CHAPTER // 01 · THE AGENDA</span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase leading-none mb-4 text-white font-heading tracking-tight">
+
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.02] mb-5 text-white font-heading tracking-tight drop-shadow-xl">
                             Plan Your <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F6E8B1] to-[#D4AF37]">
+                            <span className="gold-gradient-text">
                                 Night Out
                             </span>
                         </h2>
-                        <p className="text-zinc-400 text-sm leading-relaxed max-w-sm font-sans mb-8 font-light">
-                            There's always something happening at Reset. From midweek golden-hour happy hours to late-night rooftop headline DJs.
+
+                        <p className="text-zinc-300 text-sm sm:text-base leading-relaxed max-w-sm font-sans mb-8 font-light">
+                            From golden-hour happy hours and craft cocktail tastings to late-night headliner DJ sets under the stars.
                         </p>
 
-                        {/* Category Badges */}
+                        {/* Program Category Pills */}
                         <div className="space-y-3 font-sans mb-8">
-                            <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono">This Month's Programs</div>
+                            <div className="text-[10px] uppercase tracking-[0.25em] text-[#D4AF37] font-mono font-semibold">WEEKLY RESIDENCIES</div>
                             <div className="flex flex-wrap gap-2">
                                 {displayedCategories.map((cat, idx) => (
                                     <div
                                         key={idx}
-                                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-white/10 text-xs text-zinc-300 font-medium"
+                                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0a0a0c] border border-[#D4AF37]/25 text-xs text-zinc-200 font-medium hover:border-[#D4AF37] transition-colors"
                                     >
-                                        <span className={`w-2 h-2 rounded-full ${idx % 2 === 0 ? 'bg-[#D4AF37]' : 'bg-white'}`} />
+                                        <span className={`w-1.5 h-1.5 rounded-full ${idx % 2 === 0 ? 'bg-[#D4AF37] shadow-[0_0_6px_#D4AF37]' : 'bg-white'}`} />
                                         <span>{cat}</span>
                                     </div>
                                 ))}
@@ -171,36 +175,40 @@ export default function EventsCalendar({
                         </div>
                     </div>
 
-                    {/* Link to Full Events Page */}
-                    <div className="pt-4 border-t border-white/10 hidden lg:block">
+                    {/* Desktop Link to Full Events */}
+                    <div className="pt-6 border-t border-white/10 hidden lg:block">
                         <Link
                             href="/events"
-                            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-[#D4AF37] hover:text-white transition-colors group"
+                            className="btn-gold-shimmer inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold"
                         >
-                            <span>Explore Full Calendar & Tickets</span>
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            <span>Explore Full Calendar</span>
+                            <ArrowRight className="w-4 h-4" />
                         </Link>
                     </div>
                 </div>
 
-                {/* --- RIGHT COLUMN: THE GRID CALENDAR --- */}
+                {/* --- RIGHT COLUMN: ARCHITECTURAL CALENDAR MATRIX --- */}
                 <div className="lg:w-2/3">
-                    <div className="flex justify-between items-center mb-5">
-                        <h3 className="text-2xl md:text-3xl text-white font-light tracking-widest font-heading">
-                            {monthName} <span className="text-[#D4AF37] font-bold">{year}</span>
-                        </h3>
+                    <div className="flex justify-between items-center mb-6">
+                        <div>
+                            <span className="text-[10px] tracking-[0.3em] uppercase text-zinc-400 font-mono">SCHEDULE MATRIX</span>
+                            <h3 className="text-2xl md:text-3xl text-white font-bold tracking-wider font-heading">
+                                {monthName} <span className="gold-gradient-text">{year}</span>
+                            </h3>
+                        </div>
+
                         <div className="flex items-center gap-2 font-sans">
                             <button
                                 onClick={() => changeMonth(-1)}
                                 aria-label="Previous Month"
-                                className="w-9 h-9 border border-white/20 hover:border-[#D4AF37] hover:text-[#D4AF37] text-white flex items-center justify-center transition-all bg-zinc-900 hover:bg-black rounded-full cursor-pointer"
+                                className="w-10 h-10 border border-white/20 hover:border-[#D4AF37] hover:text-[#D4AF37] text-white flex items-center justify-center transition-all bg-[#0a0a0c] hover:bg-black rounded-full cursor-pointer shadow-lg"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={() => changeMonth(1)}
                                 aria-label="Next Month"
-                                className="w-9 h-9 border border-white/20 hover:border-[#D4AF37] hover:text-[#D4AF37] text-white flex items-center justify-center transition-all bg-zinc-900 hover:bg-black rounded-full cursor-pointer"
+                                className="w-10 h-10 border border-white/20 hover:border-[#D4AF37] hover:text-[#D4AF37] text-white flex items-center justify-center transition-all bg-[#0a0a0c] hover:bg-black rounded-full cursor-pointer shadow-lg"
                             >
                                 <ChevronRight className="w-4 h-4" />
                             </button>
@@ -208,18 +216,18 @@ export default function EventsCalendar({
                     </div>
 
                     {/* Weekday Headers */}
-                    <div className="grid grid-cols-7 border-b border-white/10 mb-2 font-sans">
+                    <div className="grid grid-cols-7 border-b border-[#D4AF37]/20 mb-3 font-sans">
                         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                            <div key={day} className="text-[10px] md:text-xs text-zinc-500 uppercase tracking-widest text-center py-2 font-semibold">
+                            <div key={day} className="text-[10px] md:text-xs text-[#D4AF37] uppercase tracking-[0.2em] text-center py-2.5 font-bold">
                                 {day}
                             </div>
                         ))}
                     </div>
 
-                    {/* Day Matrix */}
-                    <div className="grid grid-cols-7 auto-rows-[1fr] border-l border-t border-white/10 bg-zinc-950 rounded-lg overflow-hidden">
+                    {/* Day Matrix Frame */}
+                    <div className="grid grid-cols-7 auto-rows-[1fr] border-l border-t border-[#D4AF37]/25 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] bg-black">
                         {Array.from({ length: firstDay }).map((_, i) => (
-                            <div key={`empty-${i}`} className="aspect-square border-r border-b border-white/10 bg-black/60" />
+                            <div key={`empty-${i}`} className="aspect-square border-r border-b border-white/5 bg-black/80" />
                         ))}
 
                         {Array.from({ length: daysInMonth }).map((_, i) => {
@@ -242,11 +250,11 @@ export default function EventsCalendar({
                                         }
                                     }}
                                     className={`
-                                        relative aspect-square border-r border-b border-white/10 group overflow-hidden cursor-pointer transition-colors
-                                        ${isSelected ? 'bg-white/10 ring-1 ring-[#D4AF37]' : 'bg-zinc-950 hover:bg-zinc-900'}
+                                        relative aspect-square border-r border-b border-[#D4AF37]/15 group overflow-hidden cursor-pointer transition-all duration-300
+                                        ${isSelected ? 'bg-[#D4AF37]/15 ring-2 ring-[#D4AF37] z-20 shadow-[0_0_20px_rgba(212,175,55,0.4)]' : 'bg-[#0a0a0d] hover:bg-zinc-900'}
                                     `}
                                 >
-                                    <span className={`absolute top-1 left-1.5 md:top-2 md:left-2.5 text-[11px] md:text-xs font-sans font-bold z-20 transition-colors ${isSelected ? 'text-[#D4AF37]' : 'text-zinc-400 group-hover:text-white drop-shadow-md'}`}>
+                                    <span className={`absolute top-1.5 left-2 md:top-2.5 md:left-3 text-[11px] md:text-xs font-sans font-bold z-20 transition-colors ${isSelected ? 'text-[#D4AF37] font-black' : 'text-zinc-300 group-hover:text-white drop-shadow-md'}`}>
                                         {day}
                                     </span>
 
@@ -271,15 +279,15 @@ export default function EventsCalendar({
                                                             src={dayEvents[0].image_url}
                                                             alt={dayEvents[0].title}
                                                             fill
-                                                            className="w-full h-full object-cover object-top opacity-70 group-hover/item:opacity-100 group-hover/item:scale-105 transition-all duration-500"
+                                                            className="w-full h-full object-cover object-top opacity-90 group-hover/item:opacity-100 group-hover/item:scale-110 transition-all duration-500"
                                                         />
                                                     )}
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                                                    <div className="absolute bottom-1.5 left-1.5 right-1.5">
-                                                        <p className="text-[9px] uppercase tracking-wider text-[#D4AF37] mb-0.5 truncate font-sans font-bold">
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                                                    <div className="absolute bottom-1.5 left-1.5 right-1.5 z-10">
+                                                        <p className="text-[9px] uppercase tracking-wider text-[#D4AF37] mb-0.5 truncate font-sans font-extrabold drop-shadow-md">
                                                             {formatTime(dayEvents[0].time)}
                                                         </p>
-                                                        <p className="text-[11px] font-bold text-white leading-tight line-clamp-2 font-heading">
+                                                        <p className="text-[11px] font-bold text-white leading-tight line-clamp-2 font-heading drop-shadow-md">
                                                             {dayEvents[0].title}
                                                         </p>
                                                     </div>
@@ -292,12 +300,12 @@ export default function EventsCalendar({
                                                                 src={ev.image_url}
                                                                 alt={ev.title}
                                                                 fill
-                                                                className="w-full h-full object-cover object-center opacity-70 group-hover/item:opacity-100 transition-all duration-500"
+                                                                className="w-full h-full object-cover object-center opacity-90 group-hover/item:opacity-100 transition-all duration-500"
                                                             />
                                                         )}
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                                                        <div className="absolute bottom-1 left-1 right-1">
-                                                            <p className="text-[8px] uppercase tracking-wider text-[#D4AF37] truncate font-sans font-bold">
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
+                                                        <div className="absolute bottom-1 left-1 right-1 z-10">
+                                                            <p className="text-[8px] uppercase tracking-wider text-[#D4AF37] truncate font-sans font-bold drop-shadow-md">
                                                                 {formatTime(ev.time)}
                                                             </p>
                                                         </div>

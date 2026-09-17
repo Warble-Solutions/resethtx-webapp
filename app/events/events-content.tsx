@@ -150,66 +150,77 @@ export default function EventsContent({ events }: EventsContentProps) {
       {/* 1. TOP FEATURED EVENT SPOTLIGHT SECTION */}
       {/* ========================================================================= */}
       {spotlightEvent && (
-        <div className="relative rounded-3xl overflow-hidden border border-[#D4AF37]/40 bg-zinc-950/90 shadow-[0_15px_50px_rgba(0,0,0,0.8)] transition-all duration-500 hover:border-[#D4AF37] group">
+        <div className="relative rounded-3xl overflow-hidden glass-obsidian-gold group">
           <div className="relative h-[380px] sm:h-[400px] md:h-[440px] w-full overflow-hidden">
-            {/* Background Image */}
+            {/* Background Image — vivid and visible */}
             {spotlightEvent.image_url ? (
               <Image
                 src={spotlightEvent.featured_image_url || spotlightEvent.image_url}
                 alt={spotlightEvent.title}
                 fill
-                className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                style={{ filter: 'brightness(1.05) contrast(1.05)' }}
                 priority
               />
             ) : (
               <div className="w-full h-full bg-[#0e0e12]" />
             )}
 
-            {/* Dark Opulent Vignettes & Gradients */}
-            <div className="absolute inset-0 bg-black/60" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
+            {/* Controlled Vignette to protect text readability while keeping the photo bright */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%), linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)'
+              }}
+            />
 
             {/* Spotlight Content Overlay */}
             <div className="absolute inset-0 p-6 sm:p-8 md:p-12 flex flex-col justify-end z-10">
               
               {/* Badge Row */}
               <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4AF37] text-black text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] shadow-md">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full btn-gold-shimmer text-black text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">
                   <Sparkles className="w-3.5 h-3.5" />
                   Featured Event
                 </span>
-                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[#D4AF37] text-[10px] sm:text-xs font-bold uppercase tracking-widest">
+                <span
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[#D4AF37] text-[10px] sm:text-xs font-bold uppercase tracking-widest"
+                  style={{ background: 'rgba(0,0,0,0.65)', border: '1px solid rgba(212,175,55,0.3)', backdropFilter: 'blur(10px)' }}
+                >
                   {spotlightEvent.category || 'Curated Nightlife'}
                 </span>
               </div>
 
               {/* Title */}
-              <h2 className="font-heading text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold uppercase text-white tracking-tight leading-[1.05] mb-3 drop-shadow-2xl">
+              <h2
+                className="font-heading text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold uppercase text-white tracking-tight leading-[1.05] mb-3"
+                style={{ textShadow: '0 4px 25px rgba(0,0,0,0.95)' }}
+              >
                 {spotlightEvent.title}
               </h2>
 
               {/* Details Pill (Date & Time) */}
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-zinc-300 font-sans mb-3.5">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-zinc-200 font-sans mb-3.5">
                 <span className="inline-flex items-center gap-1.5 text-white font-medium">
                   <CalendarIcon className="w-4 h-4 text-[#D4AF37]" />
                   {getFormattedEventDate(spotlightEvent.date)}
                 </span>
-                <span className="hidden sm:inline text-zinc-600">✦</span>
+                <span className="hidden sm:inline text-zinc-500">✦</span>
                 <span className="inline-flex items-center gap-1.5 text-white font-medium">
                   <Clock className="w-4 h-4 text-[#D4AF37]" />
                   {formatEventTime(spotlightEvent.time, spotlightEvent.end_time)}
                 </span>
                 {spotlightEvent.ticket_price ? (
                   <>
-                    <span className="hidden sm:inline text-zinc-600">✦</span>
+                    <span className="hidden sm:inline text-zinc-500">✦</span>
                     <span className="text-[#D4AF37] font-bold">
                       ${spotlightEvent.ticket_price}
                     </span>
                   </>
                 ) : (
                   <>
-                    <span className="hidden sm:inline text-zinc-600">✦</span>
+                    <span className="hidden sm:inline text-zinc-500">✦</span>
                     <span className="text-[#D4AF37] font-semibold">Free RSVP Available</span>
                   </>
                 )}
@@ -226,19 +237,20 @@ export default function EventsContent({ events }: EventsContentProps) {
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <button
                   onClick={() => setSelectedEvent(spotlightEvent)}
-                  className="bg-[#D4AF37] hover:bg-white text-black font-bold py-3 px-8 rounded-full text-xs uppercase tracking-[0.2em] transition-all transform hover:scale-105 shadow-[0_0_25px_rgba(212,175,55,0.35)] text-center cursor-pointer"
+                  className="btn-gold-shimmer py-3 px-8 rounded-full text-[11px] uppercase tracking-[0.18em] text-center cursor-pointer font-bold"
                 >
                   {spotlightEvent.is_sold_out ? 'Sold Out' : 'Reserve Entry / Tickets'}
                 </button>
                 <button
                   onClick={() => setSelectedEvent(spotlightEvent)}
-                  className="border border-white/30 hover:border-[#D4AF37] hover:text-[#D4AF37] text-white font-bold py-3 px-7 rounded-full text-xs uppercase tracking-[0.2em] transition-all text-center cursor-pointer backdrop-blur-sm"
+                  className="py-3 px-7 rounded-full text-[11px] uppercase tracking-[0.18em] text-white/90 hover:text-[#D4AF37] transition-colors text-center cursor-pointer font-bold"
+                  style={{ background: 'rgba(10,10,12,0.7)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(12px)' }}
                 >
                   Experience Details
                 </button>
                 <Link
                   href="/reservations"
-                  className="hidden md:inline-flex items-center gap-2 text-zinc-400 hover:text-white text-xs font-semibold uppercase tracking-widest px-4 py-2 transition-colors ml-auto"
+                  className="hidden md:inline-flex items-center gap-2 text-zinc-300 hover:text-[#D4AF37] text-xs font-semibold uppercase tracking-widest px-4 py-2 transition-colors ml-auto"
                 >
                   <Crown className="w-3.5 h-3.5 text-[#D4AF37]" />
                   VIP Table Booking
@@ -362,11 +374,11 @@ export default function EventsContent({ events }: EventsContentProps) {
       {/* 3. CALENDAR VIEW (With Full Event Posters Filling the Day Cells) */}
       {/* ========================================================================= */}
       {viewMode === 'calendar' && (
-        <div className="rounded-2xl overflow-hidden border border-white/10 bg-zinc-950/90 shadow-2xl overflow-x-auto animate-in fade-in duration-300">
+        <div className="rounded-2xl overflow-hidden glass-obsidian border border-white/10 shadow-2xl overflow-x-auto">
           <div className="min-w-[720px] md:min-w-full">
             
             {/* Weekday Header Row */}
-            <div className="grid grid-cols-7 border-b border-white/10 bg-zinc-900/90">
+            <div className="grid grid-cols-7 border-b border-white/10 bg-black/60">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
                 <div
                   key={day}
@@ -388,7 +400,7 @@ export default function EventsContent({ events }: EventsContentProps) {
                   <div
                     key={day.toISOString()}
                     className={`h-[13.5vh] min-h-[115px] sm:min-h-[125px] max-h-[150px] flex flex-col border-b border-r border-white/10 relative transition-colors ${
-                      !isCurrent ? 'bg-black/60 opacity-35' : 'bg-[#08080a]'
+                      !isCurrent ? 'bg-black/70 opacity-30' : 'bg-black/30'
                     }`}
                   >
                     {/* Date Badge: Top Right */}
@@ -396,8 +408,8 @@ export default function EventsContent({ events }: EventsContentProps) {
                       <span
                         className={`text-[10px] sm:text-xs font-bold flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full shadow-md ${
                           today
-                            ? 'bg-[#D4AF37] text-black font-extrabold shadow-[0_0_8px_rgba(212,175,55,0.7)]'
-                            : 'bg-black/75 backdrop-blur-md text-white border border-white/20'
+                            ? 'bg-[#D4AF37] text-black font-extrabold shadow-[0_0_10px_rgba(212,175,55,0.7)]'
+                            : 'bg-black/80 backdrop-blur-md text-white border border-white/20'
                         }`}
                       >
                         {format(day, 'd')}
@@ -418,14 +430,15 @@ export default function EventsContent({ events }: EventsContentProps) {
                                 src={ev.image_url}
                                 alt={ev.title}
                                 fill
-                                className="object-cover opacity-85 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
+                                className="object-cover opacity-90 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
+                                style={{ filter: 'brightness(1.05)' }}
                               />
                             ) : (
                               <div className="absolute inset-0 bg-zinc-900" />
                             )}
 
                             {/* Sleek bottom overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent flex flex-col justify-end p-1.5 sm:p-2 pointer-events-none">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-1.5 sm:p-2 pointer-events-none">
                               <span className="text-[#D4AF37] text-[9px] sm:text-[10px] font-bold uppercase block leading-none mb-0.5 truncate drop-shadow">
                                 {formatEventTime(ev.time, ev.end_time)}
                               </span>
@@ -451,7 +464,7 @@ export default function EventsContent({ events }: EventsContentProps) {
       {/* 4. GRID VIEW */}
       {/* ========================================================================= */}
       {viewMode === 'grid' && (
-        <div className="space-y-6 animate-in fade-in duration-300">
+        <div className="space-y-6">
           {categoryFilteredEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {categoryFilteredEvents.map((event) => {
@@ -460,7 +473,7 @@ export default function EventsContent({ events }: EventsContentProps) {
                   <div
                     key={event.id}
                     onClick={() => setSelectedEvent(event)}
-                    className="group bg-zinc-950/80 border border-zinc-800/80 rounded-2xl overflow-hidden hover:border-[#D4AF37]/70 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer shadow-xl flex flex-col justify-between"
+                    className="group glass-obsidian border border-white/10 rounded-2xl overflow-hidden hover:border-[#D4AF37]/60 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer shadow-xl flex flex-col justify-between"
                   >
                     <div>
                       {/* Image Container with Date Pill */}
@@ -471,13 +484,14 @@ export default function EventsContent({ events }: EventsContentProps) {
                             alt={event.title}
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-700"
+                            style={{ filter: 'brightness(1.03)' }}
                           />
                         ) : (
                           <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-700">
                             Reset HTX
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
 
                         {/* Floating Date Badge */}
                         <div className="absolute top-3 right-3 bg-black/85 backdrop-blur-md border border-[#D4AF37]/50 text-white px-2.5 py-1 rounded-xl text-center shadow-lg">
@@ -491,7 +505,7 @@ export default function EventsContent({ events }: EventsContentProps) {
 
                         {/* Category badge */}
                         <div className="absolute bottom-2.5 left-3">
-                          <span className="text-[10px] font-bold uppercase tracking-[0.2em] bg-black/70 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/10 text-[#D4AF37]">
+                          <span className="text-[10px] font-bold uppercase tracking-[0.2em] bg-black/75 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/15 text-[#D4AF37]">
                             {event.category || 'Curated Nightlife'}
                           </span>
                         </div>
@@ -550,7 +564,7 @@ export default function EventsContent({ events }: EventsContentProps) {
       {/* 5. LIST VIEW */}
       {/* ========================================================================= */}
       {viewMode === 'list' && (
-        <div className="space-y-3.5 animate-in fade-in duration-300">
+        <div className="space-y-3.5">
           {categoryFilteredEvents.length > 0 ? (
             categoryFilteredEvents.map((event) => {
               const eventDate = safeParseEventDate(event.date)
@@ -558,7 +572,7 @@ export default function EventsContent({ events }: EventsContentProps) {
                 <div
                   key={event.id}
                   onClick={() => setSelectedEvent(event)}
-                  className="group flex flex-col md:flex-row items-stretch md:items-center gap-5 bg-zinc-950/80 border border-zinc-800/80 p-4 sm:p-5 rounded-2xl hover:border-[#D4AF37]/60 transition-all shadow-lg hover:shadow-[0_10px_30px_rgba(212,175,55,0.1)] cursor-pointer"
+                  className="group flex flex-col md:flex-row items-stretch md:items-center gap-5 glass-obsidian border border-white/10 p-4 sm:p-5 rounded-2xl hover:border-[#D4AF37]/60 transition-all shadow-lg hover:shadow-[0_10px_30px_rgba(212,175,55,0.1)] cursor-pointer"
                 >
                   {/* Date Column */}
                   <div className="shrink-0 w-full md:w-24 h-16 md:h-24 bg-black/70 rounded-xl flex md:flex-col items-center justify-center gap-2 md:gap-0 border border-white/5 group-hover:border-[#D4AF37]/50 transition-colors">
@@ -581,6 +595,7 @@ export default function EventsContent({ events }: EventsContentProps) {
                         alt={event.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        style={{ filter: 'brightness(1.03)' }}
                       />
                     ) : (
                       <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-700">
@@ -620,7 +635,7 @@ export default function EventsContent({ events }: EventsContentProps) {
                         e.stopPropagation()
                         setSelectedEvent(event)
                       }}
-                      className="w-full md:w-auto bg-[#D4AF37] text-black hover:bg-white font-bold py-2.5 px-6 rounded-full transition-all text-xs uppercase tracking-widest cursor-pointer shadow-[0_0_15px_rgba(212,175,55,0.25)]"
+                      className="w-full md:w-auto btn-gold-shimmer py-2.5 px-6 rounded-full text-[11px] uppercase tracking-widest cursor-pointer font-bold"
                     >
                       {event.ticket_price ? `Tickets $${event.ticket_price}` : 'RSVP Now'}
                     </button>
@@ -639,15 +654,15 @@ export default function EventsContent({ events }: EventsContentProps) {
       {/* ========================================================================= */}
       {/* 6. VIP BOTTLE SERVICE CONCIERGE CALLOUT */}
       {/* ========================================================================= */}
-      <div className="relative p-6 sm:p-10 rounded-3xl bg-gradient-to-br from-zinc-950 via-zinc-900 to-black border border-[#D4AF37]/40 text-center overflow-hidden shadow-2xl mt-8">
+      <div className="relative p-6 sm:p-10 rounded-3xl glass-obsidian-gold text-center overflow-hidden shadow-2xl mt-8">
         <div className="relative z-10 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[#D4AF37] text-[10px] font-bold uppercase tracking-[0.2em] mb-3" style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.3)' }}>
             <Crown className="w-3.5 h-3.5" />
             <span>Midtown VIP Table Service</span>
           </div>
 
           <h3 className="font-heading text-2xl sm:text-3xl font-bold uppercase text-white mb-2">
-            Reserve Your Private VIP Skyline Section
+            Reserve Your Private <span className="gold-gradient-text">VIP Skyline Section</span>
           </h3>
 
           <p className="text-zinc-300 text-xs sm:text-sm font-sans mb-6 max-w-md mx-auto font-light">
@@ -657,13 +672,14 @@ export default function EventsContent({ events }: EventsContentProps) {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/reservations"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3 bg-[#D4AF37] text-black font-bold uppercase tracking-[0.18em] text-xs rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.35)]"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 btn-gold-shimmer font-bold uppercase tracking-[0.18em] text-[11px] rounded-full"
             >
               Reserve VIP Table
             </Link>
             <Link
               href="/contact"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3 border border-white/20 text-white font-bold uppercase tracking-[0.18em] text-xs rounded-full hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-full text-white/90 hover:text-[#D4AF37] font-bold uppercase tracking-[0.18em] text-[11px] transition-colors"
+              style={{ background: 'rgba(10,10,12,0.7)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(12px)' }}
             >
               Contact Concierge
             </Link>

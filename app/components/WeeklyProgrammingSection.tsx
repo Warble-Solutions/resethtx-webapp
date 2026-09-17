@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Calendar, ArrowRight, Clock } from 'lucide-react'
+import { ArrowRight, Clock } from 'lucide-react'
 import { formatEventTime, isEventPastOrEnded } from '../utils/format'
 
 interface Event {
@@ -87,7 +87,6 @@ const PROGRAM_DEFS: ProgramConfig[] = [
   }
 ]
 
-// Helper to compute next upcoming date for a given weekday name
 function getNextWeekdayDate(dayName: string): string {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   const targetDay = days.indexOf(dayName)
@@ -105,14 +104,12 @@ export default function WeeklyProgrammingSection({
 }: WeeklyProgrammingSectionProps) {
 
   const programCards = PROGRAM_DEFS.map((prog, index) => {
-    // 1. Find all matching database events
     const matching = events.filter((ev) => {
       const title = (ev.title || '').toLowerCase()
       const cat = (ev.category || '').toLowerCase()
       return prog.queryKeywords.some((kw) => title.includes(kw) || cat.includes(kw))
     })
 
-    // 2. Select ONLY active upcoming events (strictly filter out any events that have already ended)
     const activeFutureMatches = matching
       .filter((ev) => !isEventPastOrEnded(ev.date, ev.time, ev.end_time))
       .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
@@ -120,7 +117,6 @@ export default function WeeklyProgrammingSection({
     const bestEvent = activeFutureMatches.length > 0 ? activeFutureMatches[0] : null
     const upcomingFallbackDate = getNextWeekdayDate(prog.day)
 
-    // 3. Prepare concrete single event payload for EventModal (guarantees detailed view & active booking flow)
     const eventPayload: Event = bestEvent ? {
       ...bestEvent,
       title: bestEvent.title || prog.title,
@@ -144,122 +140,98 @@ export default function WeeklyProgrammingSection({
     const displayTime = bestEvent?.time ? formatEventTime(bestEvent.time, bestEvent.end_time) : prog.defaultTime
     const priceDisplay = (bestEvent?.ticket_price === 0 || !bestEvent?.ticket_price) ? "Free RSVP" : `$${bestEvent.ticket_price}`
 
-    return {
-      prog,
-      bestEvent,
-      eventPayload,
-      cardImage,
-      displayTime,
-      priceDisplay
-    }
+    return { prog, bestEvent, eventPayload, cardImage, displayTime, priceDisplay }
   })
 
   const handleCardClick = (item: typeof programCards[0]) => {
-    if (onEventClick) {
-      onEventClick(item.eventPayload)
-    }
+    if (onEventClick) onEventClick(item.eventPayload)
   }
 
   return (
-    <section className="py-24 md:py-28 bg-[#050505] border-t border-white/5 relative overflow-hidden">
-      {/* Subtle gold glow */}
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-[#D4AF37]/5 blur-[160px] rounded-full pointer-events-none" />
+    <section className="py-20 sm:py-28 relative overflow-hidden" style={{ background: '#050505' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        
-        {/* SECTION HEADER */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-12 gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/25 text-[#D4AF37] text-xs font-bold uppercase tracking-[0.25em] mb-4">
-              <Calendar className="w-3.5 h-3.5" />
-              Weekly Programs & Residencies
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] tracking-[0.25em] uppercase font-bold mb-3"
+              style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)', color: '#D4AF37' }}>
+              CHAPTER // 03
             </div>
-            <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold uppercase text-white leading-tight">
-              Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F0DEAA] to-[#D4AF37]">Residencies</span>
+            <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white">
+              Weekly <span className="gold-gradient-text">Residencies</span>
             </h2>
           </div>
-
           <Link
             href="/events"
-            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-[#D4AF37] hover:text-white transition-colors group"
+            className="btn-gold-shimmer inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-[0.18em]"
           >
-            <span>View Full Monthly Schedule</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <span>Full Schedule</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        {/* 5 PROGRAM CARDS WITH PROGRAM IMAGES & UNIFORM BADGE SIZES */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+        {/* Horizontal scroll cards */}
+        <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory custom-scrollbar -mx-4 px-4">
           {programCards.map((item, idx) => (
             <div
               key={idx}
               onClick={() => handleCardClick(item)}
-              className="group flex flex-col rounded-2xl bg-zinc-950/85 border border-zinc-800/80 hover:border-[#D4AF37]/60 overflow-hidden transition-all duration-300 hover:-translate-y-2 cursor-pointer shadow-xl hover:shadow-[0_15px_35px_rgba(212,175,55,0.15)] justify-between"
+              className="shrink-0 w-[280px] sm:w-[300px] snap-start flex flex-col rounded-2xl overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1"
+              style={{ background: 'rgba(10,10,12,0.85)', border: '1px solid rgba(255,255,255,0.08)' }}
             >
-              <div>
-                {/* 1. PROGRAM IMAGE WITH UNIFORM BADGES */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-900">
-                  <Image
-                    src={item.cardImage}
-                    alt={item.prog.title}
-                    fill
-                    className="object-cover group-hover:scale-108 transition-transform duration-700"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 20vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/30" />
-                  
-                  {/* Top Badges - ALL BADGES STRICTLY UNIFORM EXACT SIZE: w-28 h-7 */}
-                  <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-                    {/* Category Badge (Exact w-28 h-7) */}
-                    <div className="w-28 h-7 flex items-center justify-center rounded-full bg-[#D4AF37] text-black text-[10px] font-bold uppercase tracking-wider text-center shadow-lg shrink-0">
-                      {item.prog.badge}
-                    </div>
+              {/* Image */}
+              <div className="relative aspect-[3/2] w-full overflow-hidden">
+                <Image
+                  src={item.cardImage}
+                  alt={item.prog.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  style={{ filter: 'brightness(1.05) contrast(1.05) saturate(1.1)' }}
+                  sizes="300px"
+                />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,10,12,0.9) 0%, transparent 50%)' }} />
 
-                    {/* Day Badge (Exact w-28 h-7) */}
-                    <div className="w-28 h-7 flex items-center justify-center rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold uppercase tracking-wider text-center shadow-lg shrink-0">
-                      {item.prog.day}
-                    </div>
-                  </div>
+                {/* Badges */}
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                  <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                    style={{ background: '#D4AF37', color: '#000' }}>
+                    {item.prog.badge}
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider text-white"
+                    style={{ background: 'rgba(0,0,0,0.7)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}>
+                    {item.prog.day}
+                  </span>
                 </div>
 
-                {/* 2. CARD BODY */}
-                <div className="p-5 flex flex-col">
-                  
-                  {/* Schedule Time Line */}
-                  <div className="flex items-center gap-1.5 text-[#D4AF37] text-xs font-bold uppercase tracking-wider font-sans mb-2">
-                    <Clock className="w-3.5 h-3.5 shrink-0" />
-                    <span className="truncate">{item.displayTime}</span>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="font-heading text-xl font-bold text-white uppercase group-hover:text-[#D4AF37] transition-colors line-clamp-1 mb-2 leading-snug">
+                {/* Title overlaid at bottom of image */}
+                <div className="absolute bottom-3 left-3 right-3">
+                  <h3 className="font-heading text-base font-bold text-white uppercase group-hover:text-[#D4AF37] transition-colors leading-tight">
                     {item.prog.title}
                   </h3>
-
-                  {/* Description */}
-                  <p className="text-zinc-400 text-xs font-sans leading-relaxed line-clamp-2 font-light">
-                    {item.prog.description}
-                  </p>
                 </div>
               </div>
 
-              {/* 3. CARD FOOTER */}
-              <div className="p-5 pt-0">
-                <div className="pt-3.5 border-t border-white/5 flex items-center justify-between mt-auto">
-                  <span className="text-white font-bold font-sans text-xs uppercase tracking-wider">
-                    {item.priceDisplay}
-                  </span>
-                  <span className="text-[#D4AF37] group-hover:text-white text-xs font-bold uppercase tracking-wider transition-colors inline-flex items-center gap-1">
-                    <span>Details & RSVP</span>
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+              {/* Body */}
+              <div className="p-4 flex flex-col flex-1">
+                <div className="flex items-center gap-1.5 text-[#D4AF37] text-[11px] font-bold uppercase tracking-wider font-sans mb-2">
+                  <Clock className="w-3 h-3 shrink-0" />
+                  <span className="truncate">{item.displayTime}</span>
+                </div>
+                <p className="text-zinc-400 text-[11px] font-sans leading-relaxed line-clamp-2 font-light mb-3 flex-1">
+                  {item.prog.description}
+                </p>
+                <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <span className="text-white font-bold font-sans text-[11px] uppercase tracking-wider">{item.priceDisplay}</span>
+                  <span className="text-[#D4AF37] text-[11px] font-bold uppercase tracking-wider group-hover:text-white transition-colors">
+                    RSVP →
                   </span>
                 </div>
               </div>
-
             </div>
           ))}
+          <div className="w-4 shrink-0" />
         </div>
-
       </div>
     </section>
   )

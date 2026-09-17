@@ -24,11 +24,25 @@ export default function Navbar() {
   const { openInquiry } = useInquire()
   const pathname = usePathname()
 
-  // Handle Scroll Transparency
+  // Handle Scroll Transparency & State
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    const handleScroll = () => {
+      const scrollY = Math.max(
+        window.pageYOffset || 0,
+        document.documentElement.scrollTop || 0,
+        document.body.scrollTop || 0,
+        window.scrollY || 0
+      )
+      setScrolled(scrollY > 5)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    document.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      document.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   // Close menu on route change
@@ -48,14 +62,26 @@ export default function Navbar() {
 
   if (pathname.startsWith('/admin')) return null
 
+  // Always solid on inner pages; on homepage, becomes 100% solid immediately upon scrolling (>5px) or menu open
+  const isSolid = scrolled || isOpen || pathname !== '/'
+
   return (
     <>
 
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled || isOpen
-          ? 'bg-black/95 backdrop-blur-md border-b border-white/10 py-4 shadow-2xl'
-          : 'bg-linear-to-b from-black/80 to-transparent border-b-0 border-transparent py-6'
-          }`}
+        style={{
+          backgroundColor: isSolid ? '#050505' : 'transparent',
+          backgroundImage: isSolid
+            ? 'none'
+            : 'linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)',
+          borderBottom: isSolid
+            ? '1px solid rgba(255, 255, 255, 0.12)'
+            : '1px solid transparent',
+          boxShadow: isSolid ? '0 10px 30px rgba(0, 0, 0, 0.9)' : 'none',
+        }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isSolid ? 'navbar-solid py-3.5 sm:py-4' : 'navbar-transparent py-5 sm:py-6'
+        }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center relative z-50">
 
@@ -109,7 +135,8 @@ export default function Navbar() {
 
       {/* MOBILE / TABLET MENU OVERLAY */}
       <div
-        className={`fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-center transition-all duration-500 lg:hidden h-dvh w-screen overflow-y-auto py-24
+        style={{ backgroundColor: 'rgba(5, 5, 5, 0.98)' }}
+        className={`fixed inset-0 z-40 backdrop-blur-2xl flex flex-col items-center justify-center transition-all duration-500 lg:hidden h-dvh w-screen overflow-y-auto py-24
           ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}
         `}
       >

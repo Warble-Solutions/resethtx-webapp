@@ -207,54 +207,52 @@ export default function PrivateEventsClient() {
       {/* ========================================================================= */}
       {/* 1. CINEMATIC HERO SECTION */}
       {/* ========================================================================= */}
-      <section className="relative h-[90dvh] min-h-[640px] w-full flex items-center justify-center overflow-hidden">
-        {/* Background Image & Ambient Luxury Vignettes */}
+      <section className="relative h-[85dvh] min-h-[580px] w-full flex items-center justify-center overflow-hidden">
+        {/* Background Image — unmasked bright */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/corpo.avif"
+            src="/images/12.png"
             alt="Reset Rooftop Skyline Private Event"
             fill
-            className="object-cover opacity-45 scale-105 transition-transform duration-10000"
+            className="object-cover"
+            style={{ filter: 'brightness(1.05) contrast(1.05) saturate(1.15)' }}
             priority
           />
-          <div className="absolute inset-0 bg-black/55" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/80" />
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#D4AF37]/12 blur-[140px] rounded-full pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, #050505 0%, transparent 40%, rgba(0,0,0,0.5) 100%)' }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.3) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.3) 100%)' }} />
         </div>
 
-        <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto pt-20">
+        <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl mx-auto pt-20">
           
           {/* Badge Pill */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/35 text-[#D4AF37] text-[11px] sm:text-xs font-bold uppercase tracking-[0.25em] mb-6 backdrop-blur-md shadow-lg">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] mb-5" style={{ background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(212,175,55,0.4)', color: '#D4AF37', backdropFilter: 'blur(12px)' }}>
             <Sparkles className="w-3.5 h-3.5" />
             <span>Private Events & Rooftop Buyouts</span>
-            <span className="hidden sm:inline">✦ Midtown Houston</span>
           </div>
 
           {/* Main Title */}
-          <h1 className="font-heading text-4xl xs:text-5xl sm:text-7xl md:text-8xl font-bold uppercase tracking-tight mb-6 text-white leading-[1.05] sm:leading-[0.95] drop-shadow-2xl">
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight mb-4 text-white leading-[1.05]" style={{ textShadow: '0 4px 30px rgba(0,0,0,0.95)' }}>
             Host Above <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F6E8B1] to-[#D4AF37]">
-              The Skyline
-            </span>
+            <span className="gold-gradient-text">The Skyline</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="font-sans text-zinc-300 text-sm sm:text-lg md:text-xl mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed font-light">
-            Boardroom views, not boardrooms. From executive networking and private culinary tastings to milestone galas and complete venue buyouts.
+          <p className="font-sans text-zinc-200 text-xs sm:text-sm md:text-base mb-7 max-w-xl mx-auto leading-relaxed font-light" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>
+            Boardroom views, not boardrooms. Executive networking, private culinary tastings, milestone galas, and complete venue buyouts.
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-md sm:max-w-none mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md sm:max-w-none mx-auto">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="w-full sm:w-auto px-10 py-4 bg-[#D4AF37] hover:bg-white text-black font-bold uppercase tracking-[0.2em] text-xs rounded-full transition-all transform hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.35)] cursor-pointer"
+              className="w-full sm:w-auto btn-gold-shimmer px-9 py-3.5 font-bold uppercase tracking-[0.18em] text-[11px] rounded-full cursor-pointer"
             >
               Inquire About Dates
             </button>
             <a
               href="#spaces"
-              className="w-full sm:w-auto px-10 py-4 border border-white/25 hover:border-[#D4AF37] hover:text-[#D4AF37] text-white font-bold uppercase tracking-[0.2em] text-xs rounded-full transition-all text-center backdrop-blur-sm"
+              className="w-full sm:w-auto px-9 py-3.5 font-bold uppercase tracking-[0.18em] text-[11px] rounded-full text-white/90 hover:text-[#D4AF37] text-center transition-colors"
+              style={{ background: 'rgba(10,10,12,0.7)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)' }}
             >
               Explore Spaces
             </a>
@@ -269,20 +267,20 @@ export default function PrivateEventsClient() {
       <section className="bg-zinc-950/90 border-y border-white/10 py-6 sm:py-8 px-4 sm:px-6 relative z-20">
         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center">
           <div className="p-2">
-            <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">10+</p>
-            <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">Group Gatherings</p>
+            <p className="font-heading text-2xl sm:text-3xl font-bold text-[#D4AF37]">10+</p>
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.15em] text-zinc-400 mt-1 font-sans">Group Gatherings</p>
           </div>
           <div className="p-2 border-l border-white/10">
-            <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">Dual</p>
-            <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">Patio & Indoor Lounge</p>
+            <p className="font-heading text-2xl sm:text-3xl font-bold text-[#D4AF37]">Dual</p>
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.15em] text-zinc-400 mt-1 font-sans">Patio & Indoor Lounge</p>
           </div>
           <div className="p-2 border-l border-white/10">
-            <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">360°</p>
-            <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">Skyline Panoramas</p>
+            <p className="font-heading text-2xl sm:text-3xl font-bold text-[#D4AF37]">360°</p>
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.15em] text-zinc-400 mt-1 font-sans">Skyline Panoramas</p>
           </div>
           <div className="p-2 border-l border-white/10">
-            <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">&lt;10 min</p>
-            <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">From Downtown HTX</p>
+            <p className="font-heading text-2xl sm:text-3xl font-bold text-[#D4AF37]">&lt;10 min</p>
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.15em] text-zinc-400 mt-1 font-sans">From Downtown HTX</p>
           </div>
         </div>
       </section>
@@ -295,7 +293,7 @@ export default function PrivateEventsClient() {
           <span className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-bold block mb-2">
             Customizable Configurations
           </span>
-          <h2 className="font-heading text-3xl sm:text-5xl md:text-6xl font-bold uppercase text-white tracking-tight">
+          <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold uppercase text-white tracking-tight">
             The Venue Spaces
           </h2>
           <p className="text-zinc-400 text-sm sm:text-base md:text-lg font-sans leading-relaxed mt-4 font-light">
@@ -405,7 +403,7 @@ export default function PrivateEventsClient() {
             <span className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-bold block mb-2">
               Atmosphere & Aesthetic
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold uppercase text-white tracking-tight">
+            <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold uppercase text-white tracking-tight">
               Event Visual Lookbook
             </h2>
             <p className="text-zinc-400 text-xs sm:text-sm font-sans mt-2 font-light">
@@ -490,7 +488,7 @@ export default function PrivateEventsClient() {
           <span className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-bold block mb-2">
             Tailored Experiences
           </span>
-          <h2 className="font-heading text-3xl sm:text-5xl font-bold uppercase text-white tracking-tight">
+          <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold uppercase text-white tracking-tight">
             Event Types & Occasions
           </h2>
         </div>
@@ -531,7 +529,7 @@ export default function PrivateEventsClient() {
             <span className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-bold block mb-2">
               Full-Service Event Execution
             </span>
-            <h2 className="font-heading text-3xl sm:text-5xl font-bold uppercase text-white tracking-tight mb-6">
+            <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold uppercase text-white tracking-tight mb-5">
               Turnkey Production & Amenities
             </h2>
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed font-sans mb-8 font-light">
@@ -657,7 +655,7 @@ export default function PrivateEventsClient() {
             <span className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-bold block mb-2">
               The Journey
             </span>
-            <h2 className="font-heading text-3xl sm:text-5xl font-bold uppercase text-white tracking-tight">
+            <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold uppercase text-white tracking-tight">
               Seamless Planning Process
             </h2>
           </div>
@@ -728,7 +726,7 @@ export default function PrivateEventsClient() {
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-5 pb-5 text-xs sm:text-sm text-zinc-400 font-sans leading-relaxed border-t border-white/5 pt-3 font-light animate-in fade-in duration-200">
+                  <div className="px-5 pb-5 text-xs sm:text-sm text-zinc-400 font-sans leading-relaxed border-t border-white/5 pt-3 font-light">
                     {faq.a}
                   </div>
                 )}
@@ -750,7 +748,7 @@ export default function PrivateEventsClient() {
             <span>Dates Fill Quickly</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold uppercase mt-2 mb-6 tracking-tight font-heading text-white">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase mt-2 mb-5 tracking-tight font-heading text-white">
             Plan Your Next Event
           </h2>
 
@@ -760,7 +758,7 @@ export default function PrivateEventsClient() {
 
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#D4AF37] hover:bg-white text-black px-12 py-4.5 font-bold uppercase tracking-[0.2em] text-xs transition-all transform hover:scale-105 rounded-full shadow-[0_0_35px_rgba(212,175,55,0.4)] cursor-pointer"
+            className="btn-gold-shimmer px-10 py-3.5 font-bold uppercase tracking-[0.18em] text-[11px] rounded-full cursor-pointer"
           >
             Submit Venue Inquiry
           </button>

@@ -1,3 +1,5 @@
+import { MessageSquareQuote, Star } from 'lucide-react'
+
 interface Testimonial {
     id: string
     quote: string
@@ -12,62 +14,69 @@ export default function TestimonialsSection({ testimonials }: { testimonials: Te
     if (!testimonials || testimonials.length === 0) return null
 
     return (
-        <section className="py-24 bg-[#0F172A] border-t border-white/5 relative overflow-hidden">
-            {/* Background Decor */}
-            <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-[#D4AF37]/50 to-transparent"></div>
+        <section className="py-28 bg-[#050505] border-t border-white/10 relative overflow-hidden">
+            {/* Background Decor & Glow */}
+            <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[700px] h-[700px] bg-[#D4AF37]/5 blur-[160px] rounded-full pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+                {/* Header */}
                 <div className="text-center mb-16">
-                    <h2 className="text-[#D4AF37] tracking-[0.3em] font-bold text-sm mb-4 uppercase">
-                        The Word on the Street
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] tracking-[0.3em] uppercase font-bold mb-4">
+                        <MessageSquareQuote className="w-3.5 h-3.5" />
+                        CHAPTER // 07 · THE ACCLAIM
+                    </div>
+                    <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white uppercase tracking-tight">
+                        Voices of the <span className="gold-gradient-text">Skyline</span>
                     </h2>
-                    <h3 className="font-heading text-4xl md:text-5xl font-bold text-white uppercase">
-                        Guest <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4AF37] to-[#F0DEAA]">Love</span>
-                    </h3>
+                    <p className="mt-3 text-slate-400 font-sans text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed">
+                        Unfiltered impressions from Houston tastemakers, private celebration hosts, and evening regulars.
+                    </p>
                 </div>
 
-                {/* 2. Scrollable Container */}
-                {/* 'snap-x' enables snap scrolling, 'pb-8' makes room for scrollbar */}
-                <div className="flex overflow-x-auto gap-8 pb-8 snap-x snap-mandatory custom-scrollbar">
-
+                {/* Horizontal Scrollable Carousel */}
+                <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory custom-scrollbar pt-2">
                     {testimonials.map((t) => (
                         <div
                             key={t.id}
-                            // Fixed width (w-80 or w-96) ensures cards stay consistent size while scrolling
-                            className="shrink-0 w-[85vw] md:w-96 snap-center bg-black/40 border border-white/5 p-8 relative group hover:border-[#D4AF37]/30 transition-all duration-500 flex flex-col"
+                            className="shrink-0 w-[85vw] sm:w-[380px] md:w-[420px] snap-center glass-obsidian border border-white/10 p-8 rounded-2xl relative group hover:border-[#D4AF37]/50 transition-all duration-500 flex flex-col justify-between shadow-[0_10px_35px_rgba(0,0,0,0.8)] hover:-translate-y-1.5"
                         >
                             {/* Gold Quote Icon */}
-                            <div className="absolute top-6 right-6 text-6xl text-[#D4AF37]/40 font-serif leading-none group-hover:text-[#D4AF37] transition-colors">
+                            <div className="absolute top-6 right-6 text-5xl text-[#D4AF37]/20 font-serif leading-none group-hover:text-[#D4AF37]/50 transition-colors select-none pointer-events-none">
                                 &ldquo;
                             </div>
 
-                            {/* Stars */}
-                            <div className="flex text-[#D4AF37] text-sm mb-4">
-                                {Array.from({ length: t.rating || 5 }).map((_, i) => (
-                                    <span key={i}>★</span>
-                                ))}
+                            <div>
+                                {/* Stars */}
+                                <div className="flex items-center gap-1 text-[#D4AF37] text-xs mb-5">
+                                    {Array.from({ length: t.rating || 5 }).map((_, i) => (
+                                        <Star key={i} className="w-4 h-4 fill-[#D4AF37] text-[#D4AF37]" />
+                                    ))}
+                                </div>
+
+                                {/* Quote Text */}
+                                <p className="text-slate-200 font-sans text-sm sm:text-base leading-relaxed mb-8 relative z-10 font-light italic">
+                                    &ldquo;{t.quote}&rdquo;
+                                </p>
                             </div>
 
-                            {/* Quote Text */}
-                            <p className="text-slate-300 italic mb-8 relative z-10 font-sans leading-relaxed min-h-[80px]">
-                                {t.quote}
-                            </p>
-
                             {/* Author Info */}
-                            <div className="flex items-center gap-4 border-t border-white/5 pt-6 mt-auto">
-                                <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#D4AF37] to-[#8a701f] flex items-center justify-center text-black font-bold font-heading shadow-[0_0_10px_rgba(212,175,55,0.3)]">
+                            <div className="flex items-center gap-4 border-t border-white/10 pt-5 mt-auto">
+                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#8a701f] flex items-center justify-center text-black font-bold font-heading shadow-[0_0_15px_rgba(212,175,55,0.3)] shrink-0 text-base">
                                     {t.author_name.charAt(0)}
                                 </div>
-                                <div>
-                                    <h4 className="text-white font-bold text-sm uppercase tracking-wider">{t.author_name}</h4>
-                                    <p className="text-[#D4AF37] text-xs font-bold opacity-70">{t.author_role || 'Guest'}</p>
+                                <div className="overflow-hidden">
+                                    <h4 className="text-white font-bold text-xs sm:text-sm uppercase tracking-wider truncate">
+                                        {t.author_name}
+                                    </h4>
+                                    <p className="text-[#D4AF37] text-[11px] font-mono tracking-widest uppercase truncate mt-0.5">
+                                        {t.author_role || 'Verified Guest'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     ))}
 
-                    {/* Spacer at the end for smooth scrolling */}
-                    <div className="w-4 shrink-0"></div>
+                    <div className="w-4 shrink-0" />
                 </div>
             </div>
         </section>
