@@ -26,11 +26,66 @@ const manrope = Manrope({
   display: "swap",
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://resethtx.com'
+
 export const metadata: Metadata = {
-  title: "Reset HTX",
-  description: "Experience the vibe.",
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: "Reset HTX | Rooftop Lounge, Craft Cocktails & Dining in Midtown Houston",
+    template: "%s | Reset HTX",
+  },
+  description: "Houston's premier rooftop lounge in Midtown. Featuring craft cocktails, elevated dining, weekday happy hours, private event venue rentals, and curated nightlife.",
+  keywords: [
+    "Houston rooftop lounge",
+    "Midtown Houston lounge",
+    "craft cocktails Houston",
+    "rooftop dining Houston",
+    "private events Houston",
+    "happy hour Midtown Houston",
+    "Reset HTX",
+    "Houston nightlife",
+  ],
+  authors: [{ name: "Reset HTX" }],
+  creator: "Reset HTX",
+  publisher: "Reset HTX",
+  alternates: {
+    canonical: "./",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: baseUrl,
+    siteName: "Reset HTX",
+    title: "Reset HTX | Rooftop Lounge, Craft Cocktails & Dining in Midtown Houston",
+    description: "Houston's premier rooftop lounge in Midtown. Featuring craft cocktails, elevated dining, weekday happy hours, private event venue rentals, and curated nightlife.",
+    images: [
+      {
+        url: "/logos/logo-main.png",
+        width: 1200,
+        height: 630,
+        alt: "Reset HTX Rooftop Lounge & Kitchen Midtown Houston",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Reset HTX | Rooftop Lounge, Craft Cocktails & Dining in Midtown Houston",
+    description: "Houston's premier rooftop lounge in Midtown. Featuring craft cocktails, elevated dining, weekday happy hours, private event venue rentals, and curated nightlife.",
+    images: ["/logos/logo-main.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
-    icon: '/logos/fav.png',
+    icon: "/logos/fav.png",
   },
 };
 

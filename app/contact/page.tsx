@@ -1,5 +1,14 @@
+import type { Metadata } from 'next'
 import ContactForm from '@/app/components/ContactForm'
 import { createClient } from '@/utils/supabase/server'
+
+export const metadata: Metadata = {
+  title: "Contact & Location | Reset HTX Midtown Houston",
+  description: "Contact Reset HTX in Midtown Houston for table reservations, VIP bottle service, private event buyouts, or customer service. Located at 606 Dennis St Ste 200.",
+  alternates: {
+    canonical: '/contact',
+  },
+}
 
 export default async function ContactPage() {
     const supabase = await createClient()

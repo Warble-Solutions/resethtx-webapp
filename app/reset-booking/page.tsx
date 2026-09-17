@@ -2,8 +2,11 @@ import type { Metadata } from 'next'
 import ResetBookingClient from './ResetBookingClient'
 
 export const metadata: Metadata = {
-    title: 'Book Now | Reset HTX',
-    description: 'Book your table at Reset HTX — Houston\'s premier nightlife destination. Reserve for a live event or general dining.',
+    title: 'Table Reservations & VIP Booking | Reset HTX Houston',
+    description: 'Reserve a table or VIP bottle service section at Reset HTX in Midtown Houston. Enjoy rooftop dining, craft cocktails, live DJs, and skyline views.',
+    alternates: {
+        canonical: '/reservations',
+    },
 }
 
 export default function ResetBookingPage() {

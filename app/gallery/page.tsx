@@ -1,5 +1,14 @@
+import type { Metadata } from 'next'
 import GalleryContent from './gallery-content'
 import { getGalleryImages } from '@/app/actions/gallery'
+
+export const metadata: Metadata = {
+  title: "Photo Gallery | Reset HTX Rooftop Atmosphere & Nightlife",
+  description: "Explore photo highlights from Reset HTX rooftop lounge in Midtown Houston. See our skyline views, luxury booths, craft cocktails, and vibrant nightlife atmosphere.",
+  alternates: {
+    canonical: '/gallery',
+  },
+}
 
 export const revalidate = 60 // Revalidate every minute
 

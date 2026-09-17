@@ -31,7 +31,12 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files
-# .env*
+.env
+.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # vercel
 .vercel
@@ -40,15 +45,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-#databse pass
+# database pass
 .cas.txt
 
 # Image backup from compression script
 _image_backup/
 reset-htx-cpanel*.tar.gz
-
-# Environment secrets
-.env.local
 
 # Google service account key
 *.json
@@ -56,3 +58,6 @@ reset-htx-cpanel*.tar.gz
 !package-lock.json
 !tsconfig.json
 !next.config.json
+
+# Local Netlify folder
+.netlify

@@ -2,16 +2,16 @@
 
 import { useState } from 'react'
 import HeroCarousel from './HeroCarousel'
-import UpcomingEventsSection from './UpcomingEventsSection'
-import EventsCalendar from './EventsCalendar'
+import TheExperienceSection from './TheExperienceSection'
+import RooftopDiningSection from './RooftopDiningSection'
+import WeeklyProgrammingSection from './WeeklyProgrammingSection'
+import VenueShowcaseSection from './VenueShowcaseSection'
+import VipLoungeSection from './VipLoungeSection'
 import TestimonialsSection from './TestimonialsSection'
-import SonicLandscapeSection from './SonicLandscapeSection'
+import ReviewsCTA from './ReviewsCTA'
+import HomeFaqSection from './HomeFaqSection'
 import EventModal from './EventModal'
 import ReviewModal from './ReviewModal'
-import ReviewsCTA from './ReviewsCTA'
-import ExclusiveAccess from './ExclusiveAccess'
-import HappyHourSection from './HappyHourSection'
-
 
 interface Event {
     id: string
@@ -21,7 +21,6 @@ interface Event {
     image_url: string | null
     featured_image_url?: string | null
     description?: string | null
-    // ... flexible for other props
     [key: string]: any
 }
 
@@ -52,36 +51,40 @@ export default function HomeClient({
     return (
         <main className="min-h-screen bg-black text-white selection:bg-[#D4AF37] selection:text-black">
 
+            {/* 1. CINEMATIC LUXURY HERO (2 Main Brand Banners + up to 5 Featured Events) */}
             <HeroCarousel
                 events={featuredEvents}
                 onEventClick={handleEventClick}
             />
 
-            {/* Restored Calendar Widget */}
-            <EventsCalendar
+            {/* 2. BRAND NARRATIVE: AN ELEVATED ESCAPE ABOVE MIDTOWN */}
+            <TheExperienceSection />
+
+            {/* 3. ROOFTOP DINING & COCKTAIL MAGAZINE SPREAD */}
+            <RooftopDiningSection />
+
+            {/* 4. CURATED WEEKLY RESIDENCY SCHEDULE (Wed, Thu, Fri, Sat, Sun) */}
+            <WeeklyProgrammingSection
                 events={allEvents}
                 onEventClick={handleEventClick}
             />
 
-            {/* Restored Upcoming Events Section */}
-            <UpcomingEventsSection events={upcomingEvents} />
+            {/* 5. PRIVATE BUYOUTS & EXECUTIVE ENTERTAINING */}
+            <VenueShowcaseSection />
 
-            <ExclusiveAccess />
+            {/* 6. VIP BOOTHS & BOTTLE CONCIERGE */}
+            <VipLoungeSection />
 
-            {/* REPLACED: PrivateEventsSection with HappyHourSection */}
-            <HappyHourSection />
-
+            {/* 7. GUEST TESTIMONIALS */}
             <TestimonialsSection testimonials={testimonials} />
 
-            <SonicLandscapeSection />
-
-            {/* REMOVED: ReservationSection */}
-            {/* REMOVED: PlanYourNightSection */}
-
+            {/* 8. REVIEWS CTA */}
             <ReviewsCTA onOpenReview={() => setIsReviewModalOpen(true)} />
 
+            {/* 9. ESSENTIAL GUEST FAQ */}
+            <HomeFaqSection />
 
-
+            {/* MODALS */}
             <EventModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

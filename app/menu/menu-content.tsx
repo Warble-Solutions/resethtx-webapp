@@ -16,11 +16,10 @@ interface MenuItem {
 const SPIRIT_ORDER = ['Vodka', 'Tequila', 'Whiskey', 'Cognac', 'Scotch', 'Champagne', 'Package']
 
 const CATEGORIES = [
+    'Bar Bites',
     'Signatures',
     'Happy Hour',
     'Spirits & Bottles',
-    'Exotic & Daily',
-    'Bar Bites',
     'Hookah'
 ]
 
@@ -31,7 +30,7 @@ const formatPrice = (price: string | number) => {
 };
 
 export default function MenuContent({ items }: { items: MenuItem[] }) {
-    // Default to first category
+    // Default to first category: 'Bar Bites' (Kitchen)
     const [activeTab, setActiveTab] = useState(CATEGORIES[0])
     const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
 
@@ -40,24 +39,26 @@ export default function MenuContent({ items }: { items: MenuItem[] }) {
 
     return (
         <div>
-            {/* --- 1. TABS NAVIGATION --- */}
-            <div className="flex flex-wrap justify-center gap-4 mb-16 border-b border-white/10 pb-1">
-                {CATEGORIES.map((cat) => (
-                    <button
-                        key={cat}
-                        onClick={() => setActiveTab(cat)}
-                        className={`
-                    px-4 md:px-6 py-3 text-sm md:text-base font-bold uppercase tracking-widest transition-all relative
-                    ${activeTab === cat ? 'text-[#D4AF37]' : 'text-slate-500 hover:text-white'}
-                `}
-                    >
-                        {cat}
-                        {/* Gold Underline for active tab */}
-                        {activeTab === cat && (
-                            <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#D4AF37] shadow-[0_0_10px_#D4AF37]" />
-                        )}
-                    </button>
-                ))}
+            {/* --- 1. LUXURY TABS NAVIGATION --- */}
+            <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-16 pb-4 border-b border-white/10">
+                {CATEGORIES.map((cat) => {
+                    const isSelected = activeTab === cat
+                    return (
+                        <button
+                            key={cat}
+                            onClick={() => setActiveTab(cat)}
+                            className={`
+                                px-5 md:px-7 py-3 text-xs md:text-sm font-bold uppercase tracking-[0.2em] rounded-full transition-all duration-300 relative cursor-pointer
+                                ${isSelected 
+                                    ? 'bg-[#D4AF37] text-black shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-105' 
+                                    : 'bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800 border border-white/5'
+                                }
+                            `}
+                        >
+                            {cat === 'Bar Bites' ? 'Kitchen & Bites' : cat}
+                        </button>
+                    )
+                })}
             </div>
 
 
@@ -162,54 +163,83 @@ export default function MenuContent({ items }: { items: MenuItem[] }) {
 
 
 
-            {/* --- 3. POPUP MODAL --- */}
+            {/* --- 3. PRIVATE DINING / RESERVATION BANNER --- */}
+            <div className="mt-20 p-8 md:p-12 rounded-3xl bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 border border-[#D4AF37]/30 text-center relative overflow-hidden shadow-2xl">
+                <div className="absolute top-0 right-1/4 w-72 h-72 bg-[#D4AF37]/10 blur-[90px] rounded-full pointer-events-none" />
+                <div className="relative z-10 max-w-2xl mx-auto">
+                    <span className="text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-bold">Group Dining & Celebrations</span>
+                    <h3 className="font-heading text-3xl md:text-4xl font-bold uppercase text-white mt-2 mb-4">
+                        Reserve Your Table Above The Skyline
+                    </h3>
+                    <p className="text-slate-400 text-sm md:text-base font-sans leading-relaxed mb-8">
+                        Whether it's an intimate date night, birthday dinner, or corporate mixer, reserve a dedicated rooftop table with personalized bottle and dining service.
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <a
+                            href="/reservations"
+                            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 bg-[#D4AF37] text-black font-bold uppercase tracking-widest text-xs rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+                        >
+                            Reserve Table
+                        </a>
+                        <a
+                            href="/private-events"
+                            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 border border-white/20 text-white font-bold uppercase tracking-widest text-xs rounded-full hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all"
+                        >
+                            Private Buyouts
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {/* --- 4. POPUP MODAL --- */}
             {
                 selectedItem && (
                     <div
                         onClick={() => setSelectedItem(null)}
-                        className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
+                        className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 cursor-pointer"
                     >
                         <div
                             onClick={(e) => e.stopPropagation()}
-                            className="bg-[#0a0a0a] border border-[#D4AF37] max-w-lg w-full rounded-xl overflow-hidden shadow-[0_0_50px_rgba(212,175,55,0.2)] cursor-default relative"
+                            className="bg-zinc-950 border border-[#D4AF37]/50 max-w-lg w-full rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(212,175,55,0.25)] cursor-default relative"
                         >
                             {/* Close Button */}
                             <button
                                 onClick={() => setSelectedItem(null)}
-                                className="absolute top-4 right-4 z-10 w-8 h-8 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-[#D4AF37] hover:text-black transition-colors"
+                                aria-label="Close modal"
+                                className="absolute top-4 right-4 z-10 w-8 h-8 bg-black/70 border border-white/15 text-white rounded-full flex items-center justify-center hover:bg-[#D4AF37] hover:text-black transition-colors"
                             >
                                 ✕
                             </button>
 
                             {/* Modal Image */}
-                            <div className="relative h-64 w-full bg-slate-900 border-b border-white/10">
+                            <div className="relative h-64 w-full bg-zinc-900 border-b border-white/10">
                                 {selectedItem.image_url ? (
                                     <Image src={selectedItem.image_url} alt={selectedItem.name} fill className="object-cover" />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-slate-600">No Image Available</div>
+                                    <div className="w-full h-full flex items-center justify-center text-zinc-600 font-sans text-sm">No Image Available</div>
                                 )}
                             </div>
 
                             {/* Modal Content */}
                             <div className="p-8">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="font-heading text-3xl font-bold text-white">{selectedItem.name}</h3>
-                                    <span className="text-2xl text-[#D4AF37] font-bold font-heading">{formatPrice(selectedItem.price)}</span>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="font-heading text-2xl md:text-3xl font-bold text-white">{selectedItem.name}</h3>
+                                    <span className="text-xl md:text-2xl text-[#D4AF37] font-bold font-heading">{formatPrice(selectedItem.price)}</span>
                                 </div>
 
                                 <div className="prose prose-invert prose-sm">
-                                    <p className="text-slate-300 leading-relaxed text-base">
-                                        {selectedItem.description || "Ask your server for details about this item."}
+                                    <p className="text-zinc-300 leading-relaxed text-sm md:text-base font-sans">
+                                        {selectedItem.description || "Ask your server for tasting notes and pairing suggestions."}
                                     </p>
                                 </div>
 
                                 <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
-                                    <span className="text-xs uppercase text-slate-500 font-bold tracking-widest">{selectedItem.category}</span>
+                                    <span className="text-xs uppercase text-[#D4AF37] font-bold tracking-[0.2em]">{selectedItem.category}</span>
                                     <button
                                         onClick={() => setSelectedItem(null)}
-                                        className="text-white hover:text-[#D4AF37] text-sm font-bold uppercase tracking-wide"
+                                        className="text-white hover:text-[#D4AF37] text-xs font-bold uppercase tracking-widest transition-colors cursor-pointer"
                                     >
-                                        Close
+                                        Back to Menu
                                     </button>
                                 </div>
                             </div>
@@ -217,7 +247,7 @@ export default function MenuContent({ items }: { items: MenuItem[] }) {
                     </div>
                 )
             }
-        </div >
+        </div>
     )
 }
 
@@ -225,11 +255,11 @@ function MenuItemCard({ item, onClick }: { item: MenuItem, onClick: () => void }
     return (
         <div
             onClick={onClick}
-            className="flex bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden cursor-pointer group hover:border-[#D4AF37]/50 transition-all hover:-translate-y-1 h-36 md:h-40"
+            className="flex bg-zinc-950/70 border border-zinc-800/80 rounded-2xl overflow-hidden cursor-pointer group hover:border-[#D4AF37]/60 transition-all duration-300 hover:-translate-y-1 h-36 md:h-40 shadow-md hover:shadow-[0_8px_25px_rgba(212,175,55,0.12)]"
         >
             {/* LEFT: Image (Fixed Width - Only if exists) */}
             {item.image_url && (
-                <div className="w-1/3 relative h-full bg-slate-900 border-r border-white/5 shrink-0">
+                <div className="w-1/3 relative h-full bg-zinc-900 border-r border-white/5 shrink-0 overflow-hidden">
                     <Image
                         src={item.image_url}
                         alt={item.name}
@@ -243,22 +273,22 @@ function MenuItemCard({ item, onClick }: { item: MenuItem, onClick: () => void }
             <div className={`p-5 flex flex-col justify-center relative min-w-0 ${item.image_url ? 'w-2/3' : 'flex-1'}`}>
                 {/* Header */}
                 <div className="flex justify-between items-start gap-2 mb-2">
-                    <h3 className="font-heading font-bold text-white text-lg leading-tight group-hover:text-[#D4AF37] transition-colors">
+                    <h3 className="font-heading font-bold text-white text-base md:text-lg leading-tight group-hover:text-[#D4AF37] transition-colors">
                         {item.name}
                     </h3>
-                    <span className="text-[#D4AF37] font-bold text-lg leading-tight whitespace-nowrap">
+                    <span className="text-[#D4AF37] font-bold text-base md:text-lg leading-tight whitespace-nowrap">
                         {formatPrice(item.price)}
                     </span>
                 </div>
 
-                {/* Tiny Description Preview */}
-                <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed">
+                {/* Description Preview */}
+                <p className="text-zinc-400 text-xs line-clamp-2 leading-relaxed font-sans">
                     {item.description}
                 </p>
 
                 {/* "View" Label */}
-                <span className="text-[10px] text-white/30 mt-auto uppercase tracking-wider font-bold group-hover:text-white transition-colors pt-2">
-                    View Details →
+                <span className="text-[10px] text-zinc-500 mt-auto uppercase tracking-wider font-bold group-hover:text-[#D4AF37] transition-colors pt-2">
+                    Tasting Details →
                 </span>
             </div>
         </div>
