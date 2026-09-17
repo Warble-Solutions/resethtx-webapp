@@ -142,23 +142,64 @@ const FAQS = [
   }
 ]
 
+const LOOKBOOK_ITEMS = [
+  {
+    title: "The Skyline Patio at Sunset",
+    category: "patio",
+    badge: "Open-Air Deck",
+    desc: "Unobstructed downtown Houston skyline views with weather-adaptive retractable covers and comfortable open-air lounge seating.",
+    image: "/images/event-3.png",
+    span: "col-span-1 md:col-span-2 aspect-[16/10]"
+  },
+  {
+    title: "Handcrafted Cocktail Program",
+    category: "mixology",
+    badge: "Artisanal Bar",
+    desc: "Bespoke mixology tailored to your occasion with crystal hand-cut ice, fresh botanicals, and premium spirits.",
+    image: "/private_page/1.png",
+    span: "col-span-1 aspect-[4/3] md:aspect-auto"
+  },
+  {
+    title: "VIP Bottle Presentations",
+    category: "mixology",
+    badge: "Celebration",
+    desc: "Celebratory bottle presentations with custom sparklers, premium champagnes, and dedicated table hosts.",
+    image: "/private_page/3.jpeg",
+    span: "col-span-1 aspect-[4/3] md:aspect-auto"
+  },
+  {
+    title: "Cozy Interior Velvet Salon",
+    category: "lounge",
+    badge: "Indoor Salon",
+    desc: "Plush velvet banquet booths, sound-synchronized mood lighting, and climate-controlled luxury seating.",
+    image: "/private_page/4.jpg",
+    span: "col-span-1 md:col-span-2 aspect-[16/10]"
+  },
+  {
+    title: "Full Venue Buyout Gatherings",
+    category: "patio",
+    badge: "Exclusive Buyout",
+    desc: "Seamless indoor-outdoor flow connecting the open-air terrace with the main acoustic salon.",
+    image: "/private_page/6.png",
+    span: "col-span-1 aspect-[4/3]"
+  },
+  {
+    title: "Turnkey Evening Energy",
+    category: "lounge",
+    badge: "Nightlife & AV",
+    desc: "Headline DJ booth, high-fidelity sound systems, and presentation screens ready for corporate or milestone celebrations.",
+    image: "/images/12.png",
+    span: "col-span-1 md:col-span-2 aspect-[16/10]"
+  }
+]
+
 export default function PrivateEventsClient() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedSpaceTab, setSelectedSpaceTab] = useState<'terrace' | 'lounge' | 'buyout'>('terrace')
-  
-  // Interactive Event Fit Estimator state
-  const [estEventType, setEstEventType] = useState('Corporate Mixer')
-  const [estGuestCount, setEstGuestCount] = useState(150)
+  const [galleryCategory, setGalleryCategory] = useState<'all' | 'patio' | 'lounge' | 'mixology'>('all')
   
   // FAQ accordion state
   const [openFaq, setOpenFaq] = useState<number | null>(null)
-
-  // Determine recommendation based on guest count
-  const recommendedSpace = useMemo(() => {
-    if (estGuestCount <= 120) return VENUE_SPACES[1] // The Obsidian Lounge
-    if (estGuestCount <= 250) return VENUE_SPACES[0] // The Skyline Terrace
-    return VENUE_SPACES[2] // Full Venue Buyout
-  }, [estGuestCount])
 
   return (
     <div className="bg-black min-h-screen text-white selection:bg-[#D4AF37] selection:text-black">
@@ -170,10 +211,10 @@ export default function PrivateEventsClient() {
         {/* Background Image & Ambient Luxury Vignettes */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/private_page/2.jpeg"
+            src="/images/corpo.avif"
             alt="Reset Rooftop Skyline Private Event"
             fill
-            className="object-cover opacity-55 scale-105 transition-transform duration-10000"
+            className="object-cover opacity-45 scale-105 transition-transform duration-10000"
             priority
           />
           <div className="absolute inset-0 bg-black/55" />
@@ -228,19 +269,19 @@ export default function PrivateEventsClient() {
       <section className="bg-zinc-950/90 border-y border-white/10 py-6 sm:py-8 px-4 sm:px-6 relative z-20">
         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center">
           <div className="p-2">
-            <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">450</p>
-            <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">Standing Reception</p>
-          </div>
-          <div className="p-2 border-l border-white/10">
-            <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">280</p>
-            <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">Seated Dining</p>
+            <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">10+</p>
+            <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">Group Gatherings</p>
           </div>
           <div className="p-2 border-l border-white/10">
             <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">Dual</p>
-            <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">Indoor & Patio Spaces</p>
+            <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">Patio & Indoor Lounge</p>
           </div>
           <div className="p-2 border-l border-white/10">
-            <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">10 min</p>
+            <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">360°</p>
+            <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">Skyline Panoramas</p>
+          </div>
+          <div className="p-2 border-l border-white/10">
+            <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37]">&lt;10 min</p>
             <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 mt-1 font-sans">From Downtown HTX</p>
           </div>
         </div>
@@ -353,111 +394,91 @@ export default function PrivateEventsClient() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 4. INTERACTIVE EVENT FIT & CAPACITY ESTIMATOR */}
+      {/* 4. ATMOSPHERIC EVENT LOOKBOOK & GALLERY */}
       {/* ========================================================================= */}
       <section className="py-20 bg-gradient-to-b from-zinc-950 via-black to-zinc-950 border-y border-white/10 px-4 sm:px-8 relative overflow-hidden">
         <div className="absolute -top-32 right-1/4 w-96 h-96 bg-[#D4AF37]/10 blur-[130px] rounded-full pointer-events-none" />
 
-        <div className="max-w-5xl mx-auto relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10">
           
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-bold block mb-2">
-              Plan Your Experience
+              Atmosphere & Aesthetic
             </span>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold uppercase text-white tracking-tight">
-              Event Fit Estimator
+              Event Visual Lookbook
             </h2>
             <p className="text-zinc-400 text-xs sm:text-sm font-sans mt-2 font-light">
-              Select your expected guest count and event style to discover your ideal venue configuration.
+              Explore the unique spaces, skyline horizons, and celebration moments at Reset HTX.
             </p>
+
+            {/* Filter Tabs */}
+            <div className="flex flex-wrap items-center justify-center gap-2.5 mt-8">
+              {[
+                { id: 'all', label: 'All Experiences' },
+                { id: 'patio', label: 'Skyline Patio' },
+                { id: 'lounge', label: 'Interior Lounge' },
+                { id: 'mixology', label: 'Bar & Bottles' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setGalleryCategory(tab.id as any)}
+                  className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+                    galleryCategory === tab.id
+                      ? 'bg-[#D4AF37] text-black border-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.35)]'
+                      : 'bg-black/60 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-white'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="bg-zinc-950/85 border border-[#D4AF37]/40 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md">
-            
-            {/* Step 1: Event Type */}
-            <div className="mb-8">
-              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-3">
-                1. Select Event Type
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {['Corporate Mixer', 'Private Dining', 'Milestone Gala', 'Brand Activation'].map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => setEstEventType(type)}
-                    className={`py-3 px-3 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border text-center ${
-                      estEventType === type
-                        ? 'bg-white text-black border-white shadow-md'
-                        : 'bg-black/60 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-white'
-                    }`}
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Step 2: Guest Count Slider / Preset Buttons */}
-            <div className="mb-10">
-              <div className="flex justify-between items-center mb-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-300">
-                  2. Estimated Guest Count
-                </label>
-                <span className="font-heading text-2xl font-bold text-[#D4AF37]">
-                  {estGuestCount} <span className="text-xs text-zinc-400 font-sans font-normal uppercase tracking-wider">Guests</span>
-                </span>
-              </div>
-
-              {/* Slider */}
-              <input
-                type="range"
-                min="30"
-                max="450"
-                step="10"
-                value={estGuestCount}
-                onChange={(e) => setEstGuestCount(Number(e.target.value))}
-                className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
-              />
-
-              {/* Quick Presets */}
-              <div className="flex justify-between text-[11px] text-zinc-500 font-sans mt-2">
-                <span>30 (Intimate)</span>
-                <span>150 (Lounge)</span>
-                <span>250 (Terrace)</span>
-                <span>450 (Full Buyout)</span>
-              </div>
-            </div>
-
-            {/* Recommended Configuration Box */}
-            <div className="bg-black/80 rounded-2xl border border-white/10 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#D4AF37] font-bold block mb-1">
-                  Recommended Configuration
-                </span>
-                <h4 className="font-heading text-2xl sm:text-3xl font-bold text-white mb-2">
-                  {recommendedSpace.name}
-                </h4>
-                <p className="text-xs sm:text-sm text-zinc-400 font-sans max-w-xl">
-                  {recommendedSpace.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mt-4">
-                  <span className="text-[11px] bg-[#D4AF37]/10 text-[#D4AF37] px-3 py-1 rounded-full border border-[#D4AF37]/30 font-semibold">
-                    Max: {recommendedSpace.capacity}
-                  </span>
-                  <span className="text-[11px] bg-white/5 text-zinc-300 px-3 py-1 rounded-full border border-white/10">
-                    Format: {estEventType === 'Private Dining' ? 'Seated Dining' : 'Standing Reception'}
+          {/* Mosaic Lookbook Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {LOOKBOOK_ITEMS.filter((item) => galleryCategory === 'all' || item.category === galleryCategory).map((item, idx) => (
+              <div
+                key={idx}
+                className={`${item.span} relative rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl group min-h-[300px]`}
+              >
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent opacity-90 group-hover:opacity-80 transition-opacity" />
+                
+                {/* Floating Category Badge */}
+                <div className="absolute top-4 left-4 z-10">
+                  <span className="px-3.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest">
+                    {item.badge}
                   </span>
                 </div>
+
+                {/* Content Overlay */}
+                <div className="absolute bottom-6 left-6 right-6 z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                  <div className="max-w-md">
+                    <h3 className="font-heading text-xl sm:text-2xl font-bold text-white mb-1.5 leading-tight group-hover:text-[#D4AF37] transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-zinc-300 text-xs font-sans font-light leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-[#D4AF37] text-white hover:text-black border border-white/20 hover:border-[#D4AF37] text-[11px] font-bold uppercase tracking-wider transition-all backdrop-blur-sm self-start sm:self-auto cursor-pointer"
+                  >
+                    <span>Inquire</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
-
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="shrink-0 w-full md:w-auto px-8 py-4 bg-[#D4AF37] hover:bg-white text-black font-bold uppercase tracking-[0.2em] text-xs rounded-full transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.3)] cursor-pointer text-center"
-              >
-                Inquire For This Setup
-              </button>
-            </div>
-
+            ))}
           </div>
+
         </div>
       </section>
 
