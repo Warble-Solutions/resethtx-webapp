@@ -255,9 +255,24 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
               ) : (
                 <div className="w-full h-full bg-[#0d0d0f]" />
               )}
-              {/* Gradient overlays — let center be vivid */}
-              <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, #050505 0%, transparent 40%, rgba(0,0,0,0.5) 100%)' }} />
-              <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.35) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.35) 100%)' }} />
+              {/* Subtle dark tint layer across background to ensure high readability */}
+              <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+
+              {/* Gradient overlays for depth, navbar blending, and smooth bottom transition */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    'linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.3) 70%, #050505 100%)'
+                }}
+              />
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(ellipse at center, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 60%, transparent 100%)'
+                }}
+              />
             </div>
           </div>
         )
@@ -278,8 +293,8 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
         >
 
           {/* Slide counter pill */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] mb-4 sm:mb-5"
-            style={{ background: 'rgba(0,0,0,0.7)', borderColor: 'rgba(212,175,55,0.4)', color: '#D4AF37', backdropFilter: 'blur(12px)' }}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] mb-4 sm:mb-5 shadow-lg"
+            style={{ background: 'rgba(0,0,0,0.75)', borderColor: 'rgba(212,175,55,0.45)', color: '#D4AF37', backdropFilter: 'blur(12px)' }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse shrink-0" />
             <span className="font-mono">{String(currentIndex + 1).padStart(2, '0')} / {String(allSlides.length).padStart(2, '0')}</span>
@@ -294,14 +309,14 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
             <>
               <h1
                 className="font-heading text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.05] mb-3 sm:mb-4"
-                style={{ textShadow: '0 4px 30px rgba(0,0,0,0.95)' }}
+                style={{ textShadow: '0 4px 30px rgba(0,0,0,0.98), 0 2px 10px rgba(0,0,0,0.9)' }}
               >
                 {currentSlide.title}
               </h1>
 
               <p
-                className="font-sans text-zinc-200 text-xs sm:text-sm md:text-base max-w-xl mx-auto leading-relaxed mb-5 sm:mb-7 font-light line-clamp-3 px-2 sm:px-0"
-                style={{ textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}
+                className="font-sans text-zinc-100 text-xs sm:text-sm md:text-base max-w-xl mx-auto leading-relaxed mb-5 sm:mb-7 font-normal line-clamp-3 px-2 sm:px-0"
+                style={{ textShadow: '0 2px 14px rgba(0,0,0,0.95), 0 1px 4px rgba(0,0,0,0.9)' }}
               >
                 {currentSlide.description}
               </p>
@@ -338,14 +353,14 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
             <>
               <h1
                 className="font-heading text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.05] mb-3 sm:mb-4"
-                style={{ textShadow: '0 4px 30px rgba(0,0,0,0.95)' }}
+                style={{ textShadow: '0 4px 30px rgba(0,0,0,0.98), 0 2px 10px rgba(0,0,0,0.9)' }}
               >
                 {currentSlide.title}
               </h1>
 
               <div
-                className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-zinc-100 text-[11px] sm:text-xs tracking-widest uppercase mb-3 sm:mb-5 px-4 sm:px-6 py-2 rounded-full max-w-[92vw]"
-                style={{ background: 'rgba(0,0,0,0.7)', border: '1px solid rgba(212,175,55,0.35)', backdropFilter: 'blur(12px)' }}
+                className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-zinc-100 text-[11px] sm:text-xs tracking-widest uppercase mb-3 sm:mb-5 px-4 sm:px-6 py-2 rounded-full max-w-[92vw] shadow-lg"
+                style={{ background: 'rgba(0,0,0,0.75)', border: '1px solid rgba(212,175,55,0.4)', backdropFilter: 'blur(12px)' }}
               >
                 <span className="text-[#D4AF37] font-bold">🗓 {getEventDate(currentSlide.date)}</span>
                 <span style={{ color: '#555' }}>·</span>
@@ -360,8 +375,8 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
 
               {(currentSlide.featured_description || currentSlide.description) && (
                 <p
-                  className="font-sans text-zinc-200 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed mb-5 sm:mb-7 line-clamp-2 font-light px-2 sm:px-0"
-                  style={{ textShadow: '0 2px 8px rgba(0,0,0,0.9)' }}
+                  className="font-sans text-zinc-100 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed mb-5 sm:mb-7 line-clamp-2 font-normal px-2 sm:px-0"
+                  style={{ textShadow: '0 2px 14px rgba(0,0,0,0.95), 0 1px 4px rgba(0,0,0,0.9)' }}
                 >
                   {currentSlide.featured_description || currentSlide.description}
                 </p>
