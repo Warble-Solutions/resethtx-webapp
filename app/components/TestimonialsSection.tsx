@@ -23,7 +23,7 @@ export default function TestimonialsSection({ testimonials }: { testimonials: Te
                 <div className="text-center mb-16">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] tracking-[0.3em] uppercase font-bold mb-4">
                         <MessageSquareQuote className="w-3.5 h-3.5" />
-                        CHAPTER // 07 · THE ACCLAIM
+                        CHAPTER // 06 · THE ACCLAIM
                     </div>
                     <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white uppercase tracking-tight">
                         Voices of the <span className="gold-gradient-text">Skyline</span>

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { formatEventTime } from '../utils/format'
 import InquireModal from '@/app/components/InquireModal'
 import EventModal from '@/app/components/EventModal'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 type SlideType = 'BRAND' | 'EVENT'
 
@@ -13,6 +14,7 @@ interface BaseSlide {
   id: string
   type: SlideType
   image_url: string | null
+  image_position?: string
 }
 
 interface BrandSlide extends BaseSlide {
@@ -71,7 +73,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
       title: 'RESET ROOFTOP LOUNGE',
       subtitle: 'Midtown Houston',
       description: 'Craft cocktails, elevated rooftop dining, and panoramic skyline views.',
-      image_url: '/images/def_banner.png',
+      image_url: '/images/14.png',
       buttonText: 'Explore Menu',
       buttonLink: '/menu'
     },
@@ -81,7 +83,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
       title: 'YOUR NEXT EVENT, ELEVATED',
       subtitle: 'Private Events & Buyouts',
       description: 'Boardroom views, not boardrooms. Host client dinners, corporate mixers, and rooftop receptions.',
-      image_url: '/images/12.png',
+      image_url: '/images/16.png',
       buttonText: 'Venue Rental',
       buttonLink: '/private-events'
     },
@@ -91,7 +93,8 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
       title: 'WEDNESDAY HAPPY HOUR',
       subtitle: 'Every Wednesday • 4 PM – 8 PM',
       description: 'Half-priced signature craft cocktails, chef-curated small plates, and panoramic sunset skyline views.',
-      image_url: '/images/event-3.png',
+      image_url: '/images/9.png',
+      image_position: 'right center',
       buttonText: 'Explore Happy Hour',
       buttonLink: '/events'
     },
@@ -101,7 +104,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
       title: 'HOUSE ON THE ROOFTOP',
       subtitle: 'Every Thursday • 4 PM – 12 AM',
       description: 'Deep melodic house, global rhythms, elevated mixology, and skyline lounge energy above Midtown.',
-      image_url: '/images/event-2.png',
+      image_url: '/images/event-3.png',
       buttonText: 'Explore Thursday',
       buttonLink: '/events'
     },
@@ -111,7 +114,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
       title: 'THE FRIDAY EXCHANGE',
       subtitle: 'Every Friday • 10:30 PM – 2 AM',
       description: 'Houston\'s premier weekend kickoff. Guest headline DJs, VIP bottle presentations, and rooftop energy.',
-      image_url: '/images/14.png',
+      image_url: '/images/event-1.png',
       buttonText: 'Reserve Entry & VIP',
       buttonLink: '/events'
     },
@@ -121,7 +124,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
       title: 'MILLENNIALS ONLY',
       subtitle: 'Every Saturday • 9 PM – 2 AM',
       description: 'The ultimate 90s & 2000s throwback rooftop experience. Timeless singalong anthems, bottle service, and skyline views.',
-      image_url: '/images/event-1.png',
+      image_url: '/images/def_banner.png',
       buttonText: 'Get Tickets & Tables',
       buttonLink: '/events'
     },
@@ -131,7 +134,7 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
       title: 'RESET SUNDAYS',
       subtitle: 'Every Sunday • 4 PM – 12 AM',
       description: 'Houston\'s favorite soulful rooftop day party. Live acoustic R&B vocalists, global sounds, and golden hour vibes.',
-      image_url: '/images/16.png',
+      image_url: '/images/event-6.png',
       buttonText: 'Join The Vibe',
       buttonLink: '/events'
     }
@@ -246,7 +249,8 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
                   fill
                   className="object-cover"
                   style={{
-                    filter: 'brightness(1.05) contrast(1.05) saturate(1.15)',
+                    filter: 'brightness(1.1) contrast(1.02) saturate(1.15)',
+                    objectPosition: slide.image_position || 'center',
                     transform: index === currentIndex ? 'scale(1.04)' : 'scale(1)',
                     transition: 'transform 10s ease-out',
                   }}
@@ -255,22 +259,13 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
               ) : (
                 <div className="w-full h-full bg-[#0d0d0f]" />
               )}
-              {/* Subtle dark tint layer across background to ensure high readability */}
-              <div className="absolute inset-0 bg-black/40 pointer-events-none" />
 
-              {/* Gradient overlays for depth, navbar blending, and smooth bottom transition */}
+              {/* Minimal gradient overlays for navbar blending at top and section transition at very bottom */}
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    'linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.3) 70%, #050505 100%)'
-                }}
-              />
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    'radial-gradient(ellipse at center, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 60%, transparent 100%)'
+                    'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.5) 100%)'
                 }}
               />
             </div>
@@ -408,18 +403,28 @@ export default function HeroCarousel({ events, onEventClick, onInquire }: HeroCa
           <button
             onClick={prevSlide}
             aria-label="Previous slide"
-            className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full items-center justify-center text-white/70 hover:text-white cursor-pointer group transition-all"
-            style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)' }}
+            className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full items-center justify-center text-white/80 hover:text-[#D4AF37] cursor-pointer group transition-all duration-300 hover:scale-105"
+            style={{
+              background: 'rgba(10,10,12,0.65)',
+              border: '1px solid rgba(212,175,55,0.3)',
+              backdropFilter: 'blur(16px)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.6)'
+            }}
           >
-            <span className="text-lg group-hover:-translate-x-0.5 transition-transform">‹</span>
+            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
           </button>
           <button
             onClick={nextSlide}
             aria-label="Next slide"
-            className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full items-center justify-center text-white/70 hover:text-white cursor-pointer group transition-all"
-            style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)' }}
+            className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full items-center justify-center text-white/80 hover:text-[#D4AF37] cursor-pointer group transition-all duration-300 hover:scale-105"
+            style={{
+              background: 'rgba(10,10,12,0.65)',
+              border: '1px solid rgba(212,175,55,0.3)',
+              backdropFilter: 'blur(16px)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.6)'
+            }}
           >
-            <span className="text-lg group-hover:translate-x-0.5 transition-transform">›</span>
+            <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </>
       )}

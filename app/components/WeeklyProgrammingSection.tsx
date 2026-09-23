@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, Clock } from 'lucide-react'
+import { ArrowRight, Clock, Sparkles } from 'lucide-react'
 import { formatEventTime, isEventPastOrEnded } from '../utils/format'
 
 interface Event {
@@ -154,9 +154,17 @@ export default function WeeklyProgrammingSection({
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-12 gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] tracking-[0.25em] uppercase font-bold mb-3"
-              style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)', color: '#D4AF37' }}>
-              CHAPTER // 03
+            <div
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] mb-3"
+              style={{
+                background: 'rgba(0,0,0,0.6)',
+                border: '1px solid rgba(212,175,55,0.45)',
+                color: '#F5E6BE',
+                backdropFilter: 'blur(12px)'
+              }}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span className="font-mono text-[#E5C158]">CHAPTER // 03 · WEEKLY RESIDENCIES</span>
             </div>
             <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white">
               Weekly <span className="gold-gradient-text">Residencies</span>
@@ -187,10 +195,10 @@ export default function WeeklyProgrammingSection({
                   alt={item.prog.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  style={{ filter: 'brightness(1.05) contrast(1.05) saturate(1.1)' }}
+                  style={{ filter: 'brightness(1.12) contrast(1.02) saturate(1.1)' }}
                   sizes="300px"
                 />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,10,12,0.9) 0%, transparent 50%)' }} />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,10,12,0.55) 0%, transparent 45%)' }} />
 
                 {/* Badges */}
                 <div className="absolute top-3 left-3 right-3 flex items-center justify-between">

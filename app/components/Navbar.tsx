@@ -12,6 +12,7 @@ const navLinks = [
   { name: 'CALENDAR', href: '/events' },
   { name: 'MENU', href: '/menu' },
   { name: 'PRIVATE EVENTS', href: '/private-events' },
+  { name: 'DRESS CODE', href: '/dress-code' },
   { name: 'ABOUT', href: '/about' },
   { name: 'GALLERY', href: '/gallery' },
   { name: 'CONTACT', href: '/contact' },
@@ -98,7 +99,7 @@ export default function Navbar() {
           </Link>
 
           {/* DESKTOP LINKS */}
-          <div className="hidden lg:flex items-center gap-5 xl:gap-7">
+          <div className="hidden lg:flex items-center gap-3.5 xl:gap-5">
             {navLinks.map((link) => (
               <Link
                 key={link.name}

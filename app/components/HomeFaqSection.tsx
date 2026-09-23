@@ -19,7 +19,7 @@ export default function HomeFaqSection() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] tracking-[0.3em] uppercase font-bold mb-4">
             <HelpCircle className="w-3.5 h-3.5" />
-            CHAPTER // 08 · THE PROTOCOL
+            CHAPTER // 07 · THE PROTOCOL
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white mb-4">
             Guest Dossier &amp; <span className="gold-gradient-text">FAQs</span>

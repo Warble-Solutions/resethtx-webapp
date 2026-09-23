@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import HeroCarousel from './HeroCarousel'
+import HomeAboutSnippet from './HomeAboutSnippet'
 import EventsCalendar from './EventsCalendar'
 import TheExperienceSection from './TheExperienceSection'
 import RooftopDiningSection from './RooftopDiningSection'
@@ -57,6 +58,9 @@ export default function HomeClient({
                 events={featuredEvents}
                 onEventClick={handleEventClick}
             />
+
+            {/* ABOUT / SUMMARY BRAND SNIPPET */}
+            <HomeAboutSnippet />
 
             {/* 2. INTERACTIVE EVENT CALENDAR MATRIX */}
             <EventsCalendar

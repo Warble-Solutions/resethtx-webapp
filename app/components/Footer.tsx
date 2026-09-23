@@ -116,6 +116,9 @@ export default async function Footer() {
                         <Link href="/faq" className="text-slate-400 hover:text-[#D4AF37] transition-colors">
                             FAQ
                         </Link>
+                        <Link href="/dress-code" className="text-slate-400 hover:text-[#D4AF37] transition-colors">
+                            Dress Code
+                        </Link>
                         <Link href="/privacy" className="text-slate-400 hover:text-[#D4AF37] transition-colors">
                             Privacy Policy
                         </Link>
