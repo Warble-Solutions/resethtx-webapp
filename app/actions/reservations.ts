@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { getTransporter } from '@/lib/mail'
 import { stripe } from '@/lib/stripe'
+import { getHoustonToday, isClosedDay } from '@/lib/houston-date'
 
 const GENERAL_RESERVATION_FEE = 50 // $50 USD
 
@@ -38,11 +39,17 @@ export async function createGeneralReservationIntent({
         return { success: false, error: 'All required fields must be filled.' }
     }
 
-    const selectedDate = new Date(date + 'T12:00:00')
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    if (selectedDate < today) {
+    // All dates are Houston calendar dates ("YYYY-MM-DD")
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        return { success: false, error: 'Invalid date.' }
+    }
+    if (date < getHoustonToday()) {
         return { success: false, error: 'Please select a future date.' }
+    }
+
+    // Reset HTX is closed on Mondays and Tuesdays
+    if (isClosedDay(date)) {
+        return { success: false, error: 'Reset HTX is closed on Mondays and Tuesdays. Please choose Wednesday through Sunday.' }
     }
 
     if (!process.env.STRIPE_SECRET_KEY) {
@@ -361,27 +368,44 @@ async function sendAdminNotificationEmail({
     }
 }
 
-// ─── Utility: Check if a date has an event ───────────────────────────────────
-export async function getEventByDate(date: string): Promise<{ hasEvent: boolean; eventTitle?: string; eventId?: string }> {
+// ─── Utility: Get all events on a date ───────────────────────────────────────
+export interface DayEvent {
+    id: string
+    title: string
+    date: string
+    time: string | null
+    end_time?: string | null
+    image_url: string | null
+    description?: string | null
+    is_external_event?: boolean
+    external_url?: string
+    ticket_price?: number
+    ticket_capacity?: number
+    table_price?: number
+    category?: string
+    is_sold_out?: boolean
+}
+
+export async function getEventByDate(date: string): Promise<{ hasEvent: boolean; events: DayEvent[] }> {
     const supabase = await createClient()
 
     try {
-        const startOfDay = new Date(date + 'T00:00:00').toISOString()
-        const endOfDay = new Date(date + 'T23:59:59').toISOString()
+        // Event dates are stored as Houston calendar dates without timezone
+        // (e.g. "2026-10-07T00:00:00"), so compare plain strings — converting
+        // through Date would shift the range based on the server's timezone.
+        const startOfDay = `${date}T00:00:00`
+        const endOfDay = `${date}T23:59:59`
 
         const { data } = await supabase
             .from('events')
-            .select('id, title')
+            .select('id, title, date, time, end_time, image_url, description, is_external_event, external_url, ticket_price, ticket_capacity, table_price, category, is_sold_out')
             .gte('date', startOfDay)
             .lte('date', endOfDay)
-            .limit(1)
+            .order('time', { ascending: true })
 
-        if (data && data.length > 0) {
-            return { hasEvent: true, eventTitle: data[0].title, eventId: data[0].id }
-        }
-
-        return { hasEvent: false }
+        const events = (data || []) as DayEvent[]
+        return { hasEvent: events.length > 0, events }
     } catch {
-        return { hasEvent: false }
+        return { hasEvent: false, events: [] }
     }
 }

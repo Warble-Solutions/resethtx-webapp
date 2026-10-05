@@ -102,7 +102,7 @@ export async function POST(req: Request) {
             name: guestName,
             email: guestEmail,
             tableSelection: tableSelection,
-            bookingRef: booking_ref,
+            bookingRef: bookingRef,
         };
 
         try {
