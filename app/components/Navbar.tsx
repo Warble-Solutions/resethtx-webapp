@@ -12,6 +12,7 @@ const navLinks = [
   { name: 'CALENDAR', href: '/events' },
   { name: 'MENU', href: '/menu' },
   { name: 'ABOUT', href: '/about' },
+  { name: 'DRESS CODE', href: '/dress-code' },
   { name: 'CONTACT', href: '/contact' },
   { name: 'GALLERY', href: '/gallery' },
 ]

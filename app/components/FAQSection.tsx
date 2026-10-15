@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
 
-const faqs = [
+export const faqs = [
     {
         question: "WHAT IS THE REQUIRED AGE FOR ENTRY?",
         answer: "You must have a valid government issued photo ID. You must be 21+ to enter the venue."
