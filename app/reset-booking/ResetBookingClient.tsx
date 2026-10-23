@@ -23,11 +23,15 @@ function PaymentForm({
     formattedDate,
     time,
     guests,
+    fee,
+    selectedTable,
     onBack,
 }: {
     formattedDate: string
     time: string
     guests: number
+    fee: number
+    selectedTable: { name: string; category: string } | null
     onBack: () => void
 }) {
     const stripe = useStripe()
@@ -67,12 +71,18 @@ function PaymentForm({
                 <div className="flex justify-between items-center mb-1">
                     <span className="text-sm text-slate-300">⏰ {time}</span>
                 </div>
-                <div className="flex justify-between items-center mb-3">
+                <div className="flex justify-between items-center mb-1">
                     <span className="text-sm text-slate-300">👥 {guests} {guests === 1 ? 'guest' : 'guests'}</span>
                 </div>
+                {selectedTable && (
+                    <div className="flex justify-between items-center mb-3">
+                        <span className="text-sm text-slate-300">🪑 Table</span>
+                        <span className="text-sm font-semibold text-white">{selectedTable.name} <span className="text-[#D4AF37]">({selectedTable.category})</span></span>
+                    </div>
+                )}
                 <div className="border-t border-white/10 pt-3 flex justify-between items-center">
                     <span className="text-sm text-slate-400 uppercase font-bold tracking-wide">Reservation Fee</span>
-                    <span className="text-[#D4AF37] font-bold text-lg">$50.00</span>
+                    <span className="text-[#D4AF37] font-bold text-lg">${fee}.00</span>
                 </div>
             </div>
 
@@ -104,7 +114,7 @@ function PaymentForm({
                     ) : (
                         <>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
-                            Pay $50 — Confirm Reservation
+                            Pay ${fee} — Confirm Reservation
                         </>
                     )}
                 </button>
@@ -150,9 +160,10 @@ export default function ResetBookingClient() {
     })
     const [formError, setFormError] = useState<string | null>(null)
     
-    // Table Selection State
+    // Table Selection State & Fee ($75 for table tops, $100 for sections)
     const [isTableModalOpen, setIsTableModalOpen] = useState(false)
-    const [selectedTable, setSelectedTable] = useState<{ id: string, name: string, category: string } | null>(null)
+    const [selectedTable, setSelectedTable] = useState<{ id: string, name: string, category: string, price?: number } | null>(null)
+    const [reservationFee, setReservationFee] = useState<number>(100)
 
     // Check for event whenever date changes
     useEffect(() => {
@@ -162,6 +173,7 @@ export default function ResetBookingClient() {
             setStep('form')
             setClientSecret(null)
             setSelectedTable(null)
+            setReservationFee(100)
             const result = await getEventByDate(selectedDate)
             setEventInfo(result)
             setCheckingEvent(false)
@@ -186,10 +198,17 @@ export default function ResetBookingClient() {
             setFormError('Please select a preferred time.')
             return
         }
+        if (!selectedTable) {
+            setFormError('Please select a table to proceed with your reservation.')
+            return
+        }
         if (!form.full_name || !form.email || !form.phone) {
             setFormError('Please fill in all required fields.')
             return
         }
+
+        const isTableTop = (selectedTable.category || '').toLowerCase() === 'table top' || selectedTable.name.toLowerCase().startsWith('table top')
+        const calculatedFee = isTableTop ? 75 : 100
 
         startTransition(async () => {
             const result = await createGeneralReservationIntent({
@@ -200,11 +219,13 @@ export default function ResetBookingClient() {
                 date: selectedDate,
                 time: form.time,
                 special_requests: form.special_requests,
-                tableId: selectedTable?.id,
-                tableName: selectedTable?.name,
+                tableId: selectedTable.id,
+                tableName: selectedTable.name,
+                tableCategory: selectedTable.category,
             })
 
             if (result.success && result.clientSecret) {
+                setReservationFee(result.fee || calculatedFee)
                 setClientSecret(result.clientSecret)
                 setStep('payment')
             } else {
@@ -352,9 +373,9 @@ export default function ResetBookingClient() {
                                         Venue Closed
                                     </span>
                                 ) : !eventInfo.hasEvent ? (
-                                    // $50 fee badge
+                                    // Tiered fee badge
                                     <span className="px-3 py-1 bg-[#D4AF37]/10 text-[#D4AF37] text-[10px] font-extrabold uppercase tracking-widest rounded-full border border-[#D4AF37]/30">
-                                        $50 Reservation Fee
+                                        $75 – $100 Reservation Fee
                                     </span>
                                 ) : (
                                     <span className="px-3 py-1 bg-white/5 text-slate-500 text-[10px] font-extrabold uppercase tracking-widest rounded-full border border-white/10">
@@ -390,7 +411,7 @@ export default function ResetBookingClient() {
                                     {activeCard !== 'general' ? (
                                         <>
                                             <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-                                                Reserve a table for a regular night. A <strong className="text-white">$50 reservation fee</strong> is charged to secure your booking — refundable if cancelled 24hrs in advance.
+                                                Reserve a table for a regular night. A reservation fee (<strong className="text-white">$75 for table tops</strong>, <strong className="text-white">$100 for all other sections</strong>) is charged to secure your booking — refundable if cancelled 24hrs in advance.
                                             </p>
                                             <button
                                                 onClick={() => { setActiveCard('general'); setStep('form') }}
@@ -403,6 +424,43 @@ export default function ResetBookingClient() {
                                     ) : step === 'form' ? (
                                         // ── STEP 1: Reservation Form ──
                                         <form onSubmit={handleFormSubmit} className="space-y-4 animate-in slide-in-from-bottom-2 fade-in duration-300">
+
+                                             {/* Assigned Table (Required for pricing) */}
+                                            <div className="p-4 border border-[#D4AF37]/30 rounded-lg bg-[#050505]">
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <label className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Select Table *</label>
+                                                    <span className="text-[10px] text-[#D4AF37] font-semibold tracking-wide">$75 Table Tops · $100 Sections</span>
+                                                </div>
+                                                {selectedTable ? (
+                                                    <div className="flex justify-between items-center bg-[#111] border border-[#D4AF37] p-4 rounded-lg">
+                                                        <div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">{selectedTable.category}</span>
+                                                                <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30">
+                                                                    ${(selectedTable.category || '').toLowerCase() === 'table top' || selectedTable.name.toLowerCase().startsWith('table top') ? '75' : '100'} Fee
+                                                                </span>
+                                                            </div>
+                                                            <div className="text-white font-bold font-heading text-xl mt-0.5">{selectedTable.name}</div>
+                                                        </div>
+                                                        <button 
+                                                            type="button" 
+                                                            onClick={() => setIsTableModalOpen(true)}
+                                                            className="text-xs font-bold uppercase border border-white/20 px-3 py-1.5 rounded hover:bg-white hover:text-black transition-colors"
+                                                        >
+                                                            Change Table
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsTableModalOpen(true)}
+                                                        className="w-full bg-[#D4AF37]/10 border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black font-bold uppercase tracking-widest py-3.5 rounded-lg transition-all flex items-center justify-center gap-2 group"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                                                        Choose a Table ($75 – $100)
+                                                    </button>
+                                                )}
+                                            </div>
 
                                             {/* Time + Party Size Row */}
                                             <div className="grid grid-cols-2 gap-3">
@@ -432,35 +490,6 @@ export default function ResetBookingClient() {
                                                         ))}
                                                     </select>
                                                 </div>
-                                            </div>
-
-                                            {/* Assigned Table */}
-                                            <div className="mt-4 p-4 border border-[#D4AF37]/30 rounded-lg bg-[#050505]">
-                                                <label className="text-[10px] text-slate-500 uppercase font-bold block mb-1.5">Assigned Table (Optional)</label>
-                                                {selectedTable ? (
-                                                    <div className="flex justify-between items-center bg-[#111] border border-[#D4AF37] p-4 rounded-lg">
-                                                        <div>
-                                                            <div className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">{selectedTable.category}</div>
-                                                            <div className="text-white font-bold font-heading text-xl">{selectedTable.name}</div>
-                                                        </div>
-                                                        <button 
-                                                            type="button" 
-                                                            onClick={() => setIsTableModalOpen(true)}
-                                                            className="text-xs font-bold uppercase border border-white/20 px-3 py-1.5 rounded hover:bg-white hover:text-black transition-colors"
-                                                        >
-                                                            Change
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setIsTableModalOpen(true)}
-                                                        className="w-full bg-white/5 border border-white/10 text-white font-bold uppercase tracking-widest py-3 rounded-lg hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
-                                                    >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
-                                                        Select a Table
-                                                    </button>
-                                                )}
                                             </div>
 
                                             {/* Name */}
@@ -533,6 +562,8 @@ export default function ResetBookingClient() {
                                                 formattedDate={formattedDate}
                                                 time={form.time}
                                                 guests={Number(form.guests)}
+                                                fee={reservationFee}
+                                                selectedTable={selectedTable}
                                                 onBack={() => { setStep('form'); setClientSecret(null) }}
                                             />
                                         </Elements>
@@ -546,7 +577,7 @@ export default function ResetBookingClient() {
 
                 {/* Footer note */}
                 <p className="text-center text-slate-600 text-xs mt-10">
-                    21+ to enter. $50 reservation fee secures your table. · Reset HTX
+                    21+ to enter. $75 – $100 reservation fee secures your table. · Reset HTX
                 </p>
 
             </div>

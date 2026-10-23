@@ -5,7 +5,13 @@ import { getTransporter } from '@/lib/mail'
 import { stripe } from '@/lib/stripe'
 import { getHoustonToday, isClosedDay } from '@/lib/houston-date'
 
-const GENERAL_RESERVATION_FEE = 50 // $50 USD
+function calculateTableReservationFee(table?: { category?: string; name?: string } | null): number {
+    if (!table) return 100
+    const cat = (table.category || '').toLowerCase()
+    const name = (table.name || '').toLowerCase()
+    const isTableTop = cat === 'table top' || name.startsWith('table top')
+    return isTableTop ? 75 : 100
+}
 
 interface GeneralReservationInput {
     full_name: string
@@ -17,13 +23,14 @@ interface GeneralReservationInput {
     special_requests?: string
     tableId?: string
     tableName?: string
+    tableCategory?: string
 }
 
 function generateBookingRef() {
     return 'RST-' + Math.random().toString(36).substr(2, 6).toUpperCase()
 }
 
-// ─── STEP 1: Create Stripe PaymentIntent ($50) ───────────────────────────────
+// ─── STEP 1: Create Stripe PaymentIntent ($75 for Table Tops, $100 for Sections)
 export async function createGeneralReservationIntent({
     full_name,
     email,
@@ -34,7 +41,8 @@ export async function createGeneralReservationIntent({
     special_requests,
     tableId,
     tableName,
-}: GeneralReservationInput): Promise<{ success: boolean; clientSecret?: string; error?: string }> {
+    tableCategory,
+}: GeneralReservationInput): Promise<{ success: boolean; clientSecret?: string; fee?: number; error?: string }> {
     if (!full_name || !email || !phone || !guests || !date || !time) {
         return { success: false, error: 'All required fields must be filled.' }
     }
@@ -56,9 +64,32 @@ export async function createGeneralReservationIntent({
         return { success: false, error: 'Payment system is not configured. Please contact us directly.' }
     }
 
+    // Calculate fee: $75 for table tops, $100 for everything else
+    let resolvedCategory = tableCategory
+    let resolvedName = tableName
+    let fee = calculateTableReservationFee({ category: resolvedCategory, name: resolvedName })
+
+    if (tableId) {
+        try {
+            const supabase = await createClient()
+            const { data: tableData } = await supabase
+                .from('tables')
+                .select('category, name')
+                .eq('id', tableId)
+                .maybeSingle()
+            if (tableData) {
+                resolvedCategory = tableData.category || resolvedCategory
+                resolvedName = tableData.name || resolvedName
+                fee = calculateTableReservationFee(tableData)
+            }
+        } catch (e) {
+            console.warn('Could not verify table category from DB, using fallback fee:', e)
+        }
+    }
+
     try {
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: GENERAL_RESERVATION_FEE * 100,
+            amount: fee * 100,
             currency: 'usd',
             metadata: {
                 type: 'general_reservation',
@@ -70,12 +101,14 @@ export async function createGeneralReservationIntent({
                 time,
                 special_requests: special_requests || '',
                 tableId: tableId || '',
-                tableName: tableName || '',
+                tableName: resolvedName || '',
+                tableCategory: resolvedCategory || '',
+                fee: fee.toString(),
             },
             automatic_payment_methods: { enabled: true },
         })
 
-        return { success: true, clientSecret: paymentIntent.client_secret! }
+        return { success: true, clientSecret: paymentIntent.client_secret!, fee }
     } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Unknown error'
         console.error('Stripe PaymentIntent error:', err)
@@ -87,7 +120,7 @@ export async function createGeneralReservationIntent({
 export async function finalizeGeneralReservation(paymentIntentId: string): Promise<{
     success: boolean
     bookingRef?: string
-    details?: { full_name: string; email: string; date: string; time: string; guests: number }
+    details?: { full_name: string; email: string; date: string; time: string; guests: number; fee: number; tableName?: string; tableCategory?: string }
     error?: string
 }> {
     if (!process.env.STRIPE_SECRET_KEY) {
@@ -111,6 +144,8 @@ export async function finalizeGeneralReservation(paymentIntentId: string): Promi
         const special_requests = meta.special_requests || ''
         const tableId = meta.tableId || null
         const tableName = meta.tableName || null
+        const tableCategory = meta.tableCategory || null
+        const fee = meta.fee ? parseInt(meta.fee) : calculateTableReservationFee({ category: tableCategory || undefined, name: tableName || undefined })
 
         if (!full_name || !email || !date || !time) {
             return { success: false, error: 'Reservation details are incomplete.' }
@@ -143,8 +178,8 @@ export async function finalizeGeneralReservation(paymentIntentId: string): Promi
                 status: 'confirmed',
                 special_requests: [
                     `Booking Ref: ${bookingRef}`,
-                    tableName ? `Table: ${tableName}` : null,
-                    `$${GENERAL_RESERVATION_FEE} paid via Stripe (${paymentIntentId})`,
+                    tableName ? `Table: ${tableName}${tableCategory ? ` (${tableCategory})` : ''}` : null,
+                    `$${fee} paid via Stripe (${paymentIntentId})`,
                     special_requests,
                 ]
                     .filter(Boolean)
@@ -159,18 +194,18 @@ export async function finalizeGeneralReservation(paymentIntentId: string): Promi
             // Always send emails regardless of DB insert result
             // Wrapped in try/catch so email failures never crash the reservation flow
             try {
-                await sendGuestConfirmationEmail({ to: email, full_name, guests, date, time, bookingRef, special_requests })
+                await sendGuestConfirmationEmail({ to: email, full_name, guests, date, time, bookingRef, special_requests, fee, tableName: tableName || undefined, tableCategory: tableCategory || undefined })
             } catch (emailErr) {
                 console.error('Guest confirmation email failed (non-fatal):', emailErr)
             }
             try {
-                await sendAdminNotificationEmail({ full_name, email, phone, guests, date, time, bookingRef, special_requests, paymentIntentId })
+                await sendAdminNotificationEmail({ full_name, email, phone, guests, date, time, bookingRef, special_requests, paymentIntentId, fee, tableName: tableName || undefined, tableCategory: tableCategory || undefined })
             } catch (emailErr) {
                 console.error('Admin notification email failed (non-fatal):', emailErr)
             }
         }
 
-        return { success: true, bookingRef, details: { full_name, email, date, time, guests } }
+        return { success: true, bookingRef, details: { full_name, email, date, time, guests, fee, tableName: tableName || undefined, tableCategory: tableCategory || undefined } }
     } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Unknown error'
         console.error('finalizeGeneralReservation error:', err)
@@ -187,6 +222,9 @@ async function sendGuestConfirmationEmail({
     time,
     bookingRef,
     special_requests,
+    fee,
+    tableName,
+    tableCategory,
 }: {
     to: string
     full_name: string
@@ -195,6 +233,9 @@ async function sendGuestConfirmationEmail({
     time: string
     bookingRef: string
     special_requests?: string
+    fee: number
+    tableName?: string
+    tableCategory?: string
 }) {
     const transporter = getTransporter()
     if (!transporter) return
@@ -252,9 +293,14 @@ async function sendGuestConfirmationEmail({
         <td style="padding:11px 0;border-bottom:1px solid #222;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Party Size</td>
         <td style="padding:11px 0;border-bottom:1px solid #222;color:#fff;font-size:14px;font-weight:600;">${guests} ${guests === 1 ? 'guest' : 'guests'}</td>
       </tr>
+      ${tableName ? `
+      <tr>
+        <td style="padding:11px 0;border-bottom:1px solid #222;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Table</td>
+        <td style="padding:11px 0;border-bottom:1px solid #222;color:#D4AF37;font-size:14px;font-weight:700;">${tableName} ${tableCategory ? `(${tableCategory})` : ''}</td>
+      </tr>` : ''}
       <tr>
         <td style="padding:11px 0;${special_requests ? 'border-bottom:1px solid #222;' : ''}color:#666;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Reservation Fee</td>
-        <td style="padding:11px 0;${special_requests ? 'border-bottom:1px solid #222;' : ''}color:#4CAF50;font-size:14px;font-weight:700;">$50.00 — Paid ✓</td>
+        <td style="padding:11px 0;${special_requests ? 'border-bottom:1px solid #222;' : ''}color:#4CAF50;font-size:14px;font-weight:700;">$${fee}.00 — Paid ✓</td>
       </tr>
       ${special_requests ? `
       <tr>
@@ -266,7 +312,7 @@ async function sendGuestConfirmationEmail({
     <!-- Notice -->
     <div style="background:#1a1a1a;border-left:3px solid #D4AF37;border-radius:4px;padding:16px;margin-top:24px;">
       <p style="margin:0;color:#bbb;font-size:13px;line-height:1.7;">
-        Please <strong style="color:#fff;">present this email upon arrival</strong>. Your $50 reservation fee confirms your table — see you soon! 🥂
+        Please <strong style="color:#fff;">present this email upon arrival</strong>. Your $${fee} reservation fee confirms your table — see you soon! 🥂
       </p>
     </div>
 
@@ -307,6 +353,9 @@ async function sendAdminNotificationEmail({
     bookingRef,
     special_requests,
     paymentIntentId,
+    fee,
+    tableName,
+    tableCategory,
 }: {
     full_name: string
     email: string
@@ -317,6 +366,9 @@ async function sendAdminNotificationEmail({
     bookingRef: string
     special_requests?: string
     paymentIntentId: string
+    fee: number
+    tableName?: string
+    tableCategory?: string
 }) {
     const transporter = getTransporter()
     if (!transporter) return
@@ -344,7 +396,8 @@ async function sendAdminNotificationEmail({
       <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Date</td><td style="padding:9px 0;border-bottom:1px solid #eee;font-weight:600;">${formattedDate}</td></tr>
       <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Time</td><td style="padding:9px 0;border-bottom:1px solid #eee;">${time}</td></tr>
       <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Party Size</td><td style="padding:9px 0;border-bottom:1px solid #eee;">${guests} ${guests === 1 ? 'guest' : 'guests'}</td></tr>
-      <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Amount Paid</td><td style="padding:9px 0;border-bottom:1px solid #eee;color:green;font-weight:700;">$50.00 ✓ Stripe</td></tr>
+      ${tableName ? `<tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Assigned Table</td><td style="padding:9px 0;border-bottom:1px solid #eee;font-weight:700;color:#D4AF37;">${tableName} ${tableCategory ? `(${tableCategory})` : ''}</td></tr>` : ''}
+      <tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;">Amount Paid</td><td style="padding:9px 0;border-bottom:1px solid #eee;color:green;font-weight:700;">$${fee}.00 ✓ Stripe</td></tr>
       ${special_requests ? `<tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#888;vertical-align:top;">Requests</td><td style="padding:9px 0;border-bottom:1px solid #eee;color:#555;">${special_requests}</td></tr>` : ''}
       <tr><td style="padding:9px 0;color:#888;font-size:12px;">Stripe PI</td><td style="padding:9px 0;font-size:11px;font-family:monospace;color:#666;">${paymentIntentId}</td></tr>
     </table>

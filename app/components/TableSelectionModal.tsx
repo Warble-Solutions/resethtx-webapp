@@ -115,7 +115,7 @@ export default function TableSelectionModal({ isOpen, onClose, eventId, date, sh
                             <div>
                                 <h4 className="text-white font-bold uppercase tracking-wider text-sm mb-1">Reservation Fee Required</h4>
                                 <p className="text-slate-400 text-sm leading-relaxed">
-                                    Table bookings require a <strong className="text-white">$50 reservation fee</strong>. This fee secures your spot and does not go towards your tab. Additionally, all table reservations require a <strong className="text-white">minimum purchase of 1 bottle</strong>.
+                                    Table bookings require a reservation fee: <strong className="text-white">$75 for Table Tops</strong> and <strong className="text-white">$100 for all other sections</strong> (Lounge, Dance Floor, DJ Booth, Patio). This fee secures your spot and does not go towards your tab. Additionally, all table reservations require a <strong className="text-white">minimum purchase of 1 bottle</strong>.
                                 </p>
                             </div>
                         </div>
@@ -145,12 +145,17 @@ export default function TableSelectionModal({ isOpen, onClose, eventId, date, sh
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         {groupedTables[category].map(table => {
                                             const isBooked = table.isBooked || takenTableIds.has(table.id)
+                                            const isTableTop = (table.category || '').toLowerCase() === 'table top' || (table.name || '').toLowerCase().startsWith('table top')
+                                            const tableFee = isTableTop ? 75 : 100
                                             return (
                                                 <button
                                                     key={table.id}
                                                     onClick={() => {
                                                         if (!isBooked) {
-                                                            onSelectTable(table)
+                                                            onSelectTable({
+                                                                ...table,
+                                                                price: showFeeNote ? tableFee : table.price,
+                                                            })
                                                             onClose()
                                                         }
                                                     }}
@@ -166,8 +171,15 @@ export default function TableSelectionModal({ isOpen, onClose, eventId, date, sh
                                                     {!isBooked && (
                                                         <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#D4AF37]" />
                                                     )}
-                                                    <div>
-                                                        <div className="font-heading font-bold text-lg mb-1 leading-tight">{table.name}</div>
+                                                    <div className="w-full">
+                                                        <div className="flex items-start justify-between gap-2 mb-1 pr-3">
+                                                            <div className="font-heading font-bold text-lg leading-tight">{table.name}</div>
+                                                            {showFeeNote && (
+                                                                <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 whitespace-nowrap">
+                                                                    ${tableFee} Fee
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                         <div className="text-xs font-bold uppercase tracking-wider text-slate-500 group-hover:text-slate-300">
                                                             Max {table.capacity} Guests
                                                         </div>

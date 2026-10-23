@@ -128,7 +128,7 @@ export async function getGeneralTablesAvailability(date: string) {
             id: table.id,
             name: table.name || `Table ${table.id.slice(0, 4)}`,
             capacity: table.capacity || 2,
-            price: 100,
+            price: ((table.category || '').toLowerCase() === 'table top' || (table.name || '').toLowerCase().startsWith('table top')) ? 75 : 100,
             category: table.category || 'Standard',
             isBooked: bookedTableIds.has(table.id),
             x: table.x,

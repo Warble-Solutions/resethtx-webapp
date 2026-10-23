@@ -88,7 +88,7 @@ async function ResultContent({ searchParams }: PageProps) {
                 <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-[4px] mb-3">Reservation Confirmed</p>
                 <h2 className="font-heading text-4xl text-white uppercase tracking-widest mb-3">See You Soon!</h2>
                 <p className="text-slate-400 mb-8">
-                    Your $50 reservation fee has been paid and your table is secured. A confirmation email is on its way.
+                    Your ${details?.fee || 100} reservation fee has been paid and your table is secured. A confirmation email is on its way.
                 </p>
 
                 {/* Booking card */}
@@ -124,9 +124,15 @@ async function ResultContent({ searchParams }: PageProps) {
                                     <span className="text-white font-semibold">{details.guests} {details.guests === 1 ? 'guest' : 'guests'}</span>
                                 </div>
                             )}
+                            {details?.tableName && (
+                                <div className="flex justify-between">
+                                    <span className="text-slate-500">Table</span>
+                                    <span className="text-[#D4AF37] font-semibold">{details.tableName} {details.tableCategory ? `(${details.tableCategory})` : ''}</span>
+                                </div>
+                            )}
                             <div className="border-t border-white/10 pt-3 flex justify-between">
                                 <span className="text-slate-500">Reservation Fee</span>
-                                <span className="text-green-400 font-bold">$50.00 Paid ✓</span>
+                                <span className="text-green-400 font-bold">${details?.fee || 100}.00 Paid ✓</span>
                             </div>
                         </div>
                     </div>
